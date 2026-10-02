@@ -159,3 +159,11 @@ Kernel keeps
              │
              ▼
          🧹 Removed
+
+| 👶 Orphan Process         | 🧟 Zombie Process           |
+| ------------------------- | --------------------------- |
+| Parent terminates first   | Child terminates first      |
+| Child is still running    | Child has finished          |
+| Original parent is gone   | Parent is still running     |
+| Child gets reparented     | Child waits to be reaped    |
+| Child continues execution | Child executes no more code |
