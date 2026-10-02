@@ -1,0 +1,138 @@
+An orphan process is a child process whose parent has terminated while the child is still running. 
+Linux reparents the orphan to a suitable process, commonly PID 1 or a configured subreaper.
+
+👶 Orphan Process in Linux
+
+An orphan process is a child process whose parent process has terminated while the child is still running.
+
+In simple words:
+
+👨 Parent dies first → 👶 Child is still running → Child becomes an orphan process.
+
+
+💥 What happens when Parent terminates?
+
+Suppose:
+
+👨 Parent
+PID = 1000
+    │
+    ▼
+👶 Child
+PID = 1001
+
+The parent terminates:
+
+❌ Parent PID 1000
+        │
+        X
+        │
+        ▼
+👶 Child PID 1001
+still running
+
+Now the child becomes an orphan.
+
+Linux then reparents the orphan to another process, traditionally PID 1 (init/systemd on modern Linux systems), or in some environments to a designated subreaper.
+
+So conceptually:
+
+Before:
+
+systemd
+  │
+  └── Parent
+        │
+        └── Child
+
+
+After Parent dies:
+
+systemd
+  │
+  └── Child
+      👶
+
+
+
+
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    pid_t pid;
+
+    pid = fork();
+
+    if (pid < 0)
+    {
+        printf("fork failed\n");
+        return 1;
+    }
+
+    if (pid == 0)
+    {
+        // Child
+        printf("Child started\n");
+        printf("Child PID  = %d\n", getpid());
+        printf("Parent PID = %d\n", getppid());
+
+        sleep(5);
+
+        printf("\nAfter parent terminates:\n");
+        printf("Child PID  = %d\n", getpid());
+        printf("Parent PID = %d\n", getppid());
+    }
+    else
+    {
+        // Parent
+        printf("Parent PID = %d\n", getpid());
+        printf("Child PID  = %d\n", pid);
+
+        printf("Parent exiting...\n");
+        return 0;
+    }
+
+    return 0;
+}
+
+
+
+🧪 Run It
+
+Compile:
+
+gcc orphan.c -o orphan
+
+Run:
+
+./orphan
+
+You may get:
+
+Parent PID = 5000
+Child PID = 5001
+Parent exiting...
+
+Child started
+Child PID  = 5001
+Parent PID = 5000
+
+Then after the sleep(5):
+
+After parent terminates:
+Child PID  = 5001
+Parent PID = 1
+
+On a typical system, the child's PPID changes to 1.
+
+
+
+| 👶 Orphan                  | 🧟 Zombie                                          |
+| -------------------------- | -------------------------------------------------- |
+| Parent terminates first    | Child terminates first                             |
+| Child is still running     | Child has already terminated                       |
+| Child gets reparented      | Child remains as a process-table entry temporarily |
+| Parent is gone             | Parent is still alive but hasn't collected status  |
+| Child can continue working | Child cannot continue executing                    |
