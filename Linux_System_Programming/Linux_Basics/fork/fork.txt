@@ -1,0 +1,390 @@
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    pid_t pid;
+
+    printf("Before fork: PID = %d\n", getpid());
+
+    pid = fork();
+
+    if (pid < 0)
+    {
+        printf("fork failed\n");
+    }
+    else if (pid == 0)
+    {
+        // Child process
+        printf("\n--- CHILD ---\n");
+        printf("Child PID  = %d\n", getpid());
+        printf("Parent PID = %d\n", getppid());
+    }
+    else
+    {
+        // Parent process
+        printf("\n--- PARENT ---\n");
+        printf("Parent PID = %d\n", getpid());
+        printf("Child PID  = %d\n", pid);
+    }
+
+    return 0;
+}
+
+
+Compile:
+
+gcc fork.c -o fork
+
+Run:
+
+./fork
+
+
+
+2️⃣ Understand the output
+
+You may get:
+
+Before fork: PID = 5000
+
+--- PARENT ---
+Parent PID = 5000
+Child PID  = 5001
+
+--- CHILD ---
+Child PID  = 5001
+Parent PID = 5000
+
+The exact PIDs will be different on your system.
+
+Now let's analyze this carefully. 🔍
+
+3️⃣ Before fork()
+
+Initially, there is only one process.
+
+              Program
+                 │
+                 ▼
+          👨 Process
+          PID = 5000
+
+This line:
+
+printf("Before fork: PID = %d\n", getpid());
+
+prints:
+
+PID = 5000
+
+So getpid() means:
+
+🆔 Give me the PID of the process that is currently executing this code.
+
+4️⃣ What happens at fork()?
+
+This line:
+
+pid = fork();
+
+is the most important line.
+
+Before fork():
+
+             👨 One Process
+                PID 5000
+
+After fork():
+
+                 fork()
+                   │
+          ┌────────┴────────┐
+          ▼                 ▼
+      👨 Parent          👶 Child
+      PID 5000           PID 5001
+
+Now there are two processes executing from the point after fork().
+
+5️⃣ How do we know which is Parent and Child?
+
+This is the most important rule:
+
+fork() return value
+       │
+       ├── -1  → ❌ Failed
+       │
+       ├──  0  → 👶 Child
+       │
+       └── >0  → 👨 Parent
+
+So:
+
+if (pid == 0)
+{
+    // CHILD
+}
+else
+{
+    // PARENT
+}
+6️⃣ What does the Parent receive?
+
+Suppose:
+
+Parent PID = 5000
+Child PID  = 5001
+
+When the parent executes:
+
+pid = fork();
+
+the return value is:
+
+pid = 5001
+
+Why?
+
+Because the parent needs to know:
+
+"What is the PID of the child I just created?"
+
+So:
+
+👨 Parent
+PID = 5000
+
+fork()
+  ↓
+returns 5001
+
+Therefore:
+
+printf("Child PID = %d\n", pid);
+
+prints:
+
+Child PID = 5001
+7️⃣ What does the Child receive?
+
+The child gets:
+
+fork() → 0
+
+Therefore:
+
+if (pid == 0)
+
+means:
+
+"I am the child."
+
+But here's an important point:
+
+pid == 0 is NOT the child's actual PID.
+
+The child's actual PID is obtained using:
+
+getpid();
+
+For example:
+
+fork() return value → 0
+getpid()             → 5001
+
+So:
+
+👶 Child
+
+pid       = 0
+getpid()  = 5001
+getppid() = 5000
+🧠 8️⃣ getpid() vs getppid()
+
+This is extremely important.
+
+getpid()
+getpid()
+
+means:
+
+What is my PID?
+
+getppid()
+getppid()
+
+means:
+
+What is my parent's PID?
+
+So the child can do:
+
+printf("My PID = %d\n", getpid());
+printf("My Parent PID = %d\n", getppid());
+
+Output:
+
+My PID = 5001
+My Parent PID = 5000
+🔥 Full Relationship
+                  👨 PARENT
+                  PID = 5000
+                      │
+                      │ fork()
+                      │
+                      ▼
+                  👶 CHILD
+                  PID = 5001
+
+
+
+
+
+
+| In        | `fork()` returns | `getpid()` |  `getppid()` |
+| --------- | ---------------: | ---------: | -----------: |
+| 👨 Parent |        Child PID | Parent PID | Parent's PID |
+| 👶 Child  |              `0` |  Child PID |   Parent PID |
+| ❌ Failure |             `-1` |          — |            — |
+
+
+
+🔎 1️⃣0️⃣ Check using ps
+
+Run:
+
+ps -ef | grep fork
+
+You may see:
+
+komal  5000  4500  ... ./fork
+komal  5001  5000  ... ./fork
+
+Now look carefully:
+
+PID     PPID
+5000    4500
+5001    5000
+
+This tells you:
+
+           PPID
+            │
+            ▼
+PID 5000 ───────► Parent
+   │
+   │ PPID = 5000
+   ▼
+PID 5001 ───────► Child
+
+The child's PPID equals the parent's PID.
+
+That's one of the easiest ways to identify the relationship. 🔥
+
+🧪 1️⃣1️⃣ Use pstree
+
+Another very useful command:
+
+pstree -p
+
+You may see something like:
+
+systemd(1)
+ └─bash(4500)
+    └─fork(5000)
+       └─fork(5001)
+
+This visually shows the process hierarchy.
+
+You can also use:
+
+pstree -p 5000
+🔬 1️⃣2️⃣ Check a specific process
+
+For example:
+
+ps -p 5000 -o pid,ppid,state,cmd
+
+Output might be:
+
+  PID  PPID S CMD
+ 5000  4500 S ./fork
+
+For the child:
+
+ps -p 5001 -o pid,ppid,state,cmd
+
+Output:
+
+  PID  PPID S CMD
+ 5001  5000 S ./fork
+
+Now you can analyze:
+
+PID     → Who am I?
+PPID    → Who is my parent?
+STATE   → What am I doing?
+CMD     → Which program am I running?
+
+
+🧠 1️⃣3️⃣ Why do we use sleep()?
+
+You might wonder:
+
+Why did we put sleep(20)?
+
+Because without it, the processes may finish before you can inspect them.
+
+With:
+
+sleep(20);
+
+they remain alive for 20 seconds.
+
+That gives you time to run:
+
+ps
+pstree
+ps -ef
+
+and inspect them.
+
+This is a very useful debugging technique. 🔧
+
+
+
+
+
+When you see:
+
+pid = fork();
+
+immediately analyze it like this:
+
+                    fork()
+                      │
+          ┌───────────┴───────────┐
+          ▼                       ▼
+       👨 PARENT                👶 CHILD
+       pid > 0                  pid == 0
+          │                       │
+          │                       │
+          ▼                       ▼
+ getpid() = Parent PID      getpid() = Child PID
+ fork() = Child PID        getppid() = Parent PID
+
+ 
+🔑 Remember these four things:
+getpid()   → My PID 🆔
+getppid()  → My Parent PID 👨
+fork()=0   → I am Child 👶
+fork()>0   → I am Parent 👨
+
+And to verify from Linux:
+
+ps -ef | grep fork
+ps -p <PID> -o pid,ppid,state,cmd
+pstree -p
+
+
+
