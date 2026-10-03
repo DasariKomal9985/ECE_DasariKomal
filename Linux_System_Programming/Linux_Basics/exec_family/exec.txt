@@ -1,0 +1,640 @@
+The exec family is used to replace the currently running program with another program.
+
+Very important:
+
+exec() does NOT create a new process.
+It replaces the current process's program.
+
+For example:
+
+Before exec:
+
+Process PID = 5000
+Running → program_A
+
+
+        exec()
+
+
+After exec:
+
+Process PID = 5000
+Running → program_B
+
+Notice:
+
+PID before = 5000
+PID after  = 5000
+
+The process remains the same; its program is replaced.
+
+
+🧩 The 6 exec() Functions
+
+There are six commonly discussed functions:
+
+execl()
+execlp()
+execle()
+
+execv()
+execvp()
+execve()
+
+They are actually wrappers around the underlying system call:
+
+execve()
+
+
+🧠 First Understand the Letters
+
+The function names look confusing, but the letters tell you what changes.
+
+l = List
+
+Arguments are provided one by one.
+
+"ls", "-l", "-a", NULL
+v = Vector
+
+Arguments are provided through an array.
+
+char *args[] = {"ls", "-l", "-a", NULL};
+p = PATH
+
+Searches for the executable using the PATH environment variable.
+
+For example:
+
+"ls"
+
+instead of:
+
+"/bin/ls"
+e = Environment
+
+Allows you to provide a custom environment.
+
+
+| Function   | Arguments | PATH search? | Custom environment? |
+| ---------- | --------- | ------------ | ------------------- |
+| `execl()`  | List      | ❌            | ❌                   |
+| `execlp()` | List      | ✅            | ❌                   |
+| `execle()` | List      | ❌            | ✅                   |
+| `execv()`  | Vector    | ❌            | ❌                   |
+| `execvp()` | Vector    | ✅            | ❌                   |
+| `execve()` | Vector    | ❌            | ✅                   |
+
+
+l → List
+v → Vector
+p → PATH
+e → Environment
+
+
+
+1️⃣ execl()
+What is execl()?
+
+execl() executes a program by providing its arguments one by one.
+
+Syntax:
+
+execl(path, arg0, arg1, arg2, ..., NULL);
+
+It does not search PATH.
+
+Therefore, normally provide the complete path.
+
+💻 Code
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    printf("Before execl()\n");
+
+    execl("/bin/ls", "ls", "-l", NULL);
+
+    printf("After execl()\n");
+
+    return 0;
+}
+
+Compile:
+
+gcc execl.c -o execl
+
+Run:
+
+./execl
+
+You may see:
+
+Before execl()
+total 20
+-rwxr-xr-x ...
+-rw-r--r-- ...
+...
+
+You will not normally see:
+
+After execl()
+Why?
+
+Because:
+
+execl("/bin/ls", ...)
+
+successfully replaces your program with ls.
+
+So execution becomes:
+
+Your program
+     │
+     │ execl()
+     ▼
+   /bin/ls
+     │
+     ▼
+   ls runs
+
+The original program's remaining code doesn't continue.
+
+🔎 Understanding the arguments
+execl("/bin/ls", "ls", "-l", NULL);
+
+Think:
+
+             execl()
+                │
+     ┌──────────┼──────────┐
+     ▼          ▼          ▼
+ "/bin/ls"    "ls"       "-l"
+     │          │          │
+ executable   argv[0]    argv[1]
+
+The first "ls" is argv[0], not the path.
+
+So internally:
+
+argv[0] = "ls"
+argv[1] = "-l"
+argv[2] = NULL
+
+
+2️⃣ execlp()
+
+Now add p.
+
+p means:
+
+Search the executable using PATH.
+
+So you don't need:
+
+/bin/ls
+
+You can simply use:
+
+ls
+💻 Code
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    printf("Before execlp()\n");
+
+    execlp("ls", "ls", "-l", NULL);
+
+    printf("After execlp()\n");
+
+    return 0;
+}
+
+Compile:
+
+gcc execlp.c -o execlp
+
+Run:
+
+./execlp
+
+Output:
+
+Before execlp()
+total 20
+-rwxr-xr-x ...
+...
+
+Again:
+
+printf("After execlp()\n");
+
+won't execute if execlp() succeeds.
+
+🔥 execl() vs execlp()
+execl()
+execl("/bin/ls", "ls", "-l", NULL);
+
+You provide the path.
+
+execlp()
+execlp("ls", "ls", "-l", NULL);
+
+Linux searches PATH.
+
+execl
+  ↓
+You give path
+  ↓
+/bin/ls
+
+execlp
+  ↓
+Linux searches PATH
+  ↓
+finds ls
+
+
+3️⃣ execle()
+
+Now we add:
+
+e = Environment
+
+execle() allows you to provide a custom environment to the new program.
+
+Syntax:
+
+execle(path, arg0, arg1, ..., NULL, envp);
+💻 Code
+
+We'll execute /usr/bin/env.
+
+env prints environment variables.
+
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    char *env[] =
+    {
+        "MY_NAME=KOMAL",
+        "MY_PROJECT=LSP",
+        NULL
+    };
+
+    printf("Before execle()\n");
+
+    execle("/usr/bin/env",
+           "env",
+           NULL,
+           env);
+
+    printf("execle failed\n");
+
+    return 0;
+}
+
+Run:
+
+./execle
+
+Output:
+
+Before execle()
+MY_NAME=KOMAL
+MY_PROJECT=LSP
+
+Here we created our own environment:
+
+char *env[] =
+{
+    "MY_NAME=KOMAL",
+    "MY_PROJECT=LSP",
+    NULL
+};
+
+Then:
+
+execle(..., env);
+
+passes that environment to the new program.
+
+
+3️⃣ execle()
+
+Now we add:
+
+e = Environment
+
+execle() allows you to provide a custom environment to the new program.
+
+Syntax:
+
+execle(path, arg0, arg1, ..., NULL, envp);
+💻 Code
+
+We'll execute /usr/bin/env.
+
+env prints environment variables.
+
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    char *env[] =
+    {
+        "MY_NAME=KOMAL",
+        "MY_PROJECT=LSP",
+        NULL
+    };
+
+    printf("Before execle()\n");
+
+    execle("/usr/bin/env",
+           "env",
+           NULL,
+           env);
+
+    printf("execle failed\n");
+
+    return 0;
+}
+
+Run:
+
+./execle
+
+Output:
+
+Before execle()
+MY_NAME=KOMAL
+MY_PROJECT=LSP
+
+Here we created our own environment:
+
+char *env[] =
+{
+    "MY_NAME=KOMAL",
+    "MY_PROJECT=LSP",
+    NULL
+};
+
+Then:
+
+execle(..., env);
+
+passes that environment to the new program.
+
+
+
+5️⃣ execvp() ⭐
+
+This is one of the most important ones for your Mini Shell.
+
+execvp() means:
+
+v → Vector
+p → PATH
+
+So:
+
+Arguments are supplied as an array, and Linux searches PATH.
+
+💻 Code
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    char *args[] =
+    {
+        "ls",
+        "-l",
+        NULL
+    };
+
+    printf("Before execvp()\n");
+
+    execvp("ls", args);
+
+    printf("execvp failed\n");
+
+    return 0;
+}
+
+Notice:
+
+execvp("ls", args);
+
+We don't write:
+
+/bin/ls
+
+because p tells it to search PATH.
+
+🚀 Why execvp() is important for Mini Shell
+
+Suppose the user types:
+
+ls -l
+
+Your shell needs to execute:
+
+ls
+
+Your Mini Shell can do:
+
+char *args[] = {"ls", "-l", NULL};
+
+execvp(args[0], args);
+
+That's exactly why execvp() is commonly used in simple shell implementations.
+
+The flow becomes:
+
+User
+ │
+ │ types: ls -l
+ ▼
+🐚 Mini Shell
+ │
+ │ fork()
+ ▼
+👶 Child
+ │
+ │ execvp("ls", args)
+ ▼
+/bin/ls
+ │
+ ▼
+Output
+
+🔥 This is a very important connection for your Mini Shell project.
+
+6️⃣ execve()
+
+Finally:
+
+e = Environment
+v = Vector
+
+execve() takes:
+
+path
+argv[]
+envp[]
+
+It does not search PATH.
+
+💻 Code
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    char *args[] =
+    {
+        "env",
+        NULL
+    };
+
+    char *env[] =
+    {
+        "MY_NAME=KOMAL",
+        "MY_PROJECT=LSP",
+        NULL
+    };
+
+    printf("Before execve()\n");
+
+    execve("/usr/bin/env", args, env);
+
+    printf("execve failed\n");
+
+    return 0;
+}
+
+Run:
+
+./execve
+
+Output:
+
+Before execve()
+MY_NAME=KOMAL
+MY_PROJECT=LSP
+
+Here:
+
+execve("/usr/bin/env", args, env);
+
+means:
+
+/usr/bin/env → executable path
+args          → argument vector
+env           → environment vector
+
+
+                EXEC FAMILY
+                    │
+       ┌────────────┴────────────┐
+       │                         │
+     List                       Vector
+       │                         │
+   ┌───┴───┐                 ┌───┴───┐
+   │       │                 │       │
+  no p     p                no p     p
+   │       │                 │       │
+ execl   execlp             execv   execvp
+   │
+   └── + e → execle
+
+execv + e → execve
+
+
+| Function   | `l/v`  | `p` | `e` | Example                              |
+| ---------- | ------ | --- | --- | ------------------------------------ |
+| `execl()`  | List   | ❌   | ❌   | `execl("/bin/ls", "ls", "-l", NULL)` |
+| `execlp()` | List   | ✅   | ❌   | `execlp("ls", "ls", "-l", NULL)`     |
+| `execle()` | List   | ❌   | ✅   | Custom environment                   |
+| `execv()`  | Vector | ❌   | ❌   | `execv("/bin/ls", args)`             |
+| `execvp()` | Vector | ✅   | ❌   | `execvp("ls", args)`                 |
+| `execve()` | Vector | ❌   | ✅   | `execve("/usr/bin/env", args, env)`  |
+
+
+
+
+🚨 fork() + exec()
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main()
+{
+    pid_t pid;
+
+    char *args[] =
+    {
+        "ls",
+        "-l",
+        NULL
+    };
+
+    pid = fork();
+
+    if (pid < 0)
+    {
+        perror("fork");
+        return 1;
+    }
+
+    if (pid == 0)
+    {
+        // 👶 Child
+        printf("Child executing ls...\n");
+
+        execvp("ls", args);
+
+        perror("execvp");
+        return 1;
+    }
+    else
+    {
+        // 👨 Parent
+        printf("Parent waiting...\n");
+
+        waitpid(pid, NULL, 0);
+
+        printf("Child finished\n");
+    }
+
+    return 0;
+}
+
+                 🐚 Shell
+                    │
+                  fork()
+                    │
+          ┌─────────┴─────────┐
+          ▼                   ▼
+       👨 Parent            👶 Child
+          │                   │
+       waitpid()          execvp("ls")
+          │                   │
+          │                   ▼
+          │                 /bin/ls
+          │                   │
+          │                   ▼
+          │                Output
+          │                   │
+          └─────── wait ◄─────┘
+                    │
+                    ▼
+              Child finished
