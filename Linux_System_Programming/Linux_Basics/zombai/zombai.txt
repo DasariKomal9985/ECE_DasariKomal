@@ -1,0 +1,280 @@
+🧟 1. Zombie Process — WITH Zombie
+
+A zombie happens when:
+
+Child terminates first, but the parent is still alive and hasn't collected the child's termination status.
+
+Simple flow
+👨 Parent
+   │
+   ├── fork()
+   │
+   ▼
+👶 Child
+   │
+   └── exit()
+          │
+          ▼
+       🧟 ZOMBIE
+          │
+          │ Parent hasn't wait()
+          │
+          ▼
+      Parent still alive
+ 
+ 
+             fork()
+               │
+       ┌───────┴────────┐
+       ▼                ▼
+    👨 Parent         👶 Child
+       │                │
+       │                │ exit()
+       │                ▼
+       │             ❌ Finished
+       │                │
+       │                ▼
+       │             🧟 ZOMBIE
+       │
+       │
+       ├── ❌ No wait()
+       │       → Zombie remains
+       │
+       └── ✅ wait()
+               OR
+           ✅ waitpid()
+               │
+               ▼
+             🧹 Reaped
+               │
+               ▼
+          No zombie
+
+
+
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+int main()
+{
+    pid_t pid;
+
+    pid = fork();
+
+    if (pid < 0)
+    {
+        perror("fork");
+        return 1;
+    }
+
+    if (pid == 0)
+    {
+        // 👶 CHILD
+
+        printf("Child PID = %d\n", getpid());
+
+        printf("Child: Exiting...\n");
+
+        exit(10);
+    }
+    else
+    {
+        // 👨 PARENT
+
+        printf("Parent PID = %d\n", getpid());
+        printf("Child PID  = %d\n", pid);
+
+        printf("Parent: Sleeping for 20 seconds...\n");
+
+        sleep(20);
+
+        printf("Parent: Exiting...\n");
+    }
+
+    return 0;
+}
+
+
+
+
+Suppose:
+
+Parent PID = 5000
+Child PID  = 5001
+
+After fork():
+
+👨 Parent
+PID = 5000
+   │
+   │
+   ▼
+👶 Child
+PID = 5001
+
+The child executes:
+
+exit(10);
+
+So:
+
+👶 Child
+   │
+   ▼
+exit(10)
+   │
+   ▼
+❌ Child terminates
+
+But the parent does:
+
+sleep(20);
+
+and doesn't call wait() or waitpid().
+
+Therefore:
+
+👨 Parent
+PID = 5000
+│
+│ still alive
+│
+└──────► 🧟 Child
+         PID = 5001
+         State = Z
+
+The child is now a zombie.
+
+🔎 How to See the Zombie
+
+Compile:
+
+gcc zombie.c -o zombie
+
+Run:
+
+./zombie
+
+While the parent is sleeping, open another terminal.
+
+Use:
+
+ps -el
+
+or:
+
+ps -ef | grep zombie
+
+You may see something like:
+
+5000  ... ./zombie
+5001  ... [zombie] <defunct>
+
+Or check directly:
+
+ps -p 5001 -o pid,ppid,state,cmd
+
+Example:
+
+PID   PPID  S  CMD
+5001  5000  Z  [zombie] <defunct>
+
+🔥 The important part:
+
+S = Z
+
+Z = Zombie.
+
+
+
+
+Suppose:
+
+Parent PID = 5000
+Child PID  = 5001
+
+After fork():
+
+👨 Parent
+PID = 5000
+   │
+   │
+   ▼
+👶 Child
+PID = 5001
+
+The child executes:
+
+exit(10);
+
+So:
+
+👶 Child
+   │
+   ▼
+exit(10)
+   │
+   ▼
+❌ Child terminates
+
+But the parent does:
+
+sleep(20);
+
+and doesn't call wait() or waitpid().
+
+Therefore:
+
+👨 Parent
+PID = 5000
+│
+│ still alive
+│
+└──────► 🧟 Child
+         PID = 5001
+         State = Z
+
+The child is now a zombie.
+
+🔎 How to See the Zombie
+
+Compile:
+
+gcc zombie.c -o zombie
+
+Run:
+
+./zombie
+
+While the parent is sleeping, open another terminal.
+
+Use:
+
+ps -el
+
+or:
+
+ps -ef | grep zombie
+
+You may see something like:
+
+5000  ... ./zombie
+5001  ... [zombie] <defunct>
+
+Or check directly:
+
+ps -p 5001 -o pid,ppid,state,cmd
+
+Example:
+
+PID   PPID  S  CMD
+5001  5000  Z  [zombie] <defunct>
+
+🔥 The important part:
+
+S = Z
+
+Z = Zombie.
+
+
