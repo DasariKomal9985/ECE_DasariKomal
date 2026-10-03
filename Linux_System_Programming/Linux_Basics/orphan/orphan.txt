@@ -1,0 +1,197 @@
+An orphan process is a child process whose parent terminates before the child. Linux reparents the child to a suitable process, commonly PID 1 or a configured subreaper.
+ The child's PID remains the same, but its PPID changes.
+
+
+ Parent dies → Child survives → Child becomes ORPHAN → Linux reparents it. 👶➡️🏠
+
+
+ 👶 Orphan Process in Linux
+
+An orphan process is a child process whose parent process has terminated while the child is still running.
+
+🔑 Simple definition
+
+Parent dies first → Child is still running → Child becomes an orphan.
+
+
+Before parent exits:
+
+        Parent
+        PID 5000
+           |
+           |
+        Child
+        PID 5001
+
+
+Parent terminates
+       ↓
+
+        Child
+        PID 5001
+        PPID changes
+       ↓
+   Reparented to
+   systemd/PID 1
+
+
+   ⚠️ Important: The child's PID does not change.
+
+Only its PPID (parent PID) changes.
+
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    pid_t pid;
+
+    pid = fork();
+
+    if (pid < 0)
+    {
+        perror("fork");
+        return 1;
+    }
+
+    if (pid == 0)
+    {
+        // Child
+        printf("Child started\n");
+        printf("Child PID  = %d\n", getpid());
+        printf("Parent PID = %d\n", getppid());
+
+        sleep(5);
+
+        printf("\nAfter parent terminates:\n");
+        printf("Child PID  = %d\n", getpid());
+        printf("Parent PID = %d\n", getppid());
+    }
+    else
+    {
+        // Parent
+        printf("Parent PID = %d\n", getpid());
+        printf("Child PID  = %d\n", pid);
+
+        printf("Parent is terminating...\n");
+
+        return 0;
+    }
+
+    return 0;
+}
+
+
+gcc orphan.c -o orphan
+Run
+./orphan
+
+You may see something similar to:
+
+Parent PID = 5000
+Child PID  = 5001
+Parent is terminating...
+
+Child started
+Child PID  = 5001
+Parent PID = 5000
+
+After parent terminates:
+Child PID  = 5001
+Parent PID = 1
+
+The exact PID values will be different on your system.
+
+🔍 What happened?
+Step 1 — fork()
+pid = fork();
+
+Two processes now exist:
+
+Parent PID = 5000
+Child  PID = 5001
+
+Inside the parent:
+
+pid = 5001
+
+Inside the child:
+
+pid = 0
+Step 2 — Parent exits
+return 0;
+
+The parent process terminates.
+
+But the child is still running because:
+
+sleep(5);
+
+So now:
+
+Parent ❌ terminated
+
+Child  ✅ still running
+
+Therefore:
+
+Child = ORPHAN
+Step 3 — Linux reparents the child
+
+Linux changes the child's parent relationship.
+
+Before:
+
+Child PID  = 5001
+PPID       = 5000
+
+After parent terminates, typically:
+
+Child PID  = 5001
+PPID       = 1
+
+So:
+
+PID 1
+ │
+ └── Child PID 5001
+
+On systems using a configured subreaper, the orphan may instead be reparented to that subreaper.
+
+🧪 Very important: getpid() vs getppid()
+
+This is the easiest way to understand orphan processes.
+
+printf("Child PID  = %d\n", getpid());
+printf("Parent PID = %d\n", getppid());
+Before parent dies
+getpid()  → 5001
+getppid() → 5000
+After parent dies
+getpid()  → 5001
+getppid() → 1
+
+Notice:
+
+Child PID     → SAME
+Parent PID    → CHANGES
+
+
+| Orphan                               | Zombie                                   |
+| ------------------------------------ | ---------------------------------------- |
+| Parent dies first                    | Child dies first                         |
+| Child is still running               | Child has already terminated             |
+| Child gets reparented                | Child waits for parent to collect status |
+| Child is a normal running process    | Child is a zombie process                |
+| `PPID` changes                       | Process state becomes `Z`                |
+| `wait()` is not what creates the fix | `wait()/waitpid()` reaps the child       |
+
+
+
+ORPHAN
+Parent ❌
+Child  ✅
+
+ZOMBIE
+Parent ✅
+Child  ❌
