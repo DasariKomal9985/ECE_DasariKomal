@@ -1,0 +1,129 @@
+User Space is where normal applications run with limited privileges, 
+while Kernel Space is where the Linux kernel and device drivers run with privileged access to system resources and hardware. 
+User-space applications communicate with the kernel mainly through system calls.  
+  
+  
+User Space = Applications 👤
+
+Kernel Space = System control 🔴
+
+System Call = Bridge 🌉
+
+Driver = Hardware interface 🔧
+  
+  
+  
+  
+  
+  
+  
+  
+  
+             🐧 LINUX
+                │
+       ┌────────┴────────┐
+       │                 │
+ 👤 USER SPACE      🔴 KERNEL SPACE
+       │                 │
+ Applications        Linux Kernel
+ Shell               Drivers
+ C Programs          Memory Management
+ Python              Process Management
+ Browser             File System
+       │                 │
+       └──── System Calls┘
+                │
+             💻 Hardware
+
+
+
+👤 1. User Space
+
+User Space is where normal applications run.
+
+Examples:
+
+🐚 Shell
+📝 C programs
+🌐 Web browser
+📱 Applications
+🛠️ Utilities like ls, cp, cat
+Your Mini Shell
+Important point
+
+User-space programs have limited privileges.
+
+They cannot directly:
+
+Access hardware registers ❌
+Directly control the CPU ❌
+Directly access kernel memory ❌
+Directly communicate with hardware ❌
+
+Instead, they request the kernel to do these things.
+
+
+
+
+🔴 2. Kernel Space
+
+Kernel Space is the privileged area where the Linux kernel operates.
+
+The kernel manages:
+
+Kernel responsibility	            Example
+🧠 Process Management	            fork(), scheduling
+💾 Memory Management	            Virtual memory, paging
+📁 File System                      Files, directories
+🔌 Device Drivers	                UART, I2C, SPI, USB
+🌐 Networking	                    TCP/IP
+🔄 IPC	Pipes,                      shared memory
+🔐 Security	                        Permissions
+
+Kernel-space code has high privileges and can access hardware and protected memory.
+
+
+
+👤 User Program
+      │
+      │  open()
+      │  read()
+      │  write()
+      │  fork()
+      │  ioctl()
+      ▼
+📞 System Call Interface
+      │
+      ▼
+🔴 Linux Kernel
+      │
+      ▼
+🔧 Device Driver
+      │
+      ▼
+💻 Hardware
+
+For example:
+
+int fd = open("test.txt", O_RDONLY);
+
+Your C program is running in User Space.
+
+open() requests the kernel:
+
+"Please open this file for me."
+
+The kernel handles the actual filesystem operation.
+
+
+
+| Feature         | 👤 User Space                   | 🔴 Kernel Space                |
+| --------------- | ---------------------------     | ------------------------------ |
+| Runs            | Applications                    | Linux Kernel                   |
+| Privileges      | Limited                         | High/privileged                |
+| Hardware access | ❌ Direct access not allowed    | ✅ Can access through drivers   |
+| Kernel memory   | ❌ No                           | ✅ Yes                          |
+| Device drivers  | ❌                              | ✅                              |
+| Applications    | ✅                              | ❌                              |
+| Crash impact    | Usually one application         | Can affect entire system       |
+| Examples        | Shell, `ls`, C program          | Scheduler, drivers, filesystem |
