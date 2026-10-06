@@ -1,0 +1,713 @@
+Pointer
+A pointer is a variable that stores the memory address of another variable.
+Example:
+int a = 10;
+int *p = &a;
+
+Memory concept:
+a = 10
+
+Address        Value
+0x1000         10
+  ↑
+  p
+
+Here:
+a → contains 10
+&p → address of pointer p
+&a → address of a
+p → contains address of a
+*p → value stored at address contained in p
+
+Easy definition
+A pointer is a variable used to store the address of another variable.
+
+
+
+
+
+Address Operator &
+The & operator is called the address-of operator.
+It gives the memory address of a variable.
+int a = 10;
+
+printf("%p", (void *)&a);
+
+If:
+a → address = 0x1000
+
+then:
+&a → 0x1000
+
+Remember
+&variable → address of variable
+
+
+
+
+
+Dereference Operator *
+The * operator is called the dereference operator when used with a pointer expression.
+It accesses the value stored at the address held by the pointer.
+int a = 10;
+int *p = &a;
+
+printf("%d", *p);
+
+Output:
+10
+
+Because:
+p  → address of a
+*p → value at that address
+
+Easy trick 🧠
+& → "Where?"
+* → "What is there?"
+
+
+
+
+
+Pointer Declaration and Initialization
+Declaration
+int *p;
+
+This declares p as a pointer to int.
+Initialization
+int a = 10;
+int *p = &a;
+
+Now p contains the address of a.
+Common types
+char *p1;
+int *p2;
+float *p3;
+double *p4;
+
+The pointer type tells the compiler what type of object the pointer points to and therefore how dereferencing and pointer arithmetic should work.
+
+
+
+
+
+Pointer Arithmetic
+Pointer arithmetic means performing operations such as:
+p++
+p--
+p + n
+p - n
+
+on pointers.
+Example:
+int arr[3] = {10, 20, 30};
+
+int *p = arr;
+
+If int is 4 bytes:
+p       → arr[0]
+p + 1   → arr[1]
+p + 2   → arr[2]
+
+The pointer does not increase by one byte.
+It moves by:
+sizeof(pointed_type)
+
+So if int = 4 bytes:
+p + 1 → address + 4
+
+Valid pointer arithmetic
+p++;
+p--;
+p + 2;
+p - 2;
+
+Pointer subtraction is meaningful when both pointers point into the same array object (or one past it).
+
+
+
+
+
+Pointer Comparison
+Pointers can be compared.
+Equality / inequality
+p1 == p2
+p1 != p2
+
+These determine whether they represent the same address.
+Relational comparison
+p1 < p2
+p1 > p2
+p1 <= p2
+p1 >= p2
+
+Relational pointer comparisons are meaningfully defined when the pointers refer to elements of the same array object (or one past it).
+Example:
+int arr[3] = {10, 20, 30};
+
+int *p1 = &arr[0];
+int *p2 = &arr[2];
+
+Then:
+p1 < p2
+
+is true.
+
+
+
+
+
+Null Pointer
+A null pointer is a pointer that intentionally points to no valid object/function.
+Use:
+int *p = NULL;
+
+NULL is a null pointer constant.
+Check:
+if(p == NULL)
+{
+    printf("Pointer is NULL\n");
+}
+
+Important ⚠️
+Do not dereference a null pointer:
+*p = 10;
+
+That results in undefined behavior.
+
+
+
+
+
+Wild Pointer
+A wild pointer is an uninitialized pointer whose value is indeterminate.
+Example:
+int *p;
+
+Here p has not been initialized.
+❌ Don't do:
+*p = 10;
+
+It can access an invalid memory location.
+Better:
+int *p = NULL;
+
+
+
+
+
+Dangling Pointer
+A dangling pointer points to an object whose lifetime has ended or to memory that has already been released.
+Example:
+int *p;
+
+{
+    int x = 10;
+    p = &x;
+}
+
+After the block ends:
+x no longer exists
+
+So:
+p → dangling pointer
+
+Another common example is:
+free(p);
+
+After free(p), the pointer value should not be dereferenced.
+A common practice is:
+free(p);
+p = NULL;
+
+
+
+
+
+Void Pointer
+A void pointer is a pointer to an object of an unspecified type.
+void *p;
+
+Example:
+int a = 10;
+
+void *p = &a;
+
+A void * can hold the address of an object of many different types.
+However, you cannot directly dereference it in standard C:
+*p
+
+Instead, convert it to the appropriate pointer type first:
+printf("%d", *(int *)p);
+
+
+
+
+
+Generic Pointer
+In C, void * is commonly called a generic/object pointer because it can hold the address of an object of any complete object type.
+Example:
+void *p;
+
+It can point to:
+int
+char
+float
+structure
+array object
+
+This is heavily used in:
+- malloc()
+- memcpy()
+- generic data structures
+- RTOS APIs
+- callback/context arguments
+Example:
+int x = 10;
+float y = 3.14f;
+
+void *p;
+
+p = &x;
+p = &y;
+
+
+
+
+
+Pointer to Pointer
+A pointer to pointer stores the address of another pointer.
+Example:
+int a = 10;
+int *p = &a;
+int **pp = &p;
+
+Relationship:
+a
+↑
+p
+↑
+pp
+
+Values:
+a   → 10
+p   → address of a
+pp  → address of p
+
+Therefore:
+*p  → 10
+**pp → 10
+
+
+
+
+
+
+Pointer to Array
+A pointer to an array points to an entire array object.
+Example:
+int arr[5];
+
+int (*p)[5] = &arr;
+
+Notice the parentheses:
+int (*p)[5];
+
+means:
+p is a pointer to an array of 5 integers.
+
+Whereas:
+int *p[5];
+
+means:
+p is an array of 5 pointers to int.
+
+These are completely different.
+
+
+
+
+
+Pointer and Array
+Array and pointer are closely related, but an array is not a pointer.
+Example:
+int arr[3] = {10, 20, 30};
+
+int *p = arr;
+
+In most expressions:
+arr
+
+decays to:
+&arr[0]
+
+Therefore:
+arr[0]
+
+is equivalent to:
+*p
+
+And:
+arr[i]
+
+is equivalent to:
+*(arr + i)
+
+Important ⚠️
+Array ≠ Pointer
+
+An array is an actual array object with fixed storage.
+A pointer is a separate variable that stores an address.
+
+
+
+
+
+
+Pointer and Strings
+A string can be accessed using a character pointer.
+Example:
+char str[] = "Hello";
+
+char *p = str;
+
+Then:
+*p
+
+gives:
+H
+
+and:
+*(p + 1)
+
+gives:
+e
+
+You can also have:
+char *str = "Hello";
+
+But remember ⚠️:
+A string literal should not be modified.
+So this is wrong:
+str[0] = 'X';
+
+Prefer:
+char str[] = "Hello";
+
+when you need a modifiable string.
+
+
+
+
+
+Pointer and Functions
+Pointers can be used with functions in several ways:
+- passing addresses to functions
+- modifying original variables
+- passing arrays
+- returning dynamically allocated memory
+- function pointers
+- callbacks
+Example concept:
+void change(int *p)
+{
+    *p = 100;
+}
+
+The function receives an address.
+
+
+
+
+
+Pointer as Function Argument
+Passing a pointer allows a function to access or modify an object outside the function.
+Example:
+void change(int *p)
+{
+    *p = 50;
+}
+
+Call:
+int a = 10;
+
+change(&a);
+
+After the function:
+a = 50
+
+Important
+C uses pass-by-value.
+When you pass a pointer:
+change(&a);
+
+the pointer value (address) is passed by value.
+The function can use that copied address to modify the original object through *p
+
+
+
+
+
+Pointer Return from Function
+A function can return a pointer.
+Example:
+int *function(void)
+{
+    static int x = 10;
+
+    return &x;
+}
+
+Then:
+int *p = function();
+
+Important ⚠️
+Never return the address of a normal local variable:
+int *function(void)
+{
+    int x = 10;
+
+    return &x;
+}
+
+After the function returns, x no longer exists, so the returned pointer is invalid.
+Safe possibilities include returning:
+- address of a static object
+- dynamically allocated memory
+- an object whose lifetime continues outside the function
+
+
+
+
+
+Function Pointer
+A function pointer is a pointer that stores the address of a function.
+Syntax:
+return_type (*pointer_name)(parameter_types);
+
+Example:
+int (*fp)(int, int);
+
+This means:
+fp is a pointer to a function that takes two int arguments and returns int.
+
+Example:
+int add(int a, int b)
+{
+    return a + b;
+}
+
+Then:
+fp = add;
+
+Call:
+fp(10, 20);
+
+Function pointers are heavily used for:
+- callbacks
+- driver interfaces
+- interrupt-related software
+- state machines
+- command tables
+- RTOS/application interfaces
+
+
+
+
+
+Array of Pointers
+An array of pointers is an array where every element is a pointer.
+Example:
+int *p[3];
+
+This means:
+p is an array containing 3 pointers to int.
+
+Example:
+int a = 10;
+int b = 20;
+int c = 30;
+
+int *p[3] = {&a, &b, &c};
+
+Then:
+*p[0] → 10
+*p[1] → 20
+*p[2] → 30
+
+
+
+
+
+Pointer to Array
+This is different from an array of pointers.
+int (*p)[3];
+
+means:
+p is a pointer to an array of 3 integers.
+
+Example:
+int arr[3] = {10, 20, 30};
+
+int (*p)[3] = &arr;
+
+Access:
+(*p)[0]
+(*p)[1]
+(*p)[2]
+
+
+
+
+
+Array of Function Pointers
+An array can contain multiple function pointers.
+Example:
+int (*fp[3])(int, int);
+
+This means:
+fp is an array of 3 pointers to functions that take two int arguments and return int.
+
+For example:
+fp[0] → add()
+fp[1] → subtract()
+fp[2] → multiply()
+
+This is extremely useful for menu systems and command tables.
+Example concept:
+choice = 0 → add()
+choice = 1 → subtract()
+choice = 2 → multiply()
+
+
+
+
+
+Function Pointer with Structures
+A structure can contain a function pointer.
+Example:
+struct Operation
+{
+    int (*function)(int, int);
+};
+
+Then:
+Structure
+   |
+   └── function pointer
+           |
+           └── add()
+
+This technique is useful in:
+- device drivers
+- HAL interfaces
+- callbacks
+- object-like designs in C
+- peripheral abstraction
+- state machines
+A classic embedded example is a structure containing function pointers for operations such as:
+init()
+read()
+write()
+control()
+
+
+
+
+
+const with Pointers
+This is very important for C interviews. 🔥
+There are several combinations.
+A. Pointer to Constant Data
+const int *p;
+
+or:
+int const *p;
+
+Meaning:
+You can change the pointer, but you cannot modify the data through this pointer.
+
+Example:
+int a = 10;
+int b = 20;
+
+const int *p = &a;
+
+p = &b;       // allowed
+//*p = 50;    // not allowed
+
+Think:
+Data → CONSTANT
+Pointer → CHANGEABLE
+
+B. Constant Pointer
+int *const p = &a;
+
+Meaning:
+The pointer cannot change, but the data can be modified through it.
+
+Example:
+int a = 10;
+
+int *const p = &a;
+
+*p = 50;      // allowed
+//p = &b;     // not allowed
+
+Think:
+Data → CHANGEABLE
+Pointer → CONSTANT
+
+C. Constant Pointer to Constant Data
+const int *const p = &a;
+
+Meaning:
+Neither the pointer nor the data can be modified through that pointer.
+
+Data → CONSTANT
+Pointer → CONSTANT
+
+🧠 Easy const Trick
+Read from right to left around the pointer.
+const int *p
+p → pointer → const int
+
+➡️ Data is constant through p.
+int *const p
+p → const pointer → int
+
+➡️ Pointer is constant.
+const int *const p
+p → const pointer → const int
+
+➡️ Both are constant.
+
+
+
+
+
+
+| Topic | Meaning |
+|---|---|
+| Pointer | Stores address |
+| `&` | Gets address |
+| `*` | Dereferences/accesses pointed object |
+| Declaration | `int *p;` |
+| Initialization | `int *p = &a;` |
+| Pointer arithmetic | Move according to pointed type |
+| Pointer comparison | Compare pointer values/positions where defined |
+| Null pointer | Intentionally points to no object |
+| Wild pointer | Uninitialized pointer |
+| Dangling pointer | Points to an object whose lifetime ended |
+| Void pointer | Generic object pointer |
+| Pointer to pointer | Stores address of another pointer |
+| Pointer to array | Points to an entire array |
+| Pointer + array | Array-to-pointer relationship |
+| Pointer + string | Access string through `char *` |
+| Pointer argument | Pass address to function |
+| Pointer return | Function returns an address |
+| Function pointer | Stores function address |
+| Array of pointers | Array containing pointers |
+| Array of function pointers | Array containing function addresses |
+| Function pointer + struct | Struct contains function pointer |
+| `const` pointer | Controls pointer/data modification |
