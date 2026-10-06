@@ -1,0 +1,82 @@
+3️⃣ Escape Sequences
+Definition
+Escape sequences are special character combinations beginning with \ that represent special characters or control actions in a string or character literal.
+
+📚 Important Escape Sequences
+Escape	Meaning
+\n	New line
+\t	Horizontal tab
+\r	Carriage return
+\b	Backspace
+\a	Alert/bell
+\f	Form feed
+\v	Vertical tab
+\\	Backslash
+\'	Single quote
+\"	Double quote
+\0	Null character
+\?	Question mark
+
+
+🔹 \n — New Line
+printf("Hello\nWorld");
+
+Output:
+Hello
+World
+
+🔹 \t — Tab
+printf("Name\tAge");
+
+Output:
+Name    Age
+
+🔹 \\ — Backslash
+printf("C:\\Users\\Komal");
+
+Output:
+C:\Users\Komal
+
+🔹 \" — Double Quote
+printf("He said \"Hello\"");
+
+Output:
+He said "Hello"
+
+🔹 \' — Single Quote
+char ch = '\'';
+
+This stores a single quote character.
+🔹 \0 — Null Character
+Very important for strings.
+char str[] = "Hello";
+
+Internally:
+H  e  l  l  o  \0
+
+\0 marks the end of a C string.
+
+
+#include <stdio.h>
+
+int main(void)
+{
+    int a = 10;
+    int b = 3;
+
+    float result = (float)a / b;
+
+    printf("Size of int = %zu bytes\n", sizeof(int));
+    printf("Size of a = %zu bytes\n", sizeof(a));
+
+    printf("Integer division = %d\n", a / b);
+    printf("Float division = %.2f\n", result);
+
+    printf("Hello\nWorld\n");
+    printf("Name\tAge\n");
+    printf("Komal\t25\n");
+    printf("Path: C:\\Users\\Komal\n");
+    printf("He said \"Hello\"\n");
+
+    return 0;
+}
