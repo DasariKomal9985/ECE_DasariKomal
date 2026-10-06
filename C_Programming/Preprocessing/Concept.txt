@@ -1,0 +1,195 @@
+The C compilation process converts a C source program (.c) into an executable program that the computer can run.
+
+
+
+
+
+
+
+
+
+C Source Code (.c)
+       ↓
+1. Preprocessing
+       ↓
+Preprocessed Code
+       ↓
+2. Compilation
+       ↓
+Assembly Code (.s)
+       ↓
+3. Assembly
+       ↓
+Object Code (.o)
+       ↓
+4. Linking
+       ↓
+Executable File
+
+
+
+
+
+
+1️⃣ Preprocessing
+The preprocessor handles directives beginning with #.
+Examples:
+#include <stdio.h>
+#define MAX 100
+#ifdef DEBUG
+#endif
+
+Example
+#include <stdio.h>
+
+#define VALUE 10
+
+int main(void)
+{
+    printf("%d\n", VALUE);
+    return 0;
+}
+
+During preprocessing:
+#define VALUE 10
+
+is replaced with:
+10
+
+and the required contents of stdio.h are included.
+Command
+gcc -E main.c -o main.i
+
+main.i → preprocessed file
+
+
+
+
+
+
+
+
+2️⃣ Compilation
+The compiler takes the preprocessed code and:
+- Checks syntax
+- Checks semantics
+- Converts C code into assembly code
+main.i
+ ↓
+Compiler
+ ↓
+main.s
+
+Command
+gcc -S main.i -o main.s
+
+main.s → assembly code
+
+
+
+
+
+
+
+
+3️⃣ Assembly
+The assembler converts the assembly code into machine-level object code.
+main.s
+ ↓
+Assembler
+ ↓
+main.o
+
+Command
+gcc -c main.s -o main.o
+
+main.o → object file
+The object file contains machine code, but it may still have unresolved references to functions such as printf()
+
+
+
+
+
+
+
+4️⃣ Linking
+The linker combines:
+- Object files
+- Required libraries
+- Other program modules
+and creates the final executable.
+main.o + Libraries
+       ↓
+    Linker
+       ↓
+    main
+
+Command
+gcc main.o -o main
+
+Now we can execute:
+./main
+
+Output:
+10
+
+
+
+
+
+
+#include <stdio.h>
+
+#define VALUE 10
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int main(void)
+{
+    int result;
+
+    result = add(VALUE, 20);
+
+    printf("Result = %d\n", result);
+
+    return 0;
+}
+
+
+
+
+
+
+gcc -E main.c -o main.i
+gcc -S main.i -o main.s
+gcc -c main.s -o main.o
+gcc main.o -o main
+./main
+
+
+
+
+
+
+
+| Stage | Input | Output | Main Job |
+|---|---|---|---|
+| **Preprocessing** | `.c` | `.i` | Handles `#include`, `#define`, `#if` |
+| **Compilation** | `.i` | `.s` | C → Assembly |
+| **Assembly** | `.s` | `.o` | Assembly → Machine code |
+| **Linking** | `.o` + libraries | Executable | Combines everything |
+
+
+
+
+.c → .i → .s → .o → Executable
+
+
+
+
+
+
+
