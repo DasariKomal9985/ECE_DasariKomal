@@ -1,0 +1,34 @@
+| # | Keyword | Purpose |
+|---|---|---|
+| 1 | `auto` | Declares an automatic local variable |
+| 2 | `break` | Exits a loop or `switch` |
+| 3 | `case` | Defines a `switch` case |
+| 4 | `char` | Character data type |
+| 5 | `const` | Makes a variable read-only through that name |
+| 6 | `continue` | Skips to the next loop iteration |
+| 7 | `default` | Default case in `switch` |
+| 8 | `do` | Starts a `do-while` loop |
+| 9 | `double` | Double-precision floating-point type |
+| 10 | `else` | Alternative condition block |
+| 11 | `enum` | Defines an enumeration |
+| 12 | `extern` | Declares an externally defined variable/function |
+| 13 | `float` | Floating-point data type |
+| 14 | `for` | Creates a `for` loop |
+| 15 | `goto` | Jumps to a labeled statement |
+| 16 | `if` | Conditional statement |
+| 17 | `int` | Integer data type |
+| 18 | `long` | Specifies long integer type |
+| 19 | `register` | Suggests storing a variable in a CPU register |
+| 20 | `return` | Returns from a function |
+| 21 | `short` | Specifies short integer type |
+| 22 | `signed` | Specifies signed integer/character type |
+| 23 | `sizeof` | Gives size in bytes |
+| 24 | `static` | Gives static storage duration / internal linkage depending on use |
+| 25 | `struct` | Defines a structure |
+| 26 | `switch` | Multi-way selection statement |
+| 27 | `typedef` | Creates a type alias |
+| 28 | `union` | Defines a union |
+| 29 | `unsigned` | Specifies unsigned integer/character type |
+| 30 | `void` | Represents no value/type |
+| 31 | `volatile` | Tells compiler a value may change unexpectedly don't optimize |
+| 32 | `while` | Creates a `while` loop |
