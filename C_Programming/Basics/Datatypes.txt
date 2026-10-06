@@ -1,0 +1,148 @@
+C Data Types
+│
+├── Basic / Fundamental
+│   ├── char
+│   ├── int
+│   ├── float
+│   ├── double
+│   └── void
+│
+├── Type Modifiers
+│   ├── signed
+│   ├── unsigned
+│   ├── short
+│   └── long
+│
+├── Derived Data Types
+│   ├── Array
+│   ├── Pointer
+│   └── Function
+│
+└── User-Defined Data Types
+    ├── struct
+    ├── union
+    ├── enum
+    └── typedef
+
+
+
+
+
+
+| Data Type | Format Specifier | Typical Size | Range / Values | Category | Main Use |
+|---|---|---:|---|---|---|
+| `char` | `%c` | 1 byte | Character; signedness implementation-defined | Basic | Character / byte |
+| `signed char` | `%hhd` | 1 byte | -128 to 127 | Basic | Small signed integer |
+| `unsigned char` | `%hhu` | 1 byte | 0 to 255 | Basic | Byte / raw data |
+| `short int` | `%hd` | 2 bytes | -32,768 to 32,767 | Basic | Small integer |
+| `unsigned short int` | `%hu` | 2 bytes | 0 to 65,535 | Basic | Small positive integer |
+| `int` | `%d` / `%i` | 4 bytes* | -2,147,483,648 to 2,147,483,647* | Basic | General integer |
+| `unsigned int` | `%u` | 4 bytes* | 0 to 4,294,967,295* | Basic | Positive integer |
+| `long int` | `%ld` | 4 or 8 bytes | Platform-dependent | Basic | Large integer |
+| `unsigned long int` | `%lu` | 4 or 8 bytes | Platform-dependent | Basic | Large positive integer |
+| `long long int` | `%lld` | 8 bytes | -2⁶³ to 2⁶³−1 | Basic | Very large integer |
+| `unsigned long long int` | `%llu` | 8 bytes | 0 to 2⁶⁴−1 | Basic | Very large positive integer |
+| `float` | `%f` | 4 bytes | ≈ ±3.4 × 10³⁸ | Basic | Decimal/floating-point |
+| `double` | `%f` | 8 bytes | ≈ ±1.7 × 10³⁰⁸ | Basic | High-precision decimal |
+| `long double` | `%Lf` | 8/12/16 bytes | Implementation-dependent | Basic | Higher precision |
+| `_Bool` | `%d` | Typically 1 byte | `0` or `1` | Basic | Boolean |
+| `bool` | `%d` | Typically 1 byte | `false` / `true` | Basic* | Boolean |
+| `void` | — | — | No value | Basic | No return value / generic pointer |
+
+
+
+
+🟢 Fixed-Width Types — Embedded C
+
+
+| Data Type | Format Specifier | Size | Range | Category | Embedded Use |
+|---|---|---:|---|---|---|
+| `int8_t` | `PRId8` | 1 byte | -128 to 127 | Fixed-width | Signed 8-bit data |
+| `uint8_t` | `PRIu8` | 1 byte | 0 to 255 | Fixed-width | UART/SPI/I2C/CAN byte |
+| `int16_t` | `PRId16` | 2 bytes | -32,768 to 32,767 | Fixed-width | Signed sensor data |
+| `uint16_t` | `PRIu16` | 2 bytes | 0 to 65,535 | Fixed-width | ADC/timer values |
+| `int32_t` | `PRId32` | 4 bytes | -2³¹ to 2³¹−1 | Fixed-width | Signed calculations |
+| `uint32_t` | `PRIu32` | 4 bytes | 0 to 2³²−1 | Fixed-width | Registers/timers |
+| `int64_t` | `PRId64` | 8 bytes | -2⁶³ to 2⁶³−1 | Fixed-width | Large signed values |
+| `uint64_t` | `PRIu64` | 8 bytes | 0 to 2⁶⁴−1 | Fixed-width | Timestamps/counters |
+
+
+🟡 Other Important Integer Types
+
+| Data Type | Format Specifier | Typical Size | Use | Category |
+|---|---|---:|---|---|
+| `size_t` | `%zu` | 4/8 bytes | `sizeof`, array/string sizes | Standard unsigned type |
+| `ptrdiff_t` | `%td` | 4/8 bytes | Pointer difference | Standard signed type |
+| `intptr_t` | `PRIdPTR` | 4/8 bytes | Store converted object pointer | Integer type |
+| `uintptr_t` | `PRIuPTR` | 4/8 bytes | Store converted object pointer | Integer type |
+
+
+
+🔵 Derived Data Types
+These are not basic data types; they are constructed from other types.
+Derived Type	Example	Format Specifier	Size	Use
+Array	int a[5]	Depends on element	5 × element size	Store multiple values
+Pointer	int *p	%p	4 bytes on typical 32-bit MCU, 8 bytes on 64-bit system	Store address
+Function	int add(int,int)	—	Not an object size	Perform operations
+
+
+
+🟠 User-Defined Data Types
+Type	Example	Format Specifier	Size	Use
+struct	struct Student	Depends on members	Sum + padding	Group different data
+union	union Data	Depends on largest member	Largest member + alignment	Share memory
+enum	enum State	Usually %d	Implementation-dependent	Named integer states
+typedef	typedef uint32_t u32	Same as original type	Same as original	Create type alias
+
+
+
+🟣 Boolean
+Use:
+#include <stdbool.h>
+
+bool flag = true;
+
+Type	Format	Typical Size	Values	Use
+bool	%d	1 byte	false, true	Flags/status
+_Bool	%d	1 byte typically	0, 1	Boolean
+
+
+
+| Data | Format |
+|---|---|
+| `char` | `%c` |
+| `signed char` | `%hhd` |
+| `unsigned char` | `%hhu` |
+| `short int` | `%hd` |
+| `unsigned short int` | `%hu` |
+| `int` | `%d` / `%i` |
+| `unsigned int` | `%u` |
+| `long int` | `%ld` |
+| `unsigned long int` | `%lu` |
+| `long long int` | `%lld` |
+| `unsigned long long int` | `%llu` |
+| `float` | `%f` |
+| `double` | `%f` |
+| `long double` | `%Lf` |
+| `bool` / `_Bool` | `%d` |
+| Pointer | `%p` |
+| `size_t` | `%zu` |
+| `ptrdiff_t` | `%td` |
+| String (`char *`) | `%s` |
+
+
+
+
+| Type | Size | Typical Use |
+|---|---:|---|
+| `uint8_t` | 8-bit | UART/SPI/I2C/CAN data |
+| `int8_t` | 8-bit | Signed 8-bit sensor data |
+| `uint16_t` | 16-bit | ADC/timer |
+| `int16_t` | 16-bit | Signed sensor values |
+| `uint32_t` | 32-bit | Hardware registers/timers |
+| `int32_t` | 32-bit | Signed calculations |
+| `uint64_t` | 64-bit | Timestamp/large counter |
+| `float` | 32-bit | Voltage/temperature calculations |
+| `bool` | Typically 8-bit | Status/flags |
+| `size_t` | Platform-dependent | Buffer/array size |
+| `volatile uint32_t` | Typically 32-bit | MCU hardware register |
