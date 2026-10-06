@@ -1,0 +1,15 @@
+1. Introduction to C Programming
+C is a general-purpose, procedural programming language developed by Dennis Ritchie at Bell Labs in the early 1970s.
+C is widely used for system programming, embedded systems, operating systems, device drivers, compilers, and application development because it provides both high-level programming features and low-level hardware access.
+Simple definition
+C is a structured, procedural programming language that provides efficient programming and direct memory/hardware access through pointers.
+
+Why C is important in Embedded Systems 🔧
+C is especially important in embedded systems because it allows us to:
+- Access hardware registers
+- Manipulate individual bits
+- Work directly with memory addresses
+- Write interrupt handlers
+- Control GPIO, UART, SPI, I2C, CAN, timers, etc.
+- Write efficient and memory-conscious programs
+- Develop device drivers and firmware
