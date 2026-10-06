@@ -1,0 +1,42 @@
+A variable is a named memory location used to store a value that can change during program execution.
+
+
+
+
+🔹 Example
+int age = 25;
+
+Here:
+- int → Data type
+- age → Variable / Identifier
+- 25 → Initial value
+
+
+
+
+Memory
+┌──────────────┐
+│     25       │
+└──────────────┘
+       ↑
+      age
+
+
+
+
+#include <stdio.h>
+
+int main(void)
+{
+    int age = 25;
+    float salary = 25000.50;
+
+    printf("Age = %d\n", age);
+    printf("Salary = %.2f\n", salary);
+
+    age = 26;
+
+    printf("Updated Age = %d\n", age);
+
+    return 0;
+}
