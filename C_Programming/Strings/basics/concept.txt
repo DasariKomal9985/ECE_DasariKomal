@@ -1,0 +1,376 @@
+1️⃣ Character Arrays
+A character array is an array used to store individual characters.
+char name[10];
+
+Example:
+H  e  l  l  o
+0  1  2  3  4
+
+A character array does not necessarily have to be a string. It becomes a C string when it contains a terminating '\0'.
+Example:
+char arr[5] = {'H', 'e', 'l', 'l', 'o'};
+
+This is a character array, but not a valid C string, because there is no '\0'
+
+
+
+
+
+String Initialization
+A string is a sequence of characters terminated by '\0'.
+Method 1 — String literal
+char str[] = "Hello";
+
+Memory:
+H   e   l   l   o   \0
+
+So:
+char str[] = "Hello";
+
+requires 6 bytes.
+
+
+
+Character-by-character
+char str[] = {'H', 'e', 'l', 'l', 'o', '\0'};
+
+Both represent the same string:
+Hello
+
+Important
+char str[5] = "Hello";
+
+This is not enough space for the terminating '\0' if you intend to use it as a C string.
+Correct:
+char str[6] = "Hello";
+
+or simply:
+char str[] = "Hello";
+
+
+
+
+'\0' — Null Terminator
+'\0' is called the null character or null terminator.
+It marks the end of a C string.
+Example:
+char str[] = "Hello";
+
+Internally:
+H   e   l   l   o   \0
+
+ASCII value of '\0' is:
+0
+
+Why is it important?
+Functions such as:
+strlen()
+strcpy()
+strcat()
+strcmp()
+printf("%s")
+
+use '\0' to know where the string ends.
+Without '\0', functions may continue reading beyond the intended characters, causing undefined behavior.
+
+
+
+
+String Input / Output
+Output — printf()
+printf("%s", str);
+
+%s is used to print a string.
+Example:
+char name[] = "Komal";
+
+printf("%s", name);
+
+Output:
+Komal
+
+Input — scanf()
+scanf("%s", name);
+
+Example:
+char name[20];
+
+scanf("%19s", name);
+
+⚠️ %s stops reading when it encounters whitespace.
+For:
+Komal Rao
+
+scanf("%s", name) reads only:
+Komal
+
+Input — fgets()
+For strings containing spaces, use:
+fgets(str, sizeof(str), stdin);
+
+Example:
+char name[50];
+
+fgets(name, sizeof(name), stdin);
+
+It can read:
+Komal Rao
+
+including the space.
+
+
+
+
+
+strlen()
+strlen() calculates the number of characters in a string, excluding '\0'.
+Header:
+#include <string.h>
+
+Example:
+char str[] = "Hello";
+
+Memory:
+H e l l o \0
+
+strlen(str) returns:
+5
+
+It does not count '\0'.
+
+
+
+
+
+strcpy()
+strcpy() copies one string into another.
+Syntax:
+strcpy(destination, source);
+
+Example:
+char source[] = "Hello";
+char destination[20];
+
+strcpy(destination, source);
+
+After copying:
+destination = "Hello"
+
+It also copies the terminating '\0'.
+⚠️ Destination must have enough space.
+
+
+
+
+
+strncpy()
+strncpy() copies up to a specified number of characters.
+Syntax:
+strncpy(destination, source, n);
+
+Example:
+strncpy(destination, source, 5);
+
+Important point ⚠️
+strncpy() does not always guarantee null termination.
+For example:
+char src[] = "Hello";
+char dest[5];
+
+strncpy(dest, src, 5);
+
+dest may contain:
+H e l l o
+
+with no '\0'.
+If you need a guaranteed string:
+dest[4] = '\0';
+
+
+
+
+strcat()
+strcat() joins/appends one string to another.
+Syntax:
+strcat(destination, source);
+
+Example:
+char str1[20] = "Hello ";
+char str2[] = "World";
+
+strcat(str1, str2);
+
+Result:
+Hello World
+
+The destination must have enough space for the combined string plus '\0'.
+
+
+
+
+
+strncat()
+strncat() appends up to n characters from the source.
+Syntax:
+strncat(destination, source, n);
+
+Example:
+char str1[20] = "Hello ";
+char str2[] = "World";
+
+strncat(str1, str2, 3);
+
+Result:
+Hello Wor
+
+Again, the destination must have enough space for the result and terminating '\0'.
+
+
+
+
+strcmp()
+strcmp() compares two strings.
+Syntax:
+strcmp(str1, str2);
+
+Result:
+Result	Meaning
+0	Strings are equal
+< 0	First string is less than second
+> 0	First string is greater than second
+
+
+Example:
+strcmp("Hello", "Hello")
+
+returns:
+0
+
+Important:
+if(strcmp(str1, str2) == 0)
+
+means the strings are equal.
+❌ Don't compare strings using:
+str1 == str2
+
+That compares addresses, not string contents.
+
+
+
+
+
+strncmp()
+strncmp() compares only the first n characters.
+Syntax:
+strncmp(str1, str2, n);
+
+Example:
+strncmp("Hello", "Help", 3);
+
+It compares:
+H e l
+H e l
+
+So the first 3 characters are equal.
+
+
+
+
+strchr()
+strchr() searches for the first occurrence of a character in a string.
+Syntax:
+strchr(string, character);
+
+Example:
+char str[] = "Embedded";
+
+char *p = strchr(str, 'e');
+
+It returns a pointer to the first 'e'.
+Conceptually:
+Embedded
+ ^
+ first e
+
+If the character is not found, it returns:
+NULL
+
+
+
+
+strstr()
+strstr() searches for a substring inside another string.
+Syntax:
+strstr(string, substring);
+
+Example:
+char str[] = "Embedded Systems";
+
+char *p = strstr(str, "Systems");
+
+It finds:
+Embedded Systems
+         ^^^^^^^
+         Systems
+
+If the substring is not found:
+NULL
+
+
+
+
+strtok()
+strtok() is used to split a string into tokens using delimiters.
+Syntax:
+strtok(string, delimiter);
+
+Example string:
+"Embedded-C-Linux"
+
+Delimiter:
+-
+
+Tokens become:
+Embedded
+C
+Linux
+
+Typical usage:
+char str[] = "Embedded-C-Linux";
+
+char *token;
+
+token = strtok(str, "-");
+
+while(token != NULL)
+{
+    printf("%s\n", token);
+    token = strtok(NULL, "-");
+}
+
+Output:
+Embedded
+C
+Linux
+
+Important ⚠️
+strtok() modifies the original string by replacing delimiters with '\0'.
+For example:
+Embedded-C-Linux
+
+
+
+
+
+| Function | Purpose |
+|---|---|
+| `strlen()` | Find string length |
+| `strcpy()` | Copy complete string |
+| `strncpy()` | Copy up to `n` characters |
+| `strcat()` | Append complete string |
+| `strncat()` | Append up to `n` characters |
+| `strcmp()` | Compare complete strings |
+| `strncmp()` | Compare first `n` characters |
+| `strchr()` | Find first character |
+| `strstr()` | Find substring |
+| `strtok()` | Split string into tokens |
