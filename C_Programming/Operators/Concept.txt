@@ -1,0 +1,296 @@
+1. What is an Operator?
+An operator is a symbol that tells the compiler to perform a specific operation on one or more operands.
+
+Example:
+a + b
+
+Here:
+- a, b → Operands
+- + → Operator
+
+
+
+
+
+2. Types of Operators in C
+Operators
+│
+├── Arithmetic
+├── Relational
+├── Logical
+├── Assignment
+├── Increment / Decrement
+├── Conditional
+├── Bitwise
+├── sizeof
+└── Other / Special
+
+
+
+
+
+1️⃣ Arithmetic Operators
+Used for mathematical operations.
+Operator	Meaning
++	Addition
+-	Subtraction
+*	Multiplication
+/	Division
+%	Remainder / Modulus
+
+
+Example:
+a + b
+a - b
+a * b
+a / b
+a % b
+
+
+
+
+
+2️⃣ Relational Operators
+Used to compare two values.
+The result is logically true or false; in ordinary C integer expressions, true is represented as 1 and false as 0.
+Operator	Meaning
+==	Equal to
+!=	Not equal to
+>	Greater than
+<	Less than
+>=	Greater than or equal to
+<=	Less than or equal to
+
+
+Example:
+a > b
+a == b
+a != b
+
+
+
+
+
+3️⃣ Logical Operators
+Used to combine or invert conditions.
+Operator	Meaning
+&&	Logical AND
+`	
+!	Logical NOT
+
+
+Example:
+if (age >= 18 && age <= 60)
+
+Basic logic
+&& → Both conditions must be true
+|| → At least one condition must be true
+!  → Reverses true/false
+
+
+
+
+
+4️⃣ Assignment Operators
+Used to assign or update values.
+Operator	Meaning
+=	Assignment
++=	Add and assign
+-=	Subtract and assign
+*=	Multiply and assign
+/=	Divide and assign
+%=	Modulus and assign
+&=	Bitwise AND and assign
+`	=`
+^=	Bitwise XOR and assign
+<<=	Left shift and assign
+>>=	Right shift and assign
+
+
+Example:
+a = 10;
+a += 5;
+
+After a += 5:
+a = a + 5
+
+
+
+
+
+5️⃣ Increment and Decrement Operators
+Used to increase or decrease a value by 1.
+Operator	Meaning
+++	Increment by 1
+--	Decrement by 1
+
+
+They have two forms:
+Pre-increment
+++a;
+
+Increment first, then use the value.
+Post-increment
+a++;
+
+Use the current value first, then increment.
+Similarly:
+--a;    // Pre-decrement
+a--;    // Post-decrement
+
+
+
+
+
+6️⃣ Conditional / Ternary Operator
+The conditional operator is:
+? :
+
+It is called the ternary operator because it works with three operands.
+Syntax
+condition ? expression1 : expression2;
+
+Example:
+max = (a > b) ? a : b;
+
+Meaning:
+If a > b
+    max = a
+else
+    max = b
+
+It is basically a compact form of a simple if-else.
+
+
+
+
+7️⃣ Bitwise Operators
+Very important for Embedded C. 🔧
+They operate on individual bits of integer values.
+Operator	Meaning
+&	Bitwise AND
+`	`
+^	Bitwise XOR
+~	Bitwise NOT
+<<	Left shift
+>>	Right shift
+
+
+Example:
+a & b
+a | b
+a ^ b
+~a
+a << 1
+a >> 1
+
+Embedded uses
+Bitwise operators are heavily used for:
+- Set bit
+- Clear bit
+- Toggle bit
+- Check bit
+- Masking
+- Register configuration
+- GPIO control
+- Peripheral registers
+Example:
+reg |= (1U << 5);
+
+This sets bit 5 of reg.
+
+
+
+
+8️⃣ sizeof Operator
+sizeof determines the size in bytes of a type or object.
+sizeof(int)
+sizeof(variable)
+
+Example:
+int a;
+
+printf("%zu\n", sizeof(a));
+
+On a typical 32-bit system:
+4
+
+sizeof is an operator, not a function.
+
+
+
+
+9️⃣ Operator Precedence
+Precedence determines which operator is evaluated first when an expression contains multiple operators.
+
+Example:
+result = 10 + 5 * 2;
+
+Multiplication has higher precedence than addition:
+5 * 2 = 10
+10 + 10 = 20
+
+So:
+result = 20
+
+If you want addition first:
+result = (10 + 5) * 2;
+
+Result:
+30
+
+Common precedence order
+From higher → lower:
+1. () [] -> .
+2. ++ -- ! ~ sizeof
+3. * / %
+4. + -
+5. << >>
+6. < <= > >=
+7. == !=
+8. &
+9. ^
+10. |
+11. &&
+12. ||
+13. ?:
+14. = += -= *= /= ...
+15. ,
+
+
+
+
+
+🔟 Associativity
+Associativity determines the direction in which operators of the same precedence are evaluated.
+
+Most binary operators are:
+Left-to-right
+a - b + c
+
+Evaluated as:
+(a - b) + c
+
+Assignment operators are generally:
+Right-to-left
+a = b = c = 10;
+
+Evaluated conceptually as:
+a = (b = (c = 10));
+
+
+
+
+🧠 Precedence vs Associativity
+Concept	Meaning
+Precedence	Which operator gets priority
+Associativity	Direction when operators have the same precedence
+
+
+Easy example
+10 + 5 * 2
+
+* has higher precedence → multiplication first.
+a - b + c
+
+- and + have the same precedence → left-to-right associativity.
