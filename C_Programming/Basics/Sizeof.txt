@@ -1,0 +1,53 @@
+sizeof:  
+Operator used to determine the size of a type or object in bytes.
+
+
+
+
+1️⃣ sizeof Operator
+Definition
+sizeof is an operator used to find the size of a data type or variable in bytes.
+
+Syntax
+sizeof(data_type)
+
+or
+sizeof(variable)
+
+Example
+int a;
+
+printf("%zu\n", sizeof(a));
+printf("%zu\n", sizeof(int));
+
+On a typical 32-bit system:
+4
+4
+
+Different examples
+printf("%zu\n", sizeof(char));       // 1
+printf("%zu\n", sizeof(short));      // 2
+printf("%zu\n", sizeof(int));        // 4
+printf("%zu\n", sizeof(float));      // 4
+printf("%zu\n", sizeof(double));     // 8
+
+Important ⚠️
+sizeof(char) is always 1, but one C "byte" is defined as one char unit. A byte is not necessarily 8 bits on every imaginable C implementation; on modern ARM/PC systems it is 8 bits.
+Arrays
+int arr[5];
+
+printf("%zu\n", sizeof(arr));
+
+If int is 4 bytes:
+5 × 4 = 20 bytes
+
+Embedded Example 🔧
+uint32_t register_value;
+
+printf("%zu\n", sizeof(register_value));
+
+Output on a normal implementation providing uint32_t:
+4
+
+
+
