@@ -1,0 +1,56 @@
+2️⃣ Type Casting
+Definition
+Type casting is the explicit conversion of a value from one data type to another data type.
+
+Syntax
+(type)value
+
+Example 1: Integer → Float
+int a = 10;
+int b = 3;
+
+float result = (float)a / b;
+
+printf("%f\n", result);
+
+Output:
+3.333333
+
+Without casting:
+float result = a / b;
+
+The division happens as integer division first:
+10 / 3 = 3
+
+Then 3 is converted to float.
+Example 2: Float → Integer
+float value = 10.75;
+
+int x = (int)value;
+
+printf("%d\n", x);
+
+Output:
+10
+
+The fractional part is discarded.
+Example 3: Embedded C
+Suppose ADC gives a 12-bit value:
+uint16_t adc_value = 2048;
+float voltage;
+
+voltage = ((float)adc_value * 3.3f) / 4095.0f;
+
+printf("%.2f V\n", voltage);
+
+Casting adc_value to float ensures the calculation is performed using floating-point arithmetic.
+⚠️ Casting does NOT change the original variable
+int a = 10;
+
+float b = (float)a;
+
+After this:
+a = 10
+b = 10.0
+
+The cast creates a converted value for that expression; it doesn't change a's declared type.
