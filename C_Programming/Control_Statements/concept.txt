@@ -1,0 +1,481 @@
+Control statements are statements that control the flow or order of execution of a C program.
+
+Normally, a C program executes statements sequentially, one after another. Control statements allow us to make decisions, repeat statements, or jump to another part of the program.
+
+
+1. Types of Control Statements
+
+
+Control Statements
+│
+├── 1. Decision Making
+│   ├── if
+│   ├── if-else
+│   ├── nested if
+│   ├── else-if ladder
+│   └── switch-case
+│
+├── 2. Looping / Iteration
+│   ├── for
+│   ├── while
+│   └── do-while
+│
+└── 3. Jump Statements
+    ├── break
+    ├── continue
+    ├── goto
+    └── return
+
+
+
+
+Decision-Making Statements
+Decision-making statements execute different blocks depending on a condition.
+
+
+
+if
+Used when you want to execute a block only when a condition is true.
+Syntax
+if (condition)
+{
+    statements;
+}
+
+Flow
+Condition
+   │
+ ┌─┴─┐
+True False
+ │     │
+ ↓     ↓
+Code  Skip
+
+Example concept:
+if (age >= 18)
+{
+    printf("Eligible");
+}
+
+
+
+
+
+
+if-else
+Used when there are two possible paths.
+if (condition)
+{
+    statements;
+}
+else
+{
+    statements;
+}
+
+Flow
+        Condition
+        /       \
+     True       False
+      ↓           ↓
+   if block    else block
+
+Example:
+if (number % 2 == 0)
+    printf("Even");
+else
+    printf("Odd");
+
+
+
+
+
+Nested if
+An if statement placed inside another if statement is called a nested if.
+
+Example:
+if (age >= 18)
+{
+    if (age <= 60)
+    {
+        printf("Working age");
+    }
+}
+
+Used when one condition must be checked inside another condition.
+
+
+
+
+
+else-if Ladder
+Used when there are multiple conditions.
+if (condition1)
+{
+}
+else if (condition2)
+{
+}
+else if (condition3)
+{
+}
+else
+{
+}
+
+The conditions are checked from top to bottom.
+Once one condition is true, its block executes and the remaining conditions are skipped.
+Example:
+Marks
+ ↓
+>= 90 → A
+>= 75 → B
+>= 60 → C
+>= 50 → D
+else  → F
+
+
+
+
+
+
+switch-case
+Used for multiple fixed choices based on one expression.
+Syntax
+switch (expression)
+{
+    case value1:
+        statements;
+        break;
+
+    case value2:
+        statements;
+        break;
+
+    default:
+        statements;
+}
+
+Example:
+switch (choice)
+{
+    case 1:
+        printf("Start");
+        break;
+
+    case 2:
+        printf("Stop");
+        break;
+
+    default:
+        printf("Invalid");
+}
+
+Important
+break prevents execution from continuing into the next case.
+If break is omitted, fall-through can occur.
+
+
+
+Looping / Iteration Statements
+Loops are used when you want to execute a block repeatedly.
+C has three main loops:
+for
+while
+do-while
+
+
+for Loop
+Used when the number of iterations is generally known or can be expressed conveniently.
+Syntax
+for (initialization; condition; update)
+{
+    statements;
+}
+
+Example:
+for (int i = 1; i <= 5; i++)
+{
+    printf("%d\n", i);
+}
+
+Execution:
+Initialization
+      ↓
+   Condition
+   /       \
+ True      False
+  ↓          ↓
+Body        Exit
+  ↓
+Update
+  ↓
+Condition
+
+
+
+
+
+while Loop
+Used when the condition should be checked before every iteration.
+Syntax
+while (condition)
+{
+    statements;
+}
+
+Example:
+int i = 1;
+
+while (i <= 5)
+{
+    printf("%d\n", i);
+    i++;
+}
+
+
+
+
+do-while Loop
+Similar to while, but the body executes at least once because the condition is checked after the body.
+Syntax
+do
+{
+    statements;
+}
+while (condition);
+
+Example:
+int i = 1;
+
+do
+{
+    printf("%d\n", i);
+    i++;
+}
+while (i <= 5);
+
+
+
+
+
+
+Entry-Controlled vs Exit-Controlled Loops
+This is an important exam/interview concept. ⭐
+🔵 Entry-Controlled Loop
+The condition is checked before entering the loop body.
+
+C has:
+for
+while
+
+Flow:
+Condition
+   ↓
+ True?
+ /   \
+Yes   No
+ ↓     ↓
+Body   Exit
+ ↓
+Condition
+
+If the condition is false initially, the body may execute zero times.
+Example:
+while (0)
+{
+    printf("Hello");
+}
+
+Hello is never printed.
+
+
+
+
+
+Exit-Controlled Loop
+The condition is checked after executing the loop body.
+
+C has:
+do-while
+
+Flow:
+Body
+ ↓
+Condition
+ /     \
+True   False
+ ↓       ↓
+Body    Exit
+
+Therefore, the body executes at least once.
+Example:
+do
+{
+    printf("Hello");
+}
+while (0);
+
+Output:
+Hello
+
+
+
+Jump Statements
+Jump statements change the normal flow of execution.
+C has:
+break
+continue
+goto
+return
+
+
+
+break
+break immediately terminates the nearest loop or switch statement.
+
+Example:
+for (int i = 1; i <= 10; i++)
+{
+    if (i == 5)
+        break;
+}
+
+When i == 5, the loop terminates.
+Used in:
+- for
+- while
+- do-while
+- switch
+
+
+
+
+continue
+continue skips the remaining statements of the current loop iteration and proceeds to the next iteration.
+
+Example:
+for (int i = 1; i <= 5; i++)
+{
+    if (i == 3)
+        continue;
+
+    printf("%d\n", i);
+}
+
+Output:
+1
+2
+4
+5
+
+3 is skipped.
+
+
+
+goto
+goto transfers program execution directly to a labeled statement within the same function.
+
+Syntax:
+goto label;
+
+label:
+    statement;
+
+Example:
+goto end;
+
+printf("Hello");
+
+end:
+printf("Done");
+
+Output:
+Done
+
+
+
+
+return
+return terminates the current function and optionally sends a value back to the caller.
+
+Example:
+int add(int a, int b)
+{
+    return a + b;
+}
+
+Here:
+add()
+ ↓
+return a + b
+ ↓
+caller receives result
+
+In main():
+return 0;
+
+usually indicates successful program termination.
+
+
+
+
+
+exit() — Program Termination
+exit() is slightly different from the four C jump statements above.
+It is a library function, declared in:
+#include <stdlib.h>
+
+It terminates the entire program.
+Example:
+#include <stdlib.h>
+
+exit(0);
+
+Commonly:
+exit(0) → successful termination
+exit(nonzero) → indicates some kind of failure/status
+
+Difference
+return	exit()
+Returns from current function	Terminates entire program
+Language statement	Library function
+Can return value to caller	Terminates process with status
+return 0; in main ends program normally	exit(0); also terminates normally
+
+
+
+                 CONTROL STATEMENTS
+                        │
+        ┌───────────────┼────────────────┐
+        │               │                │
+    DECISION          LOOPS            JUMPS
+        │               │                │
+   ┌────┼────┐      ┌───┼────┐      ┌────┼─────┐
+   │    │    │      │   │    │      │    │     │
+  if  if-else       for while do   break continue
+   │    │           while        │
+ nested │                         goto
+   if  else-if                     │
+        │                        return
+     switch
+
+
+
+
+| Statement | Purpose |
+|---|---|
+| `if` | Execute when condition is true |
+| `if-else` | Choose between two paths |
+| Nested `if` | `if` inside another `if` |
+| `else-if` | Handle multiple conditions |
+| `switch` | Select among fixed cases |
+| `for` | Repeat using initialization, condition, update |
+| `while` | Repeat while condition is true |
+| `do-while` | Execute once, then check condition |
+| `break` | Exit nearest loop/switch |
+| `continue` | Skip current iteration |
+| `goto` | Jump to a label |
+| `return` | Exit current function |
+| `exit()` | Terminate entire program |
+
