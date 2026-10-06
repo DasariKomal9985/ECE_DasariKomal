@@ -1,0 +1,482 @@
+An array is a collection of elements of the same data type stored in contiguous memory locations.
+
+For example:
+int arr[5];
+
+creates space for 5 integers.
+arr[0]  arr[1]  arr[2]  arr[3]  arr[4]
+  ↓      ↓       ↓       ↓       ↓
+ 10      20      30      40      50
+
+⚠️ Array indexing starts from 0, not 1.
+
+
+
+
+One-Dimensional Array
+A 1D array stores elements in a single sequence.
+Example:
+10  20  30  40  50
+
+Declaration:
+int arr[5];
+
+
+
+Array Declaration
+Declaration specifies the array's data type, name, and number of elements.
+
+Syntax
+data_type array_name[size];
+
+Example:
+int marks[5];
+float temperature[10];
+char name[20];
+
+For:
+int marks[5];
+
+- int → data type
+- marks → array name
+- 5 → number of elements
+
+
+
+
+
+Array Initialization
+Initialization means assigning initial values to an array.
+
+Complete initialization
+int arr[5] = {10, 20, 30, 40, 50};
+
+Size can be omitted
+int arr[] = {10, 20, 30};
+
+Compiler determines the size as 3.
+Partial initialization
+int arr[5] = {10, 20};
+
+Conceptually:
+10  20  0  0  0
+
+The remaining elements are initialized to zero for this initialization form.
+
+
+
+
+Array Traversal
+Traversal means visiting/accessing each element of an array one by one.
+
+For example:
+arr[0]
+arr[1]
+arr[2]
+arr[3]
+arr[4]
+
+Usually a loop is used:
+i = 0 → arr[0]
+i = 1 → arr[1]
+i = 2 → arr[2]
+...
+
+Traversal is the basic operation behind:
+- Printing arrays
+- Searching
+- Sorting
+- Processing data
+
+
+
+
+Array Searching
+Searching means finding whether a particular value exists in an array and, commonly, finding its position.
+
+Example:
+Array: 10 20 30 40 50
+Search: 30
+
+Result:
+30 found at index 2
+
+Common searching techniques
+- Linear search — checks elements one by one.
+- Binary search — repeatedly divides a sorted array into halves.
+For basic C programming, start with linear search.
+
+
+
+
+Array Sorting
+Sorting means arranging array elements in a particular order.
+
+Ascending
+10 20 30 40 50
+
+Descending
+50 40 30 20 10
+
+Common sorting algorithms:
+- Bubble sort
+- Selection sort
+- Insertion sort
+For basic C practice, bubble sort is a good starting point.
+
+
+
+
+Two-Dimensional Array
+A 2D array stores data in rows and columns.
+Example:
+10 20 30
+40 50 60
+
+This is a:
+2 × 3
+
+array.
+Declaration:
+int matrix[2][3];
+
+Meaning:
+2 rows
+3 columns
+
+
+
+
+Matrix Declaration
+A matrix in C is commonly represented using a 2D array.
+
+Syntax:
+data_type matrix[rows][columns];
+
+Example:
+int matrix[3][3];
+
+This contains:
+3 × 3 = 9 elements
+
+
+
+
+Matrix Initialization
+Example:
+int matrix[2][3] =
+{
+    {1, 2, 3},
+    {4, 5, 6}
+};
+
+Conceptually:
+        Column
+        0   1   2
+       ┌───┬───┬───┐
+Row 0  │ 1 │ 2 │ 3 │
+       ├───┼───┼───┤
+Row 1  │ 4 │ 5 │ 6 │
+       └───┴───┴───┘
+
+Access:
+matrix[0][0] → 1
+matrix[0][1] → 2
+matrix[1][2] → 6
+
+
+
+
+Matrix Input and Output
+Matrix input means reading values into the matrix.
+Usually nested loops are used:
+for each row
+    for each column
+        read element
+
+Matrix output follows the same row-column traversal.
+Row 0 → Column 0, 1, 2
+Row 1 → Column 0, 1, 2
+
+
+
+
+Matrix Addition
+Matrix addition means adding corresponding elements of two matrices.
+
+For:
+A =  1  2
+     3  4
+
+B =  5  6
+     7  8
+
+Result:
+A + B =  6   8
+         10  12
+
+Formula:
+C[i][j] = A[i][j] + B[i][j]
+
+⚠️ Two matrices must have the same dimensions for ordinary matrix addition.
+
+
+
+
+Matrix Transpose
+Transpose converts rows into columns and columns into rows.
+
+Example:
+Original:
+
+1  2  3
+4  5  6
+
+Transpose:
+1  4
+2  5
+3  6
+
+Formula:
+Transpose[j][i] = Matrix[i][j]
+
+For a square matrix, the elements across the main diagonal effectively exchange their row and column positions.
+
+
+
+
+Multidimensional Arrays
+An array can have more than two dimensions.
+1D
+int a[5];
+
+2D
+int a[3][4];
+
+3D
+int a[2][3][4];
+
+A 3D array can be visualized as:
+2 blocks
+ ↓
+each block has 3 rows
+ ↓
+each row has 4 columns
+
+In general:
+data_type array[d1][d2][d3]...[dn];
+
+Multidimensional arrays are useful for:
+- Images
+- Tables
+- Sensor datasets
+- Buffers
+- Matrices
+- 3D data
+
+
+
+
+
+Array Memory Layout
+Array elements are stored in contiguous memory locations.
+
+Suppose:
+int arr[4] = {10, 20, 30, 40};
+
+If int is 4 bytes:
+Address
+1000 → arr[0] = 10
+1004 → arr[1] = 20
+1008 → arr[2] = 30
+1012 → arr[3] = 40
+
+So:
+Address of arr[i]
+= Base address + (i × sizeof(element))
+
+This contiguous layout is one reason array access is efficient.
+
+
+
+
+2D Array Memory Layout
+C stores multidimensional arrays in row-major order.
+Example:
+1  2  3
+4  5  6
+
+Memory order is:
+1 → 2 → 3 → 4 → 5 → 6
+
+It stores the complete first row, followed by the second row.
+For:
+int a[2][3];
+
+the elements are laid out conceptually as:
+a[0][0]
+a[0][1]
+a[0][2]
+a[1][0]
+a[1][1]
+a[1][2]
+
+
+
+
+Array Indexing
+Indexing is the method used to access individual array elements using their position.
+
+For:
+int arr[5];
+
+valid indexes are:
+0
+1
+2
+3
+4
+
+Therefore:
+arr[0] → first element
+arr[1] → second element
+arr[4] → fifth element
+
+⚠️ arr[5] is outside the array and accessing it is undefined behavior.
+
+
+
+
+Array and Pointer Relationship
+This is very important for C and Embedded C. 🔥
+For:
+int arr[5];
+
+the expression:
+arr
+
+usually converts to a pointer to the first element when used in an expression.
+Conceptually:
+arr
+ ↓
+&arr[0]
+
+Therefore:
+arr[0]
+
+is equivalent to:
+*(arr + 0)
+
+And:
+arr[2]
+
+is equivalent to:
+*(arr + 2)
+
+Important distinction ⚠️
+An array is not a pointer.
+int arr[5];
+int *p = arr;
+
+Here:
+- arr → actual array object
+- p → pointer variable containing the address of the first element
+
+
+
+
+
+Passing Arrays to Functions
+Arrays can be passed to functions.
+Example concept:
+void display(int arr[], int size);
+
+You can also write:
+void display(int *arr, int size);
+
+For a 1D array, these parameter forms are closely related.
+Example:
+main()
+  ↓
+array
+  ↓
+function
+  ↓
+access elements
+
+Important point
+When a 1D array is passed to a function, the function receives information equivalent to a pointer to the first element; the entire array is not copied.
+Therefore, the size is commonly passed separately:
+display(arr, 5);
+
+because the function parameter itself does not automatically carry the array length.
+
+
+
+
+
+Passing 2D Arrays to Functions
+This is especially important for interviews.
+Suppose:
+int matrix[2][3];
+
+A function can be declared as:
+void display(int matrix[][3], int rows);
+
+or equivalently:
+void display(int (*matrix)[3], int rows);
+
+The column dimension must be known for normal 2D-array parameter syntax because the compiler needs to calculate the address of each row.
+
+
+
+
+
+🔥 Array Memory + Pointer Connection
+Suppose:
+int arr[3] = {10, 20, 30};
+
+If arr starts at address 1000 and int is 4 bytes:
+             Memory
+
+1000 → 10 ← arr[0]
+1004 → 20 ← arr[1]
+1008 → 30 ← arr[2]
+
+Then:
+arr       → address of first element
+arr + 1   → next int
+arr + 2   → next int
+
+*(arr)       → 10
+*(arr + 1)   → 20
+*(arr + 2)   → 30
+
+Pointer arithmetic automatically scales by the size of the pointed-to type.
+
+
+
+
+
+
+| Topic | Meaning |
+|---|---|
+| 1D Array | Elements arranged in one sequence |
+| Declaration | Defines array type, name and size |
+| Initialization | Gives initial values |
+| Traversal | Visits elements one by one |
+| Searching | Finds a required element |
+| Sorting | Arranges elements |
+| 2D Array | Rows and columns |
+| Matrix | Usually represented by a 2D array |
+| Matrix Input | Reads row/column elements |
+| Matrix Output | Displays row/column elements |
+| Matrix Addition | Adds corresponding elements |
+| Transpose | Converts rows into columns |
+| Multidimensional | Array with 2 or more dimensions |
+| Memory Layout | Elements stored contiguously |
+| 2D Layout | Row-major in C |
+| Indexing | Access using `[]` |
+| Array/Pointer | Array often converts to pointer to first element in expressions |
+| Passing Array | Function receives access to original elements |
+| Passing 2D Array | Column dimension normally required |
