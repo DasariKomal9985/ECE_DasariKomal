@@ -1,0 +1,104 @@
+An identifier is a user-defined name given to program elements such as variables, functions, arrays, structures, and other objects.
+
+
+Identifier = Name given by the programmer
+
+
+
+int age = 25;
+
+Here:
+- int → Keyword
+- age → Identifier
+- 25 → Constant
+
+
+
+
+📋 Rules for Identifiers
+1. Can contain letters
+int age;
+int student;
+
+
+
+
+2. Can contain digits
+int age25;
+int student2026;
+
+
+
+
+⚠️ But cannot start with a digit.
+❌ Invalid:
+int 25age;
+
+✅ Valid:
+int age25;
+
+
+
+
+3. Underscore _ is allowed
+int student_name;
+int _value;
+int sensor_data;
+
+
+
+4. Cannot contain spaces
+❌ Invalid:
+int student name;
+
+✅ Valid:
+int student_name;
+
+
+
+5. Special characters are not allowed
+❌ Invalid:
+int student-name;
+int sensor@value;
+
+Characters such as:
+@  #  $  %  -  !  &
+
+
+
+
+cannot normally be used in identifiers.
+6. Cannot be a keyword
+❌ Invalid:
+int int;
+int return;
+int while;
+
+Because int, return, and while are C keywords.
+
+
+
+
+7. C is case-sensitive
+These are different identifiers:
+int value;
+int Value;
+int VALUE;
+
+So:
+value ≠ Value ≠ VALUE
+
+
+
+| Identifier | Valid? | Reason |
+|---|---|---|
+| `age` | ✅ | Valid |
+| `student_name` | ✅ | Valid |
+| `value25` | ✅ | Valid |
+| `_count` | ✅ | Valid |
+| `25value` | ❌ | Starts with digit |
+| `student name` | ❌ | Contains space |
+| `student-name` | ❌ | Contains `-` |
+| `int` | ❌ | Keyword |
+| `return` | ❌ | Keyword |
+| `Total` | ✅ | Valid |
