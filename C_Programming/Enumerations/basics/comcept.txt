@@ -1,0 +1,36 @@
+Enumeration (enum) in C
+An enumeration (enum) is a user-defined data type used to give names to a set of integer constants.
+✅ Why use enum?
+Instead of using numbers directly:
+0 = OFF
+1 = ON
+
+we can use meaningful names:
+OFF
+ON
+
+This makes the program easier to read and understand.
+📌 Syntax
+enum Name
+{
+    VALUE1,
+    VALUE2,
+    VALUE3
+};
+
+By default, values start from 0 and increase by 1.
+Example:
+enum Status
+{
+    OFF,     // 0
+    ON,      // 1
+    ERROR    // 2
+};
+
+You can also assign your own values:
+enum Status
+{
+    OFF = 0,
+    ON = 1,
+    ERROR = 5
+};
