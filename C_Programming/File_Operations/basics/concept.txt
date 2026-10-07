@@ -1,0 +1,236 @@
+File Basics
+A file is a collection of data stored on secondary storage such as an SSD, HDD, or memory card.
+C provides functions to work with files through the stdio.h library.
+Typical flow:
+Open → Read/Write → Close
+
+
+File Pointer
+A file pointer is a pointer used by C to keep track of a file and its current position.
+FILE *fp;
+
+Here:
+- FILE → structure/type provided by the C library
+- fp → file pointer
+
+
+
+
+FILE
+FILE is a type defined by the C standard library.
+It contains information needed by the library to manage an open file, such as its current position and buffering state.
+You normally use it like:
+FILE *fp;
+
+
+
+
+fopen()
+fopen() is used to open a file.
+fp = fopen("data.txt", "r");
+
+It returns a FILE *.
+If the file cannot be opened:
+fp == NULL
+
+
+
+
+fclose()
+fclose() closes an opened file.
+fclose(fp);
+
+Always close a file after you're finished using it. 👍
+
+
+
+
+fprintf()
+Writes formatted data to a file.
+fprintf(fp, "Age = %d\n", age);
+
+Similar to printf(), but output goes to the file.
+
+
+
+
+fscanf()
+Reads formatted data from a file.
+fscanf(fp, "%d", &age);
+
+Similar to scanf(), but input comes from the file.
+
+
+
+fgetc()
+Reads one character from a file.
+char ch;
+
+ch = fgetc(fp);
+
+
+
+fputc()
+Writes one character to a file.
+fputc('A', fp);
+
+
+
+
+fgets()
+Reads a line/string from a file.
+fgets(buffer, sizeof(buffer), fp);
+
+It stops when it reaches a newline, end-of-file, or the specified limit.
+
+
+
+
+fputs()
+Writes a string to a file.
+fputs("Hello\n", fp);
+
+
+
+
+fread()
+Used to read binary data/blocks of data from a file.
+fread(&data, sizeof(data), 1, fp);
+
+Basic form:
+fread(pointer, size, count, file_pointer)
+
+
+
+
+fwrite()
+Used to write binary data/blocks of data to a file.
+fwrite(&data, sizeof(data), 1, fp);
+
+Basic form:
+fwrite(pointer, size, count, file_pointer)
+
+Very useful when storing structures or other binary data. 🔧
+
+
+
+
+fseek()
+Moves the file position to a specific location.
+fseek(fp, 10, SEEK_SET);
+
+Common origins:
+SEEK_SET → Beginning
+SEEK_CUR → Current position
+SEEK_END → End
+
+
+
+
+ftell()
+Returns the current file position.
+long position = ftell(fp);
+
+
+
+rewind()
+Moves the file position back to the beginning.
+rewind(fp);
+
+It is essentially a convenient way to return to the start of the file and clear its error/EOF indicators.
+
+
+
+
+feof()
+Checks whether the EOF indicator for a stream is set.
+if (feof(fp))
+{
+    printf("End of file reached\n");
+}
+
+⚠️ Important: feof() should generally be checked after a read operation fails, not used as the loop condition before reading.
+
+
+
+
+ferror()
+Checks whether an error indicator is set for the stream.
+if (ferror(fp))
+{
+    printf("File error\n");
+}
+
+
+📋 File Modes
+
+| Mode | Meaning |
+|---|---|
+| `"r"` | Read existing file |
+| `"w"` | Write; creates/truncates file |
+| `"a"` | Append to end; creates if needed |
+| `"r+"` | Read + write existing file |
+| `"w+"` | Read + write; creates/truncates |
+| `"a+"` | Read + append; creates if needed |
+| `"rb"` | Read binary |
+| `"wb"` | Write binary |
+| `"ab"` | Append binary |
+
+
+
+
+📝 Text Files
+Text files store data in a form generally intended to be represented as characters.
+Examples:
+.txt
+.csv
+.c
+.h
+
+Functions commonly used:
+fprintf()
+fscanf()
+fgetc()
+fputc()
+fgets()
+fputs()
+
+
+
+
+
+💾 Binary Files
+Binary files store data as raw bytes rather than formatted text.
+Common functions:
+fread()
+fwrite()
+
+They are useful for storing structures, images, firmware data, etc.
+
+
+
+
+➡️ Sequential Access
+Data is processed from beginning toward the end in order.
+Example:
+Record 1 → Record 2 → Record 3 → Record 4
+
+Functions such as fgetc(), fgets(), fread() can be used sequentially.
+
+
+
+
+
+🎯 Random Access
+You can move directly to a particular position in the file.
+Main functions:
+fseek()
+ftell()
+rewind()
+
+Example:
+fseek(fp, 100, SEEK_SET);
+
+This moves directly to byte position 100 from the beginning.
+
+
