@@ -1,0 +1,8 @@
+restrict
+restrict is used with pointers.
+It tells the compiler that, for the relevant execution of the pointer's use, the pointed-to object is accessed through that pointer (and appropriately derived pointers).
+This allows the compiler to make optimization assumptions.
+📌 Common use
+int *restrict p;
+
+It is useful in performance-sensitive code such as array processing and memory operations.

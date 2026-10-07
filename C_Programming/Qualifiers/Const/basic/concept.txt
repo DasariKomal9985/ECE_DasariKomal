@@ -1,0 +1,16 @@
+🔐 Type Qualifiers in C
+Type qualifiers are keywords that modify how a variable or object can be accessed or used.
+The three important C type qualifiers are:
+1. const 🔒
+2. volatile ⚡
+3. restrict 🚀
+1️⃣ const
+const means the value should not be modified through that object/access path.
+Example
+const int x = 10;
+
+You can read x, but you cannot do:
+x = 20;   // ❌ Error
+
+📌 Embedded C use
+Very common for constant values, lookup tables, configuration data, and read-only data.

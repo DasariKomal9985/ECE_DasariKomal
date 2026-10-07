@@ -1,0 +1,15 @@
+volatile
+volatile tells the compiler:
+"This value can change unexpectedly, so do not assume its value stays the same."
+
+The compiler must perform the required accesses rather than optimizing them away based on the assumption that the value cannot change unexpectedly.
+📌 Where is it used?
+Very important in Embedded C:
+- Hardware registers
+- Interrupt Service Routines (ISR)
+- Memory-mapped I/O
+- Variables changed by hardware
+Example:
+volatile int flag;
+
+The value of flag could change outside the normal flow of the current code.
