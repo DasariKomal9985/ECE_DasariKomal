@@ -1,0 +1,280 @@
+What is Dynamic Memory Allocation?
+Dynamic Memory Allocation (DMA) is the process of allocating memory at runtime, usually from the heap, instead of deciding the required memory size at compile time.
+Example:
+int *p;
+
+p = malloc(5 * sizeof(int));
+
+Here, memory for 5 integers is requested while the program is running.
+Why do we need it?
+Suppose you don't know how many elements you need:
+User enters → 100 elements
+
+You can allocate memory for 100 elements at runtime.
+If:
+User enters → 1000 elements
+
+you can allocate memory for 1000 elements.
+This is useful for:
+- Linked lists
+- Dynamic arrays
+- Trees
+- Queues
+- Buffers
+- Variable-sized data
+- Runtime resource allocation
+
+
+
+
+
+
+Static vs Dynamic Memory
+This is another important interview comparison.
+Static allocation
+Memory size is determined before runtime or uses an object with a fixed lifetime.
+Example:
+int arr[10];
+
+The array has a fixed size.
+Dynamic allocation
+Memory is requested during program execution.
+int *arr;
+
+arr = malloc(10 * sizeof(int));
+
+
+
+
+
+
+malloc()
+malloc() means memory allocation.
+Header:
+#include <stdlib.h>
+
+Syntax:
+ptr = malloc(size);
+
+Example:
+int *p;
+
+p = malloc(5 * sizeof(int));
+
+This requests enough heap storage for 5 integers.
+Important
+malloc() returns:
+void *
+
+which is implicitly converted to the required object pointer type in C.
+If allocation fails:
+malloc()
+
+returns:
+NULL
+
+Always check when appropriate:
+if(p == NULL)
+{
+    // allocation failed
+}
+
+Initialization
+malloc() does not initialize the allocated bytes.
+The contents have indeterminate values.
+
+
+
+
+
+
+
+calloc()
+calloc() means contiguous allocation.
+Syntax:
+ptr = calloc(number_of_elements, size_of_each_element);
+
+Example:
+int *p;
+
+p = calloc(5, sizeof(int));
+
+This allocates space for 5 integers.
+Main difference from malloc()
+calloc() initializes all allocated bytes to zero.
+So for an array of integers:
+0  0  0  0  0
+
+assuming normal representation of integer zero.
+
+
+
+
+
+
+
+realloc()
+realloc() changes the size of an existing allocation.
+Syntax:
+ptr = realloc(ptr, new_size);
+
+Example:
+int *p;
+
+p = malloc(5 * sizeof(int));
+
+p = realloc(p, 10 * sizeof(int));
+
+Initially:
+5 integers
+
+After realloc():
+10 integers
+
+The allocation may be:
+- expanded in place, or
+- moved to a new location.
+Therefore, after successful realloc(), the old pointer value should not be used.
+⚠️ Safe realloc() pattern
+Avoid:
+p = realloc(p, new_size);
+
+when you need to preserve p if the reallocation fails.
+Better:
+int *temp;
+
+temp = realloc(p, new_size);
+
+if(temp != NULL)
+{
+    p = temp;
+}
+
+If realloc() fails, the original allocation pointed to by p remains valid.
+
+
+
+
+
+free()
+free() releases memory previously allocated dynamically.
+Syntax:
+free(ptr);
+
+Example:
+int *p;
+
+p = malloc(sizeof(int));
+
+free(p);
+p = NULL;
+
+After:
+free(p);
+
+the allocated memory is no longer available to your program.
+Setting:
+p = NULL;
+
+helps prevent accidentally using the old pointer value.
+
+
+
+
+
+
+
+             HEAP
+               |
+               ↓
+          malloc()
+               |
+               ↓
+        memory allocated
+               |
+               ↓
+            use it
+               |
+               ↓
+           realloc()
+          ↙       ↘
+      resize      move
+               |
+               ↓
+             free()
+               |
+               ↓
+        memory released
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Memory Leak
+A memory leak occurs when dynamically allocated memory is no longer reachable by the program but has not been released.
+Example:
+int *p;
+
+p = malloc(100 * sizeof(int));
+
+p = NULL;
+
+What happened?
+malloc()
+   ↓
+100 integers allocated
+   ↓
+p points to memory
+   ↓
+p = NULL
+   ↓
+address is lost
+   ↓
+memory cannot be freed
+
+That memory is leaked.
+Correct:
+int *p;
+
+p = malloc(100 * sizeof(int));
+
+free(p);
+p = NULL;
+
+
+
+
+
+
+
+Dangling Pointer
+A dangling pointer is a pointer that still contains the address of an object whose lifetime has ended.
+Example:
+int *p = malloc(sizeof(int));
+
+*p = 10;
+
+free(p);
+
+Now p still contains the old address, but the allocated object no longer exists.
+So:
+*p = 20;
+
+would be undefined behavior.
+Better:
+free(p);
+p = NULL;
+
+Now:
+p → NULL
