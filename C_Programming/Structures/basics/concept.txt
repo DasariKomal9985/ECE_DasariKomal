@@ -1,0 +1,572 @@
+What is a Structure? 🧩
+A structure (struct) is a user-defined data type that groups related variables of different data types into a single object.
+Example concept:
+Employee
+│
+├── name     → char[]
+├── age      → int
+├── salary   → float
+└── id       → int
+
+Simple definition
+A structure is a collection of related variables of different data types grouped under one name.
+
+
+
+
+
+Structure Declaration
+A structure is declared using the struct keyword.
+Basic syntax:
+struct Student
+{
+    int roll;
+    char name[20];
+    float marks;
+};
+
+Here:
+Student
+   ↓
+┌─────────────────┐
+│ roll   → int    │
+│ name   → char[]  │
+│ marks  → float  │
+└─────────────────┘
+
+⚠️ This declaration defines the structure type, but it doesn't by itself create a Student object.
+
+
+
+
+
+
+
+Structure Variable Declaration
+After defining the structure:
+struct Student
+{
+    int roll;
+    char name[20];
+    float marks;
+};
+
+You can create variables:
+struct Student s1;
+struct Student s2;
+
+Now:
+s1 → Student object
+s2 → Student object
+
+Each has its own:
+roll
+name
+marks
+
+
+
+
+
+
+
+Structure Initialization
+You can initialize a structure when declaring it.
+struct Student s1 = {101, "Komal", 85.5};
+
+The values are assigned in member order:
+roll  → 101
+name  → "Komal"
+marks → 85.5
+
+You can also use designated initialization:
+struct Student s1 = {
+    .roll = 101,
+    .marks = 85.5,
+    .name = "Komal"
+};
+
+
+
+
+
+
+Accessing Structure Members
+Structure members are accessed using the dot operator ..
+Example:
+s1.roll
+s1.name
+s1.marks
+
+Think:
+structure object
+       ↓
+      .
+       ↓
+    member
+
+For example:
+s1.roll
+  ↑
+object
+
+roll
+ ↑
+member
+
+
+
+
+
+
+. Operator ⭐
+The dot operator is used when you have a structure object.
+Example:
+struct Student s1;
+
+s1.roll = 101;
+
+Here:
+s1 → structure object
+.  → member access
+roll → structure member
+
+So:
+s1.roll
+
+means:
+Access the roll member of structure object s1.
+
+
+
+
+
+
+
+Assigning Structure Members
+You can assign each member individually.
+Example concept:
+s1.roll = 101
+s1.marks = 90.5
+
+For a character array:
+name
+
+is an array, so you cannot assign it using:
+s1.name = "Komal";
+
+Instead, use string-copying methods such as strcpy() for a character array member.
+
+
+
+
+
+
+
+Structure Assignment
+You can also assign one complete structure object to another when they have compatible structure types.
+Example:
+s2 = s1;
+
+This copies the structure's members.
+Conceptually:
+s1
+│
+├── roll
+├── name
+└── marks
+      ↓
+     copy
+      ↓
+s2
+│
+├── roll
+├── name
+└── marks
+
+For arrays inside a structure, the structure assignment copies the array contents as part of the structure object.
+
+
+
+
+
+
+
+-> Operator ⭐⭐⭐
+The -> operator is used when you have a pointer to a structure.
+Example:
+struct Student *p;
+
+If p points to a structure:
+p → structure
+
+you can access a member using:
+p->roll
+
+Very important relationship:
+p->roll
+
+is equivalent to:
+(*p).roll
+
+So:
+.  → structure object
+-> → pointer to structure
+
+Easy trick 🧠
+s1.roll
+ ↓
+Object
+
+p->roll
+ ↓
+Pointer
+
+
+
+
+
+
+Array of Structures
+You can create an array where every element is a structure.
+Example concept:
+struct Student students[3];
+
+Now:
+students[0] → Student
+students[1] → Student
+students[2] → Student
+
+Each student has:
+roll
+name
+marks
+
+This is very useful for storing multiple records.
+Examples:
+- Employees
+- Students
+- Sensors
+- Devices
+- Network packets
+- Configuration tables
+
+
+
+
+
+
+
+Nested Structures
+A structure can contain another structure as a member.
+Example concept:
+Employee
+│
+├── name
+├── id
+└── address
+      │
+      ├── city
+      ├── state
+      └── pin
+
+For example:
+employee.address.city
+
+You use multiple . operators.
+Why useful?
+It helps organize related information hierarchically.
+For example:
+Device
+ ├── configuration
+ │     ├── baudrate
+ │     └── mode
+ │
+ └── status
+       ├── temperature
+       └── error
+
+Very useful in embedded systems. 🔧
+
+
+
+
+
+
+
+Structure Pointer
+A structure pointer stores the address of a structure object.
+Example concept:
+struct Student s1;
+
+struct Student *p = &s1;
+
+Now:
+p
+ ↓
+s1
+
+You can access members using:
+p->roll
+p->marks
+
+instead of:
+(*p).roll
+(*p).marks
+
+
+
+
+
+
+Pointer to Structure
+"Structure pointer" and "pointer to structure" generally mean the same thing.
+Example:
+struct Student *p;
+
+means:
+p is a pointer to a struct Student.
+
+This is extremely common in:
+- Linked lists
+- Device drivers
+- APIs
+- Embedded HAL
+- Dynamic data structures
+
+
+
+
+
+Structure as a Function Argument
+A structure can be passed to a function.
+There are two common ways:
+Pass structure by value
+The structure object is copied into the function parameter.
+Conceptually:
+main structure
+      ↓
+    copy
+      ↓
+function
+
+Changes to the parameter don't change the original structure.
+Pass pointer to structure
+Instead of copying the entire structure, pass its address.
+Conceptually:
+structure
+    ↑
+    |
+ pointer
+    |
+function
+
+This is often more efficient for large structures and allows the function to modify the original object when the pointer is not to const data.
+
+
+
+
+
+Self-Referential Structure ⭐⭐⭐
+A self-referential structure contains a pointer to another object of the same structure type.
+Classic example:
+struct Node
+{
+    int data;
+    struct Node *next;
+};
+
+Think:
+Node
+│
+├── data
+└── next ──────────┐
+                   ↓
+                  Node
+                   │
+                   ├── data
+                   └── next
+
+This is the foundation of:
+- Singly linked lists
+- Doubly linked lists
+- Trees
+- Graphs
+Important ⚠️
+You cannot directly put an object of the same incomplete structure type inside itself:
+struct Node
+{
+    int data;
+    struct Node next;
+};
+
+That would make the structure infinitely large.
+Instead, use a pointer:
+struct Node *next;
+
+because a pointer has a known finite size.
+
+
+
+
+
+
+Structure Padding ⭐⭐⭐
+This is very important for Embedded C and interviews.
+Padding means the compiler may insert unused bytes between or after structure members to satisfy alignment requirements.
+Example:
+struct Example
+{
+    char a;
+    int b;
+};
+
+You might expect:
+char = 1 byte
+int  = 4 bytes
+
+Total = 5 bytes
+
+But the actual structure may be:
+┌─────┬─────────┬──────────────┐
+│  a  │ padding │      b       │
+│ 1 B │ 3 B     │    4 B       │
+└─────┴─────────┴──────────────┘
+
+Total = 8 bytes
+
+Why?
+Because int may require 4-byte alignment.
+⚠️ Exact padding and alignment are implementation-dependent.
+
+
+
+
+
+
+Padding at the End
+Padding can also be added at the end of a structure.
+Why?
+So that when you create an array of structures:
+struct Example arr[3];
+
+each structure object begins at a correctly aligned address.
+Example concept:
+Structure 1
+[ data ][ padding ]
+
+Structure 2
+[ data ][ padding ]
+
+Structure 3
+[ data ][ padding ]
+
+This is called tail padding.
+
+
+
+
+
+Structure Size
+You can determine the size using:
+sizeof(structure)
+
+The result can be larger than the simple sum of member sizes because of:
+padding
++
+alignment
+
+For example:
+char  → 1
+int   → 4
+
+Expected = 5
+
+Actual → possibly 8
+
+
+
+
+
+| Feature | Structure | Array |
+|---|---|---|
+| Data types | Can be different | Same type |
+| Purpose | Group related data | Group same-type elements |
+| Access | Members | Index |
+| Example | Student record | Marks list |
+| Operator | `.` / `->` | `[]` |
+
+
+
+
+
+Structure vs Union
+This is another very common interview question.
+Structure
+Each member generally has its own storage.
+struct
+ ├── int
+ ├── float
+ └── char
+
+All members can hold values simultaneously.
+Union
+Members share the same storage.
+union
+ ├── int
+ ├── float
+ └── char
+       ↓
+    same memory
+
+Therefore:
+Structure → all members can hold values simultaneously
+Union     → one shared storage area
+
+
+
+
+
+
+Typedef with Structure
+Instead of repeatedly writing:
+struct Student
+
+you can create an alias:
+typedef struct
+{
+    int roll;
+    float marks;
+} Student;
+
+Then simply:
+Student s1;
+
+This is very common in embedded code.
+For example:
+typedef struct
+{
+    uint32_t control;
+    uint32_t status;
+    uint32_t data;
+} RegisterBlock;
+
+This makes hardware-related structures easier to read. 🔧
+
+
+
+
+
+Structure and Dynamic Memory
+Structures can also be dynamically allocated.
+Conceptually:
+malloc()
+   ↓
+struct object
+   ↓
+structure pointer
+
+Then members can be accessed through:
+p->member
+
+This is heavily used in linked lists.
