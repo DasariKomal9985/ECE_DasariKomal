@@ -1,0 +1,526 @@
+What is a Storage Class?
+A storage class specifies important properties of an identifier, such as its scope, storage duration, linkage, and whether it may have special storage-related behavior.
+The traditional C storage-class specifiers are:
+auto
+static
+extern
+register
+
+There is also _Thread_local in modern C for thread storage duration, but for your core C/Embedded C revision, the traditional four are the main ones.
+
+
+
+
+
+The Four Main Storage Classes
+Storage Class			Main Idea
+auto				Normal 	local variable
+static				Preserve lifetime / restrict linkage depending on where used
+extern				Refers to a definition with external linkage
+register			Requests register storage for a local variable
+
+
+⚠️ Important: storage class does not simply mean "where the variable is physically stored."
+For example, register is only a request to the compiler; modern compilers may keep the variable in a register or memory.
+
+
+
+
+
+| Feature				 |	 `auto` |	 `static` Local | 	`static` Global |	 `extern` |	 `register` |
+|---|---|---|---|---|---|
+| Typical declaration 					| `auto int x;`	 | `static int x;`	 | `static int x;`	 |	 `extern int x;` |	 `register int x;` |
+| Usually used at 					| Block/local scope | Block/local scope | File scope | File/block declaration | Block/local scope |
+| Scope					 		| Block | Block | File | Depends on declaration/visible declaration | Block |
+| Lifetime / storage duration 				| Automatic | Static | Static | Static | Automatic |
+| Default initialization		 		| Indeterminate | `0` | `0` | Depends on actual definition | Indeterminate |
+| Retains value between function calls? 		| ❌ | ✅ | ✅ | Depends on referenced object | ❌ |
+| Linkage 						| None | None | Internal | Usually external | None |
+| Accessible from another file? 			| ❌ | ❌ | ❌ | ✅, if external definition is available | ❌ |
+| Address using `&` 					| ✅ | ✅ | ✅ | Depends on actual object | **Not allowed on register variable** |
+| Typical use 						| Temporary local data | Counters/state | File-private global data | Sharing global definition across files | Frequently used local variables |
+| Compiler decides actual memory 			| Yes | Yes | Yes | Yes | Yes |
+
+
+
+
+4️⃣ Scope
+Scope tells you where an identifier can be referred to in the source code.
+Think:
+Where can I use this name?
+
+Main scopes in C:
+Block scope
+Inside { }.
+void test(void)
+{
+    int x = 10;
+}
+
+x can be used only inside that block.
+File scope
+Declared outside all functions:
+int x = 10;
+
+int main(void)
+{
+}
+
+x has file scope from its declaration to the end of the source file.
+Function prototype scope
+Parameter names in a function prototype have scope limited to that prototype.
+Example:
+int add(int a, int b);
+
+The names a and b don't remain available after the declaration.
+
+
+
+
+
+
+
+Lifetime / Storage Duration
+Lifetime tells you:
+How long does the object exist?
+
+In C, the important storage durations are:
+Automatic storage duration
+Object exists while execution is inside its block.
+Typical example:
+void test(void)
+{
+    int x = 10;
+}
+
+When the function/block ends, x's lifetime ends.
+Static storage duration
+Object exists for the entire execution of the program.
+Examples:
+static int count;
+
+and file-scope:
+int count;
+
+Static storage duration objects are initialized before program execution begins and remain alive until program termination.
+Allocated storage duration
+Memory obtained through:
+malloc()
+calloc()
+realloc()
+
+exists until:
+free()
+
+or program termination.
+This is not one of the four traditional storage-class specifiers, but it is useful to distinguish it from automatic/static storage duration.
+
+
+
+
+
+
+
+Visibility
+"Visibility" is often used informally to mean:
+Where can the name be seen/used?
+
+For precise C terminology, prefer scope for where the identifier can be used and linkage for whether declarations in different scopes/files can refer to the same entity.
+Example:
+static int count;
+
+at file scope:
+Scope      → file
+Linkage    → internal
+Lifetime   → entire program
+
+
+
+
+
+
+Linkage ⭐
+Linkage determines whether declarations of an identifier in different scopes or translation units can refer to the same entity.
+There are three types:
+No linkage
+Internal linkage
+External linkage
+
+A. No Linkage
+The identifier does not refer to the same entity through declarations in other scopes.
+Typical local variable:
+void test(void)
+{
+    int x = 10;
+}
+
+x has:
+No linkage
+
+B. Internal Linkage
+The identifier can be referred to by declarations within the same translation unit (source file), but not from another translation unit.
+Typical example:
+static int count;
+
+at file scope.
+So:
+file1.c
+   ↓
+static int count;
+
+file2.c
+   ↓
+cannot directly refer to file1.c's count
+
+C. External Linkage
+The identifier can refer to the same entity across translation units.
+Example:
+int count = 10;
+
+in one source file, and:
+extern int count;
+
+in another source file.
+
+
+
+
+
+
+
+auto
+auto specifies automatic storage duration for a block-scope variable.
+Example:
+void test(void)
+{
+    auto int x = 10;
+}
+
+But normally you don't write auto.
+This:
+int x = 10;
+
+inside a function is automatically an automatic-storage-duration variable.
+So:
+auto int x;
+
+and:
+int x;
+
+have the same basic storage-duration behavior at block scope.
+Characteristics
+Scope       → Block
+Storage     → Automatic
+Lifetime    → Until block exits
+Linkage     → None
+Default     → Indeterminate if not initialized
+
+
+
+
+
+
+
+static Local Variable ⭐⭐⭐
+This is one of the most important concepts.
+A local variable declared with static has:
+Block scope
+Static storage duration
+No linkage
+
+Example:
+void counter(void)
+{
+    static int count = 0;
+
+    count++;
+}
+
+If you call:
+counter()
+counter()
+counter()
+
+the value becomes:
+1
+2
+3
+
+Why?
+Because the variable is created only once and retains its value between function calls.
+Normal local variable
+void counter(void)
+{
+    int count = 0;
+    count++;
+}
+
+Every call starts with:
+count = 0
+
+So:
+Call 1 → 1
+Call 2 → 1
+Call 3 → 1
+
+Static local variable
+void counter(void)
+{
+    static int count = 0;
+    count++;
+}
+
+Result:
+Call 1 → 1
+Call 2 → 2
+Call 3 → 3
+
+Easy memory trick 🧠
+local variable
+→ local visibility
+→ temporary lifetime
+
+static local
+→ local visibility
+→ permanent lifetime
+
+
+
+
+
+
+
+Static Global / File-Scope Variable
+A static variable declared outside all functions has file scope and internal linkage.
+Example:
+static int count = 10;
+
+This variable can be accessed by functions in the same source file, but it cannot be referred to directly from another source file using extern.
+Example:
+file1.c
+
+static int count = 10;
+
+function1()
+{
+    use count;
+}
+
+But:
+file2.c
+
+extern int count;
+
+cannot access file1.c's static count.
+Characteristics
+Scope             → File
+Storage duration  → Static
+Linkage           → Internal
+Lifetime          → Entire program
+Other source file → Not directly accessible
+
+
+
+
+
+
+
+extern
+extern tells the compiler:
+This declaration refers to an object or function that is defined elsewhere, often in another source file.
+
+Example:
+file1.c
+int count = 100;
+
+file2.c
+extern int count;
+
+Now file2.c can use the count defined in file1.c, assuming the definition has external linkage.
+Important distinction
+This:
+extern int count;
+
+is normally a declaration, not a definition.
+It tells the compiler:
+"There is an int count defined somewhere else."
+
+Whereas:
+int count = 100;
+
+is a definition.
+
+
+
+
+
+
+
+register
+register requests that the implementation keep a variable in a processor register if possible.
+Example:
+register int i;
+
+It is mainly intended for frequently accessed local variables.
+Historically, it was used for optimization.
+Modern compilers perform their own optimization, so explicitly using register is rarely necessary.
+Important rule ⭐
+You cannot use the address-of operator on a register variable:
+register int x = 10;
+
+This is not allowed:
+&x
+
+because the language does not permit taking the address of an object declared with the register storage-class specifier.
+Characteristics
+Scope       → Block
+Storage     → Automatic
+Lifetime    → Until block exits
+Linkage     → None
+Address `&` → Not allowed
+
+
+
+
+
+
+
+Local Variable
+A local variable is declared inside a function or block and normally has block scope.
+Example:
+void test(void)
+{
+    int x = 10;
+}
+
+x is accessible only within its block.
+Typical properties:
+Scope       → Block
+Linkage     → None
+Storage     → Usually automatic
+Lifetime    → Until block exits
+
+⚠️ A local variable can also be static, in which case its lifetime becomes static while its scope remains local to the block.
+
+
+
+
+
+
+
+Global Variable
+A variable declared outside all functions is commonly called a global variable.
+Example:
+int count = 10;
+
+void test(void)
+{
+    printf("%d\n", count);
+}
+
+At file scope, a non-static definition like this normally has:
+Scope             → File
+Storage duration  → Static
+Linkage           → External
+Lifetime          → Entire program
+
+It can potentially be accessed from another source file using extern.
+
+
+
+
+
+
+
+Static Variable — Two Different Cases ⭐⭐⭐
+This is where many interview candidates get confused.
+Case 1: Static local
+void test(void)
+{
+    static int x = 10;
+}
+
+Scope             → Block
+Lifetime          → Entire program
+Linkage            → None
+
+Case 2: Static file-scope
+static int x = 10;
+
+Scope             → File
+Lifetime          → Entire program
+Linkage            → Internal
+
+Remember:
+static inside function
+        ↓
+local visibility + permanent lifetime
+
+static outside function
+        ↓
+file visibility + internal linkage + permanent lifetime
+
+
+
+
+
+
+
+
+Initialization of Storage Classes
+Another important interview point:
+Automatic variable
+void test(void)
+{
+    int x;
+}
+
+x has an indeterminate value if it is not initialized.
+Static variable
+static int x;
+
+Automatically initialized to:
+0
+
+File-scope variable
+int x;
+
+Also has static storage duration and is initialized to:
+0
+
+if no explicit initializer is provided.
+
+
+
+
+
+
+
+Storage Location — Stack, Data, BSS, Register
+For embedded systems, you will often hear:
+Stack
+Data
+BSS
+Register
+
+These are useful implementation concepts, but don't confuse them with C storage-class rules.
+Typical mapping
+Variable				Typical implementation location
+Automatic local				Stack/register
+Static initialized			Data section
+Static zero-initialized			BSS
+Global initialized			Data section
+Global zero-initialized			BSS
+register				Register if compiler chooses
+Dynamic memory				Heap
+
+
+⚠️ These are typical implementation details, not universal C-language requirements.
+
+
+
+
+
+
+
+
