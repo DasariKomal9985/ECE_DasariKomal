@@ -1,0 +1,162 @@
+A structure allocates separate storage for each member, whereas a union allocates shared storage for all members, with the union's size generally determined by its largest member and alignment requirements.
+
+
+
+A union is a user-defined data type similar to a structure, but all its members share the same memory location. 🧩
+The main idea is:
+Structure → Separate memory for members
+Union     → Shared memory for members
+
+
+
+
+Union Declaration
+A union is declared using the union keyword.
+union Data
+{
+    int i;
+    float f;
+    char c;
+};
+
+Here, Data contains three members:
+Data
+│
+├── i → int
+├── f → float
+└── c → char
+
+But they all use the same memory area.
+
+
+
+
+
+Union Initialization
+A union can be initialized when it is declared.
+union Data d = {10};
+
+The first member (i) is initialized.
+You can also use a designated initializer:
+union Data d = {.f = 3.14};
+
+Here, the f member is initialized.
+Important ⚠️
+A union can hold a value for one member at a time in the usual usage model.
+For example:
+d.i = 10
+
+Then:
+d.f = 3.14
+
+stores the new value in the same memory, replacing the previous stored representation.
+
+
+
+
+
+Accessing Union Members
+The dot operator . is used to access a union member.
+d.i
+d.f
+d.c
+
+Example:
+d.i = 10
+
+Then:
+d.f = 3.14
+
+The same memory is now being used for f.
+For a pointer to a union, use:
+p->i
+p->f
+p->c
+
+just like structures.
+
+
+
+
+
+Structure vs Union ⭐⭐⭐
+This is one of the most important union interview questions.
+Structure
+struct
+│
+├── int
+├── float
+└── char
+
+Each member has its own storage.
+All members can contain meaningful values simultaneously.
+Union
+union
+│
+├── int
+├── float
+└── char
+       ↓
+   SAME MEMORY
+
+Members share storage.
+Comparison Table
+Feature	Structure	Union
+Keyword	struct	union
+Memory	Separate storage for members	Shared storage
+Members active at same time	Yes	Typically one
+Size	Includes members + padding	Usually enough for largest member, with alignment considerations
+Memory usage	More	Less
+Main purpose	Store related values together	Store one of several possible representations
+Access	. / ->	. / ->
+Useful for	Records, configurations	Memory-efficient alternatives, hardware/data representations
+
+
+
+
+
+
+Union Memory Allocation 🧠
+This is the most important concept.
+Consider:
+union Data
+{
+    int i;
+    float f;
+    char c;
+};
+
+Suppose:
+int   = 4 bytes
+float = 4 bytes
+char  = 1 byte
+
+A structure would need approximately:
+int   → 4
+float → 4
+char  → 1
+--------------
+Total → at least 9
+
+plus possible padding.
+But the union shares memory:
+        UNION MEMORY
+┌─────────────────────┐
+│                     │
+│   i / f / c         │
+│   shared storage    │
+│                     │
+└─────────────────────┘
+
+So its size is generally based on the largest member, subject to alignment requirements.
+For the example:
+int   → 4 bytes
+float → 4 bytes
+char  → 1 byte
+
+Union size → typically 4 bytes
+
+Use:
+sizeof(union Data)
+
+to determine the actual size on your compiler.
