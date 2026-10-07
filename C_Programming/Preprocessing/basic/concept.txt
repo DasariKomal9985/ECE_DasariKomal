@@ -1,0 +1,246 @@
+#include is used to include the contents of another file into the current source file.
+Example:
+#include <stdio.h>
+
+This gives access to functions such as printf().
+Two common forms:
+#include <stdio.h>      // System/header file
+#include "myfile.h"     // User-defined header
+
+
+
+
+
+#define
+#define is used to define a macro.
+#define PI 3.14
+
+Before compilation, the preprocessor replaces PI with 3.14.
+
+
+
+
+Macros
+A macro is a preprocessor substitution.
+#define MAX 100
+
+Whenever MAX appears in the source code, the preprocessor substitutes 100.
+⚠️ A macro is not a variable and does not have normal C type checking.
+
+
+
+
+Function-like Macros
+A macro can look like a function:
+#define SQUARE(x) ((x) * (x))
+
+Usage:
+SQUARE(5)
+
+The preprocessor expands it approximately to:
+((5) * (5))
+
+⚠️ Why parentheses?
+Good macro:
+#define SQUARE(x) ((x) * (x))
+
+Avoid:
+#define SQUARE(x) x * x
+
+because operator precedence can produce unexpected results.
+
+
+
+
+
+Macro Arguments
+Macros can accept arguments.
+#define ADD(a, b) ((a) + (b))
+
+Then:
+ADD(10, 20)
+
+becomes approximately:
+((10) + (20))
+
+
+
+
+Nested Macros
+One macro can use another macro.
+#define A 10
+#define B A + 20
+
+Using:
+B
+
+results in:
+10 + 20
+
+Another example:
+#define SQUARE(x) ((x) * (x))
+#define DOUBLE(x) ((x) + (x))
+
+Macros can therefore build on other macros.
+
+
+
+
+
+Conditional Compilation
+Conditional compilation means:
+Compile some part of the code only when a particular condition is satisfied.
+
+This is very useful for:
+- Debug code
+- Different hardware versions
+- Different platforms
+- Feature selection
+- Embedded firmware configurations
+
+
+
+
+
+#ifdef
+#ifdef means:
+If this macro is defined
+
+#ifdef DEBUG
+    // compile this code
+#endif
+
+
+
+
+#ifndef
+#ifndef means:
+If this macro is NOT defined
+
+Very commonly used in header guards.
+#ifndef MY_HEADER_H
+#define MY_HEADER_H
+
+// header contents
+
+#endif
+
+
+
+
+
+#if
+#if checks a preprocessor condition.
+#if 1
+    // compiled
+#endif
+
+Example:
+#define VERSION 2
+
+#if VERSION == 2
+    // Version 2 code
+#endif
+
+
+
+
+
+#elif
+#elif means else if.
+#if VERSION == 1
+
+#elif VERSION == 2
+
+#else
+
+#endif
+
+
+
+
+#else
+#else is executed when the previous condition is false.
+#ifdef DEBUG
+
+#else
+
+#endif
+
+
+
+
+#endif
+#endif marks the end of a conditional compilation block.
+#ifdef DEBUG
+
+#endif
+
+Every #if, #ifdef, or #ifndef must have a corresponding #endif.
+
+
+
+
+
+Token Pasting ##
+## joins two tokens together to create a new token.
+Example:
+#define MAKE_VAR(a, b) a##b
+
+Then:
+MAKE_VAR(value, 1)
+
+becomes:
+value1
+
+This is useful when generating identifiers programmatically.
+
+
+
+
+
+Predefined Macros
+C provides several predefined macros.
+__FILE__
+Gives the current source file name.
+__LINE__
+Gives the current line number.
+__DATE__
+Gives the compilation date.
+__TIME__
+Gives the compilation time.
+Example:
+printf("%s\n", __FILE__);
+printf("%d\n", __LINE__);
+printf("%s\n", __DATE__);
+printf("%s\n", __TIME__);
+
+These are particularly useful for debugging and logging. 🐛
+
+
+
+
+
+
+| Preprocessor | Purpose |
+|---|---|
+| `#include` | Include a file |
+| `#define` | Define a macro |
+| `#ifdef` | If macro is defined |
+| `#ifndef` | If macro is not defined |
+| `#if` | Check condition |
+| `#elif` | Else-if condition |
+| `#else` | Otherwise |
+| `#endif` | End conditional block |
+| `##` | Token pasting |
+| `__FILE__` | File name |
+| `__LINE__` | Line number |
+| `__DATE__` | Compilation date |
+| `__TIME__` | Compilation time |
+
+
+
+
+
+
+
