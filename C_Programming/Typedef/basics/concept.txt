@@ -1,0 +1,28 @@
+typedef in C
+typedef is used to create another name (alias) for an existing data type.
+It does not create a new data type. It only gives an existing type a simpler or more meaningful name.
+🔹 Normal declaration
+unsigned int age;
+
+With typedef:
+typedef unsigned int uint;
+uint age;
+
+Here:
+- unsigned int → original type
+- uint → new alias
+- age → variable
+🔹 typedef with structure
+Without typedef:
+struct Student s;
+
+With typedef:
+typedef struct
+{
+    int roll;
+    float marks;
+} Student;
+
+Student s;
+
+This is very common in Embedded C because it makes structures and hardware-related types easier to use. 🔧
