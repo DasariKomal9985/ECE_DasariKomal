@@ -1,0 +1,426 @@
+🧱 Data Structures in C
+A data structure is a way of organizing and storing data so that we can access, insert, delete, search, and modify it efficiently.
+Mainly, we divide data structures into:
+Data Structures
+      │
+      ├── Linear
+      │
+      └── Non-Linear
+
+
+
+Linear Data Structures
+In a linear data structure, elements are logically arranged one after another.
+10 → 20 → 30 → 40
+
+Examples:
+- Array
+- Linked List
+- Stack
+- Queue
+📦 Array
+An array stores multiple elements of the same data type, typically in contiguous memory locations.
+Example concept:
+Index:   0    1    2    3
+        ┌────┬────┬────┬────┐
+Data:   │ 10 │ 20 │ 30 │ 40 │
+        └────┴────┴────┴────┘
+
+We can directly access an element using its index.
+📦 Static Array
+A static/fixed-size array has a size decided when it is created.
+For example, conceptually:
+5 elements
+
+[10][20][30][40][50]
+
+The size doesn't dynamically grow during normal use.
+📦 Dynamic Array
+A dynamic array uses dynamic memory allocation and can be resized by allocating/reallocating memory.
+In C, functions such as:
+malloc(), calloc(), realloc(), free()
+are commonly used to implement dynamic arrays.
+🔗 Linked List
+A linked list consists of separate elements called nodes.
+Each node usually contains:
+Data + Link
+
+Unlike an array, linked-list nodes do not need to be contiguous in memory.
+
+
+
+
+
+Singly Linked List
+Each node contains:
+- Data
+- Pointer to the next node
+[10|•] → [20|•] → [30|NULL]
+
+Movement is normally forward only.
+
+
+
+
+Doubly Linked List
+Each node contains:
+- Previous pointer
+- Data
+- Next pointer
+NULL ← [10] ⇄ [20] ⇄ [30] → NULL
+
+We can move both:
+Forward →
+Backward ←
+
+
+
+
+Circular Linked List
+In a circular linked list, the last node points back to the beginning instead of NULL.
+10 → 20 → 30
+↑         ↓
+└─────────┘
+
+So the list forms a circle. 🔄
+It can be singly circular or doubly circular.
+🔧 Linked List Operations
+Insert
+Adds a new node.
+Possible positions:
+Beginning
+Middle
+End
+
+Delete
+Removes a node from the list.
+Search
+Checks whether a particular value/node exists.
+Traverse
+Visits the nodes one by one.
+10 → 20 → 30 → 40
+
+Reverse
+Changes the direction/order of the list.
+Before:
+10 → 20 → 30
+
+After:
+30 → 20 → 10
+
+📚 Stack
+A stack follows:
+LIFO — Last In, First Out
+Think of a stack of plates. 🍽️
+      ┌────┐
+TOP → │ 30 │  ← Last inserted
+      ├────┤
+      │ 20 │
+      ├────┤
+      │ 10 │
+      └────┘
+
+The last element inserted is the first element removed.
+Stack Using Array
+An array is used to store stack elements.
+A variable such as top keeps track of the top element.
+Stack Using Linked List
+Instead of an array, linked-list nodes are used.
+The top points to the top node.
+It can grow dynamically as memory allows.
+Push
+Push = Insert an element into the stack.
+10 20
+
+Push 30
+
+10 20 30
+
+Pop
+Pop = Remove the top element.
+10 20 30
+
+Pop
+
+10 20
+
+Peek
+Peek = Read the top element without removing it.
+Stack:
+
+10 20 30
+      ↑
+     Peek
+
+Result = 30
+
+🚶 Queue
+A queue normally follows:
+FIFO — First In, First Out
+Think of people standing in a line. 🚶🚶🚶
+Front                     Rear
+  ↓                         ↓
+[10] → [20] → [30] → [40]
+
+10 entered first, so 10 leaves first.
+
+
+
+
+
+Simple Queue
+A simple/linear queue inserts from the rear and removes from the front.
+Enqueue → Rear
+Dequeue → Front
+
+A limitation of an array-based linear queue is that space at the beginning may become unusable once rear reaches the end.
+
+
+
+
+
+Circular Queue
+A circular queue connects the logical end of the array back to the beginning.
+0 → 1 → 2 → 3 → 4
+↑               ↓
+└───────────────┘
+
+This allows previously freed array positions to be reused. 🔄
+
+
+
+
+
+Priority Queue
+In a priority queue, elements are processed according to priority, rather than only their arrival order.
+Example:
+Task A → Priority 3
+Task B → Priority 1
+Task C → Priority 2
+
+The exact meaning of higher/lower numeric priority depends on the implementation.
+This concept is important in task scheduling and operating systems.
+
+
+
+
+
+Deque
+Deque means:
+Double-Ended Queue
+Insertion and deletion can happen at both ends.
+        ↓               ↓
+     Front             Rear
+        ↓               ↓
+      [10][20][30][40]
+        ↑               ↑
+ Insert/Delete     Insert/Delete
+
+Pronounced roughly "deck."
+
+
+
+
+
+🌳 Non-Linear Data Structures
+In a non-linear data structure, elements are not arranged as one simple sequence.
+Important examples:
+- Trees 🌳
+- Graphs 🕸️
+
+
+
+
+
+Tree
+A tree organizes data in a hierarchical structure.
+           A
+         /   \
+        B     C
+       / \
+      D   E
+
+Important terms include:
+- Root
+- Parent
+- Child
+- Leaf
+- Subtree
+Here A is the root.
+
+
+
+
+
+Binary Tree
+A binary tree is a tree where each node can have at most two children.
+Usually called:
+Left Child
+Right Child
+
+Example:
+        10
+       /  \
+      20   30
+     / \
+    40  50
+
+🚶 Tree Traversal
+Traversal means visiting every node of a tree in a particular order.
+Three important depth-first traversals are:
+- Inorder
+- Preorder
+- Postorder
+1️⃣ Inorder
+Order:
+Left → Root → Right
+
+Remember:
+L N R
+2️⃣ Preorder
+Order:
+Root → Left → Right
+
+Remember:
+N L R
+3️⃣ Postorder
+Order:
+Left → Right → Root
+
+Remember:
+L R N
+For this tree:
+        10
+       /  \
+      20   30
+
+the results are:
+Traversal	Result
+Inorder	20 10 30
+Preorder	10 20 30
+Postorder	20 30 10
+
+
+
+
+
+Heap
+A heap is a special complete binary tree that follows a heap-order property.
+Two common types:
+Min Heap
+Max Heap
+
+Min Heap
+The parent is less than or equal to its children.
+        10
+       /  \
+      20   30
+     / \
+    40  50
+
+So the smallest element is at the root.
+Max Heap
+The parent is greater than or equal to its children.
+        50
+       /  \
+      40   30
+     / \
+    20  10
+
+So the largest element is at the root.
+🕸️ Graph
+A graph represents relationships between objects.
+It consists mainly of:
+Vertices + Edges
+
+Example:
+A ─── B
+│     │
+│     │
+C ─── D
+
+🔵 Vertices
+Vertices are the nodes/points in a graph.
+In the above example:
+A, B, C, D
+
+are vertices.
+🔗 Edges
+Edges are the connections between vertices.
+For example:
+A ─── B
+
+The connection between A and B is an edge.
+
+
+
+
+
+Directed Graph
+In a directed graph, edges have a direction.
+A → B
+
+This means the edge goes from A to B.
+It does not automatically mean there is an edge from B to A.
+↔️ Undirected Graph
+In an undirected graph, edges have no direction.
+A ─── B
+
+A is connected to B, and B is connected to A.
+🔍 BFS
+BFS means:
+Breadth-First Search
+It explores a graph/tree level by level.
+Example:
+        A
+       / \
+      B   C
+     / \
+    D   E
+
+A possible BFS order:
+A → B → C → D → E
+
+BFS commonly uses a Queue.
+Remember:
+BFS → Queue
+🔎 DFS
+DFS means:
+Depth-First Search
+It explores one path as deeply as possible before coming back.
+For example:
+        A
+       / \
+      B   C
+     / \
+    D   E
+
+One possible DFS order:
+A → B → D → E → C
+
+The exact order depends on which neighbor is chosen first.
+DFS commonly uses:
+- Stack
+- Recursion
+Remember:
+DFS → Stack / Recursion
+🧠 Final Quick Revision
+Data Structure	Main Idea
+Array	Contiguous same-type elements
+Dynamic Array	Resizable array using dynamic memory
+Singly Linked List	Data + next pointer
+Doubly Linked List	Previous + data + next
+Circular Linked List	Last links back to beginning
+Stack	LIFO
+Queue	FIFO
+Circular Queue	Queue that reuses array positions
+Priority Queue	Process based on priority
+Deque	Insert/delete at both ends
+Tree	Hierarchical data
+Binary Tree	Maximum two children per node
+Heap	Complete binary tree with heap property
+Min Heap	Smallest at root
+Max Heap	Largest at root
+Graph	Vertices connected by edges
+BFS	Level-by-level → Queue
+DFS	Depth-first → Stack/Recursion
