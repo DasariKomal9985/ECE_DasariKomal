@@ -1,0 +1,391 @@
+ Compilation and linking
+When you write a C program, the computer cannot execute the C source code directly. It must be translated into machine code and combined with any required code from other files or libraries.
+
+
+
+
+The complete process is:
+Source file
+main.c
+
+Preprocessor
+Processes #include, #define, macros
+Output: main.i
+
+Compiler
+Translates C into assembly
+Output: main.s
+
+Assembler
+Produces machine-code object file
+Output: main.o
+
+Linker
+Combines object files and resolves references
+
+Executable
+Program ready to load and run
+
+
+Compilation
+Compilation is the process of translating a C source file into lower-level code. In everyday usage, people often use “compilation” to describe the entire build process, but technically, compilation is one stage.
+Linking
+Linking combines object files and required library code or references, resolves symbols between them, and produces an executable or another library.
+For example, if main.c calls a function implemented in math_utils.c, the linker connects the call to that function's definition.
+
+
+
+
+
+
+
+Object files
+An object file contains compiled machine code and supporting information, such as symbols and relocation records. It is usually not a complete executable by itself.
+Common extensions:
+- .c — C source file
+- .h — header file
+- .i — preprocessed C source
+- .s — assembly source
+- .o — object file on Linux
+- .a — static library on Linux
+- .so — shared library on Linux
+Example:
+gcc -c main.c -o main.o
+
+
+The -c option compiles and assembles the source file without linking it into an executable.
+To inspect the object file:
+file main.o
+nm main.o
+objdump -d main.o
+
+
+- file identifies the file format.
+- nm lists symbols.
+- objdump -d displays disassembled machine code.
+
+
+
+
+
+
+
+Symbol table
+A symbol table is information maintained by object files and executables about named entities such as functions and global variables.
+For example:
+int count = 10;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+
+The object file may contain symbols for count and add.
+Common symbol categories:
+Symbol	Meaning
+Defined symbol	An object file provides the symbol's definition
+Undefined symbol	The object file references a symbol defined elsewhere or supplied by a library
+Global symbol	Can be referenced from other linked files when visible
+Local symbol	Restricted to the relevant object file or scope, depending on the symbol
+Check symbols with:
+nm main.o
+
+
+For example, U printf means the object file refers to printf, but does not define it. The linker must resolve that reference.
+Remember: The symbol table helps the linker determine which function or variable a reference refers to.
+
+
+
+
+
+
+Declaration vs definition
+This is one of the most important C concepts for understanding linking.
+Declaration
+A declaration tells the compiler about a name and its type.
+int add(int a, int b);
+
+
+This tells the compiler that a function named add accepts two int parameters and returns an int. It does not provide the function's body.
+Definition
+A definition provides the function implementation.
+int add(int a, int b)
+{
+    return a + b;
+}
+
+
+Variable example
+extern int count;  // Declaration; defined elsewhere
+
+int total = 100;  // Definition
+
+
+extern int count; declares a variable without defining it, assuming this is a file-scope declaration without an initializer. int total = 100; defines a variable and initializes it.
+Declaration	Definition
+Tells the compiler about a name and type	Provides the function body or defines an object
+A function prototype is a declaration	A function body is a definition
+Often placed in a header file	Often placed in a source file
+May refer to something defined elsewhere	Supplies the actual definition
+Important: A declaration alone does not provide a missing function implementation. If a program uses a function but no linked file or library defines it, linking normally fails with an undefined-reference error.
+
+
+
+
+
+
+
+Header files (.h)
+A header file contains declarations and shared definitions that source files need to know about.
+Common contents include:
+- Function prototypes
+- Structure and enumeration declarations
+- Type aliases (typedef)
+- Macros and constants
+- External variable declarations using extern
+Example project:
+math_utils.h
+Function declaration
+int add(int a, int b);
+
+
+
+math_utils.c
+Function definition
+int add(int a, int b) { return a + b; }
+
+
+
+main.c
+Includes the header and calls the function
+#include "math_utils.h"
+
+
+
+#include vs linking
+These are different operations:
+- #include "math_utils.h" makes the header's contents available during preprocessing.
+- Compiling math_utils.c produces math_utils.o.
+- Linking main.o and math_utils.o resolves the call to add().
+A header file does not automatically link the function implementation. It usually provides the information required to compile the caller.
+Use include guards to prevent the same header from being processed repeatedly in one translation unit:
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int add(int a, int b);
+
+#endif
+
+
+
+
+
+
+
+
+Multiple source files
+A real C project is often split into multiple .c files to organize and reuse code.
+Let's create this simple project:
+project/
+├── main.c
+├── math_utils.c
+└── math_utils.h
+
+
+File 1: math_utils.h
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int add(int a, int b);
+
+#endif
+
+
+File 2: math_utils.c
+#include "math_utils.h"
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+
+File 3: main.c
+#include <stdio.h>
+#include "math_utils.h"
+
+int main(void)
+{
+    int result = add(10, 20);
+
+    printf("Result = %d\n", result);
+
+    return 0;
+}
+
+
+Compile and link
+Option A: Compile and link in one command
+gcc main.c math_utils.c -o app
+./app
+
+
+Output:
+Result = 30
+
+
+Option B: Compile each source file separately
+gcc -c main.c -o main.o
+gcc -c math_utils.c -o math_utils.o
+gcc main.o math_utils.o -o app
+./app
+
+
+Output is the same.
+Why use separate compilation? If you change only math_utils.c, you can rebuild that file and link again without recompiling every unchanged source file. Build systems such as make automate this process.
+
+
+
+
+
+
+
+
+Libraries in C 📚
+A library is a collection of reusable functions, code, and related resources that programs can use instead of implementing everything themselves.
+For example, the C standard library provides functions such as:
+- printf() — formatted output
+- scanf() — formatted input
+- strlen() — string length
+- malloc() — dynamic memory allocation
+- memcpy() — memory copying
+There are two common library types:
+- Static library: commonly .a on Linux.
+- Shared library: commonly .so on Linux.
+8. Static linking
+Static linking incorporates the required library code into the executable during the linking stage.
+main.o
+
++
+libmath.a
+
+Executable
+Required library code incorporated
+
+
+Example
+Create a static library from math_utils.o:
+gcc -c math_utils.c -o math_utils.o
+ar rcs libmath.a math_utils.o
+
+
+Link your program against it:
+gcc main.c -L. -lmath -o app
+
+
+Here:
+- ar rcs creates the archive libmath.a.
+- -L. tells GCC to search the current directory for libraries.
+- -lmath requests the library named libmath.
+- -o app names the executable app.
+Run it:
+./app
+
+
+Advantages and disadvantages
+- The executable includes the required library code, so it may be easier to deploy without that particular shared library.
+- Executables can be larger.
+- Updating the library usually requires relinking the executable to incorporate the new code.
+Static linking does not mean that the entire operating system or every dependency is included; that depends on what you link and how.
+
+
+
+
+
+
+
+
+Dynamic linking
+Dynamic linking allows an executable to use a shared library rather than incorporating all of its code into the executable.
+On Linux, a shared library typically has the .so extension.
+Executable: app
+
+Shared library
+libmath.so
+
+The dynamic loader resolves and loads required libraries at program startup or when needed.
+
+Example
+Build a shared library:
+gcc -fPIC -c math_utils.c -o math_utils.o
+gcc -shared -o libmath.so math_utils.o
+
+
+Compile and link the application:
+gcc main.c -L. -lmath -o app
+
+
+For this example, run the executable with the library directory available to the runtime loader:
+LD_LIBRARY_PATH=. ./app
+
+
+Expected output:
+Result = 30
+
+
+LD_LIBRARY_PATH tells the Linux runtime loader to search the current directory for shared libraries. It is useful for testing; system-wide installations normally use standard library directories and loader configuration instead.
+Advantages and disadvantages
+- The executable can be smaller.
+- Multiple processes can share the same loaded library code.
+- A compatible shared library can be updated independently of the executable.
+- The required shared library must be available at runtime, with a compatible ABI and version.
+- Missing or incompatible libraries can prevent the program from starting.
+
+
+
+
+
+
+
+10. Static vs dynamic linking
+Feature				Static linking							Dynamic linking
+Library code			Incorporated into executable					Provided by shared library
+Typical Linux library		.a								.so
+Executable size			Often larger							Often smaller
+Runtime dependency		No dependency on that linked library as a shared object		Requires compatible shared library
+Library updates			Usually requires relinking					May work without relinking if compatibility is preserved
+Sharing library code		Usually separate executable copies of linked code		Shared code pages can be used by multiple processes
+
+
+
+
+
+
+
+Build process
+1. Write function declarations in math_utils.h.
+2. Write the function definition in math_utils.c.
+3. Include the header in main.c so the compiler knows the function's interface.
+4. Compile each .c file into an object file containing machine code, symbols, and relocation information.
+5. Link the object files and any required libraries.
+6. Run the resulting executable; the operating system loads it and its runtime dependencies.
+
+
+
+
+
+
+
+Topic				One-line definition
+Compilation			Translates C source code into lower-level code.
+Object file			Compiled code plus metadata used by the linker.
+Symbol table			Records information about functions, variables, and other symbols.
+Linking	Resolves 		references and combines object files and libraries.
+Declaration			Introduces a name and its type.
+Definition			Provides a function implementation or defines an object.
+Header file			Shares declarations, types, and macros between source files.
+Library	Reusable 		code that programs can use.
+Static linking			Incorporates required library code into the executable.
+Dynamic linking			Uses shared libraries resolved by the runtime loader or linker.
+Multiple source files		Split a project into separate modules that can be compiled and linked together.

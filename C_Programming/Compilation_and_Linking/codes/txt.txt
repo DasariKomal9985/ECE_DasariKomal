@@ -1,0 +1,58 @@
+gcc -c main.c -o main.o
+gcc -c math_utils.c -o math_utils.o
+
+
+gcc main.o math_utils.o -o app
+
+
+
+./app
+
+
+
+math_utils.h
+Declares add()
+
+main.c
+Calls add()
+
+math_utils.c
+Defines add()
+
+
+main.o
+
+math_utils.o
+
+
+Linker → app
+Resolves the call to add()
+
+
+
+
+
+Declaration: int add(int a, int b);
+
+
+
+Definition: The add() function body in math_utils.c.
+
+
+
+Header file: Shares the declaration.
+
+
+
+Object files: main.o and math_utils.o.
+
+
+
+Linking: Connects the call in main.o to the implementation in math_utils.o.
+
+
+
+Executable: app, which prints the result.
+
+
+gcc main.o -o app	
