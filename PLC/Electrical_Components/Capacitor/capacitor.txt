@@ -1,0 +1,80 @@
+⚡ Capacitor 
+1. 🔋 What is a capacitor?
+A capacitor is an electronic component that stores electrical energy in an electric field and releases it when required.
+
+
+
+2. 📘 Basic Concepts
+- Symbol: C
+- Unit: Farad (F)
+- Measuring instrument: Multimeter with capacitance mode
+- Main function: Store and release electrical energy.
+- Construction: Usually consists of two conductive plates separated by an insulating material called a dielectric.
+
+
+
+3. 🤔 Why do we use capacitors?
+- 🔋 Store electrical energy temporarily.
+- ⚡ Smooth voltage fluctuations in power supplies.
+- 🔇 Filter unwanted electrical noise.
+- ⏱️ Create timing and delay circuits.
+- 🔄 Help start certain single-phase motors.
+- 🔌 Couple AC signals while blocking steady DC in suitable circuits.
+
+
+
+4. 🧰 Types of capacitors
+
+1. Electrolytic capacitor
+- Usually has high capacitance.
+- Commonly polarized (+ and −).
+- Used in power supplies and voltage smoothing.
+
+
+
+2. Ceramic capacitor
+- Small and commonly non-polarized.
+- Used for filtering and noise suppression.
+
+
+
+3. Film capacitor
+- Generally non-polarized.
+- Used in filtering, timing, and AC applications.
+
+
+
+4. Motor capacitor
+- Used in suitable single-phase motors.
+- Start capacitors assist starting; run capacitors help maintain motor operation.
+
+
+
+
+5. 🧮 Important formula
+Capacitance is calculated using:
+
+C = Q/V
+
+
+
+Where:
+- \(C\) = Capacitance in farads (F)
+- \(Q\) = Stored charge in coulombs (C)
+- \(V\) = Voltage across the capacitor (V)
+
+
+
+
+Example: If a capacitor stores 10 coulombs of charge at 5 V:
+
+C = 10/5 = 2F 
+
+Therefore, the capacitance is 2 farads.
+
+
+6. 🏭 Capacitors in industrial applications
+- 🔌 Power supplies: Smooth DC voltage.
+- ⚙️ Single-phase motors: Assist starting or running.
+- 🎛️ Control circuits: Provide timing and filtering.
+- ⚡ Power-factor correction: Capacitor banks help improve power factor in AC installations.
