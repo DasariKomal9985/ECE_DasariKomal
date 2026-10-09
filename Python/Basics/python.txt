@@ -1,0 +1,24 @@
+Python is a high-level, interpreted, general-purpose programming language. It is popular because its syntax is simple, readable, and easy to learn.
+
+1. 🐍 What is Python?
+
+- What: A programming language used to develop software and applications.
+- Why: It is easy to read, write, test, and maintain.
+- Where: AI, Machine Learning, Embedded Systems, automation, web development, and data analysis.
+- How: We write Python code in a .py file and execute it using the Python interpreter.
+
+Example: First Python program
+
+print("Hello World")
+
+
+
+Output:
+Hello World
+
+
+Explanation:
+
+- print() displays information on the screen.
+- "Hello World" is a string.
+- Python does not require a semicolon ; at the end of a statement.
