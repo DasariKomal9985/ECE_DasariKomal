@@ -1,0 +1,52 @@
+Git is a version control system (VCS) that tracks changes in your source code and helps you manage different versions of a project.
+
+For example, suppose you're working on a C program:
+main.c
+  ↓
+Version 1: Addition
+  ↓
+Version 2: Subtraction added
+  ↓
+Version 3: Even/Odd added
+
+
+Git helps you track these changes, compare versions, and recover previous work when needed.
+
+
+
+Git vs GitHub
+
+
+Git
+A tool installed on your laptop that tracks code changes and commits.
+
+
+GitHub
+An online platform where you can store Git repositories and collaborate with others.
+
+
+
+2. 🧠 How Git works
+Git has three important areas:
+Working Directory
+Your files: main.c, program.c, etc.
+
+Staging Area
+Changes selected using git add
+
+Local Repository
+Saved snapshots using git commit
+
+Remote Repository (GitHub)
+Upload commits using git push
+
+
+Remember this sequence:
+git add .
+git commit -m "Add C programs"
+git push origin main
+
+
+- git add → select changes.
+- git commit → save a snapshot locally.
+- git push → upload commits to GitHub.

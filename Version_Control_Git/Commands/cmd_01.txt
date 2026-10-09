@@ -1,0 +1,10 @@
+3. 📂 Basic Git commands
+
+Command			Purpose				Example
+git --version		Check Git version		git --version
+git help		Open Git help			git help
+git config --list	Show Git settings		git config --list
+git status		Show current changes		git status
+git init		Create a repository		git init
+git clone URL		Copy a remote repository	git clone URL
+git ls-files		List tracked files		git ls-files
