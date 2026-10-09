@@ -1,0 +1,378 @@
+C Process Memory Model 🧠
+The C process memory model explains how a program's code, variables, function calls, and dynamically allocated memory are organized in memory when a C program runs.
+When you write a C program, it is stored as source code. When you compile and run it, the operating system loads the executable into a process's virtual address space.
+
+
+
+
+
+ C process memory layout
+
+Text / Code Section
+Compiled machine instructions
+
+Read-Only Data (.rodata)
+String literals, constant data
+
+Initialized Data (.data)
+Initialized global and static variables
+
+BSS (.bss)
+Zero-initialized or uninitialized static-storage variables
+
+Heap
+Dynamic memory: malloc(), calloc(), realloc()
+
+Stack
+Function calls, local variables, return information
+
+
+
+
+
+ Text / Code section
+The text section stores the compiled machine instructions that the CPU executes.
+Example:
+#include <stdio.h>
+
+void display(void)
+{
+    printf("Hello\n");
+}
+
+int main(void)
+{
+    display();
+    return 0;
+}
+
+
+- main() contains executable instructions.
+- display() contains executable instructions.
+- After compilation, their machine instructions are part of the program's code section.
+- This section is typically mapped as readable and executable, but not writable.
+Remember: Code section = instructions to execute.
+
+
+
+
+
+ Read-only data section (.rodata)
+This section commonly stores constant data that should not be modified, such as string literals.
+#include <stdio.h>
+
+int main(void)
+{
+    printf("Hello World\n");
+    return 0;
+}
+
+
+The string literal "Hello World\n" may be stored in read-only data.
+Another example:
+const char *message = "Welcome";
+
+
+Here, the string literal "Welcome" is typically stored in read-only storage. The pointer variable message itself is a separate object; its storage depends on where it is declared.
+Important: const does not automatically mean the object is stored in .rodata. Storage depends on the object, compiler, and platform.
+
+
+
+
+
+
+ Initialized data section (.data)
+The .data section typically stores global and static variables that have explicit nonzero initial values.
+#include <stdio.h>
+
+int count = 10;          // Global initialized variable
+static int total = 50;   // Static initialized variable
+
+int main(void)
+{
+    printf("%d %d\n", count, total);
+    return 0;
+}
+
+
+- count typically resides in .data.
+- total typically resides in .data.
+- Their storage exists for the program's lifetime.
+Remember: Initialized global/static variables → commonly .data.
+
+
+
+
+
+
+ BSS section (.bss)
+BSS typically stores global and static variables that are uninitialized or initialized to zero.
+#include <stdio.h>
+
+int count;              // Global, zero-initialized
+static int total;       // Static, zero-initialized
+int value = 0;          // May also be placed in BSS
+
+int main(void)
+{
+    printf("%d %d %d\n", count, total, value);
+    return 0;
+}
+
+
+All three variables have the value 0 before main() begins.
+- count typically resides in BSS.
+- total typically resides in BSS.
+- value may also be placed in BSS by the compiler and linker.
+The executable often records the size of this region rather than storing all its zero bytes in the file.
+Remember: Zero-initialized global/static variables → commonly BSS.
+
+
+
+
+
+
+ Global variables 🌍
+A global variable is declared outside all functions and can generally be accessed by functions within its scope.
+#include <stdio.h>
+
+int number = 100;
+
+void display(void)
+{
+    printf("%d\n", number);
+}
+
+int main(void)
+{
+    display();
+    return 0;
+}
+
+
+- number is a global variable.
+- It has static storage duration, so it exists for the entire program execution.
+- Because it has a nonzero initializer, it typically resides in .data.
+Global variables are not a separate memory section. Their actual section depends on initialization and other properties.
+
+
+
+
+
+
+Local variables
+A local variable is declared inside a function or block and can normally be accessed only within that scope.
+#include <stdio.h>
+
+int main(void)
+{
+    int number = 10;
+    int result = 20;
+
+    printf("%d %d\n", number, result);
+    return 0;
+}
+
+
+- number and result are local variables.
+- They have automatic storage duration.
+- They are commonly stored in the stack frame or held in CPU registers.
+Important: Not every local variable must physically be on the stack. The compiler can optimize its storage.
+
+
+
+
+
+ Function arguments
+Function arguments provide input values to a function.
+#include <stdio.h>
+
+void add(int a, int b)
+{
+    printf("%d\n", a + b);
+}
+
+int main(void)
+{
+    add(10, 20);
+    return 0;
+}
+
+
+Here, a and b are function parameters, receiving the values 10 and 20.
+Depending on the calling convention and compiler, arguments may be passed through CPU registers, stack locations, or a combination of both.
+Remember: Function arguments are inputs passed to a function.
+
+
+
+
+
+
+ Return address
+A return address identifies where execution should continue after a function finishes.
+#include <stdio.h>
+
+void display(void)
+{
+    printf("Inside display\n");
+}
+
+int main(void)
+{
+    printf("Before function\n");
+    display();
+    printf("After function\n");
+
+    return 0;
+}
+
+
+Execution order:
+1. Print Before function.
+2. Call display().
+3. Print Inside display.
+4. Return to the instruction after the call.
+5. Print After function.
+The return address may be kept in a CPU register, saved on the stack, or handled in another architecture-specific way.
+
+
+
+
+
+
+Heap memory
+The heap is used for dynamic memory allocation when a program requests memory at runtime.
+C provides functions such as:
+- malloc() — allocates memory without initializing its contents.
+- calloc() — allocates memory and initializes its bytes to zero.
+- realloc() — changes the size of an existing allocation.
+- free() — releases allocated memory.
+Example:
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    int *ptr = malloc(5 * sizeof(int));
+
+    if (ptr == NULL)
+    {
+        return 1;
+    }
+
+    ptr[0] = 10;
+    ptr[1] = 20;
+
+    printf("%d %d\n", ptr[0], ptr[1]);
+
+    free(ptr);
+    ptr = NULL;
+
+    return 0;
+}
+
+
+In this example:
+- ptr is a local pointer variable, commonly stored in the stack frame or a register.
+- The memory allocated by malloc() is on the heap in a typical implementation.
+- free(ptr) releases the allocation.
+Remember: The pointer and the memory it points to are two different things.
+
+
+
+
+
+
+Stack frame
+A stack frame is the area of memory or equivalent execution state associated with a particular function call.
+It may contain:
+- Local variables
+- Saved registers
+- Function arguments, depending on the calling convention
+- Return-address information, depending on the architecture
+Example:
+#include <stdio.h>
+
+int add(int a, int b)
+{
+    int result = a + b;
+    return result;
+}
+
+int main(void)
+{
+    int answer = add(10, 20);
+
+    printf("%d\n", answer);
+    return 0;
+}
+
+
+Conceptually, when add(10, 20) executes, the function's state may look like this:
+Conceptual add() stack frame
+Return information
+Where execution continues
+
+Parameter a = 10
+
+Parameter b = 20
+
+Local result = 30
+
+Illustrative only: the actual layout and locations are compiler- and architecture-dependent.
+
+When add() returns, its function-call state is no longer needed, and execution continues in main().
+
+
+
+
+
+
+
+Text/code: Compiled instructions.
+
+
+
+Read-only data: Commonly stores string literals and other read-only constants.
+
+
+
+.data: Initialized global and static variables.
+
+
+
+BSS: Uninitialized or zero-initialized global and static variables.
+
+
+
+Stack: Commonly holds function-call state and automatic local variables.
+
+
+
+Heap: Dynamic memory allocated using malloc(), calloc(), and realloc().
+
+
+
+Global variable: Declared outside functions; typically has program-long lifetime.
+
+
+
+Local variable: Declared inside a block; scope is limited to that block.
+
+
+
+Function argument: Input supplied to a function.
+
+
+
+Return address: Information identifying where execution resumes after a call.
+
+
+
+Stack frame: State associated with a function call.
+
+
+
+
+
+
