@@ -1,0 +1,469 @@
+Types of errors in C
+Error type			Meaning	Example
+Syntax error			C code violates language syntax	Missing ;
+Compile-time error		Compiler cannot compile the program	Undeclared variable
+Warning	Compiler 		detects a possible problem	Using an uninitialized variable
+Linker error			Required symbol definition is missing or duplicated	Undefined reference to a function
+Runtime error			Problem occurs while the program executes	Invalid memory access
+Logical error			Program runs but gives the wrong result	Using + instead of *
+
+
+
+
+
+Segmentation fault
+A segmentation fault (SIGSEGV) occurs when a process attempts a memory access that the operating system cannot permit.
+Common causes include:
+- Dereferencing a null pointer
+- Dereferencing an invalid or uninitialized pointer
+- Accessing memory after it has been freed
+- Writing to memory that is not writable
+- Accessing memory outside an array's bounds, when this results in an invalid access
+C has undefined behavior for many invalid pointer operations, so not every memory error produces a segmentation fault.
+Example 1: Dereferencing a null pointer
+#include <stdio.h>
+
+int main(void)
+{
+    int *ptr = NULL;
+
+    *ptr = 100;
+
+    printf("%d\n", *ptr);
+
+    return 0;
+}
+
+
+The problem is this line:
+*ptr = 100;
+
+
+ptr does not point to a valid int object. The program has undefined behavior and will commonly crash with a segmentation fault on Linux.
+How to debug it
+Compile with debug information:
+gcc -g -O0 main.c -o app
+
+
+Run it:
+./app
+
+
+If it crashes, use GDB:
+gdb ./app
+
+
+At the GDB prompt:
+run
+backtrace
+print ptr
+list
+
+
+These commands help identify the crashing function, inspect the pointer, and display the relevant source code.
+Correct version
+#include <stdio.h>
+
+int main(void)
+{
+    int value = 100;
+    int *ptr = &value;
+
+    printf("%d\n", *ptr);
+
+    return 0;
+}
+
+
+Here, ptr points to a valid object.
+
+
+
+
+
+
+
+Core dumps
+A core dump is a snapshot of a process's state when it terminates abnormally. Depending on the system configuration, it may contain memory contents, register values, thread states, and other debugging information.
+You can load a core dump in GDB to investigate a crash after the process has already stopped.
+Step 1: Enable core dumps
+In a Linux terminal:
+ulimit -c unlimited
+
+
+This removes the shell's soft limit on core-dump size, subject to system limits and configuration.
+Check the setting:
+ulimit -c
+
+
+If the output is unlimited, the shell's core-size limit is unlimited.
+Step 2: Compile a program that crashes
+Save this as crash.c:
+#include <stdio.h>
+
+int main(void)
+{
+    int *ptr = NULL;
+
+    printf("Starting program\n");
+    fflush(stdout);
+
+    *ptr = 100;
+
+    return 0;
+}
+
+
+Compile with debugging information:
+gcc -g -O0 crash.c -o crash
+
+
+Run:
+./crash
+
+
+If core dumps are enabled and permitted, the program may produce a core dump. On many Linux systems, the dump is handled by systemd-coredump or another configured core handler rather than being saved as a file named core in the current directory.
+Step 3: Find the core dump
+On a system using systemd-coredump, try:
+coredumpctl list
+
+
+Inspect a particular crash:
+coredumpctl info
+
+
+Open a crash in GDB:
+coredumpctl debug
+
+
+Depending on your system, you may need to specify the executable or PID.
+If you have a core file directly, use:
+gdb ./crash core
+
+
+Inside GDB:
+backtrace
+info registers
+print ptr
+list
+
+
+These commands can reveal where the crash happened and the values available for inspection.
+Remember: A core dump is useful after a crash because it preserves evidence of the process state. Be careful when sharing core dumps: they can contain passwords, tokens, personal data, and other sensitive memory contents.
+
+
+
+
+
+
+
+Compiler warnings
+A compiler warning indicates that the compiler found code that might be incorrect, unsafe, or unintended, even though it may still be able to compile the program.
+Consider this example:
+#include <stdio.h>
+
+int main(void)
+{
+    int value;
+
+    printf("%d\n", value);
+
+    return 0;
+}
+
+
+value is an uninitialized automatic variable. Reading its indeterminate value this way results in undefined behavior for this example.
+Compile with warnings enabled:
+gcc -Wall -Wextra -Wpedantic -g main.c -o app
+
+
+Common options:
+Option	Purpose
+-Wall	Enables many useful warnings
+-Wextra	Enables additional warnings
+-Wpedantic	Warns about certain nonstandard constructs
+-Werror	Treats warnings as errors
+-g	Adds debugging information
+-O0	Disables most optimization for easier debugging
+The precise warnings depend on the compiler version and the code.
+Example: format warning
+#include <stdio.h>
+
+int main(void)
+{
+    int age = 25;
+
+    printf("%f\n", age);
+
+    return 0;
+}
+
+
+%f is for a double argument in printf(), but age is an int. This mismatch causes undefined behavior.
+Correct it:
+printf("%d\n", age);
+
+
+Best practice
+During development, a useful starting command is:
+gcc -Wall -Wextra -Wpedantic -g -O0 main.c -o app
+
+
+Fix warnings instead of ignoring them. For larger projects, -Werror can be helpful in continuous integration once the warning policy is established, though it may make builds sensitive to new compiler warnings.
+
+
+
+
+
+
+
+
+
+What is GDB?
+GDB stands for GNU Debugger. It is a command-line debugging tool used to examine and control a running program or investigate a program after it crashes.
+With GDB, you can:
+- Run a program step by step.
+- Stop execution at a particular line or function using breakpoints.
+- Inspect variables and pointer values.
+- Examine function calls using a backtrace.
+- Step into and out of functions.
+- Inspect CPU registers and machine instructions.
+- Debug core dumps.
+- Investigate crashes and unexpected results.
+GDB is commonly used with C and C++ on Linux.
+5.1 Install GDB
+On Ubuntu:
+sudo apt update
+sudo apt install gdb build-essential
+
+
+Check the installed version:
+gdb --version
+
+
+Get GDB's built-in help:
+gdb --help
+
+
+5.2 Compile a C program for debugging
+Create main.c:
+#include <stdio.h>
+
+int add(int a, int b)
+{
+    int result = a + b;
+    return result;
+}
+
+int main(void)
+{
+    int x = 10;
+    int y = 20;
+    int sum = add(x, y);
+
+    printf("Sum = %d\n", sum);
+
+    return 0;
+}
+
+
+Compile it:
+gcc -g -O0 -Wall -Wextra main.c -o app
+
+
+Why these options?
+- -g: adds debugging information, including source-line information.
+- -O0: disables optimization, making source-level debugging easier.
+- -Wall -Wextra: enables useful warnings.
+Run the program normally:
+./app
+
+
+Output:
+Sum = 30
+
+
+Now start GDB:
+gdb ./app
+
+
+You should see a GDB prompt similar to:
+(gdb)
+
+
+You can now enter debugger commands.
+
+
+
+
+Starting and stopping a program
+Command				Meaning
+run or r			Start the program
+start				Start and stop temporarily at the beginning of main()
+continue or c			Continue running until the next stopping point
+kill				Stop the debugged process
+quit or q			Exit GDB
+help				Show command help
+help run			Explain a particular command
+apropos breakpoint		Search help topics for a keyword
+
+
+
+
+(gdb) run
+
+
+This executes the program. If no breakpoints or other stopping conditions exist, it normally runs to completion.
+For a program that needs command-line arguments:
+(gdb) run arg1 arg2
+
+
+You can also configure arguments before starting:
+(gdb) set args arg1 arg2
+(gdb) run
+
+
+
+Breakpoints
+A breakpoint tells GDB to pause execution at a chosen location.
+Command					Meaning
+break main				Stop at the beginning of main()
+break add				Stop when execution reaches add()
+break main.c:12				Set a breakpoint at line 12 of main.c
+info breakpoints			List breakpoints and watchpoints
+disable 1				Disable breakpoint number 1
+enable 1				Enable breakpoint number 1
+delete 1				Delete breakpoint number 1
+clear main.c:12				Clear a breakpoint at that source location
+
+
+(gdb) break main
+(gdb) run
+
+
+GDB pauses when execution reaches the breakpoint.
+You can then inspect variables and step through the program.
+
+
+
+
+Stepping through code
+These are among the most important GDB commands.
+Command					Meaning
+next or n				Execute the next source line without stepping into called functions
+step or s				Execute the next source line, stepping into a called function when possible
+finish					Continue until the current function returns
+continue or c				Resume execution
+until					Continue until a later line in the current frame or a specified location
+nexti or ni				Execute one machine instruction without stepping into a called function
+stepi or si				Execute one machine instruction, stepping into calls
+advance main.c:15			Continue until execution reaches a specified location, if reached first
+
+
+(gdb) break main
+(gdb) run
+(gdb) next
+(gdb) next
+(gdb) step
+
+
+
+Inspect variables
+Command			Meaning
+print x or p x		Print the value of x
+print sum		Print the value of sum
+print x + y		Evaluate an expression
+display x		Automatically display x each time execution stops
+info locals		Show local variables in the current function frame
+info args		Show the current function's arguments
+undisplay 1		Remove automatic display number 1
+set variable x = 100	Change a variable's value while debugging
+
+
+
+(gdb) break add
+(gdb) run
+(gdb) print a
+(gdb) print b
+(gdb) next
+(gdb) print result
+
+
+
+GDB stack and function-call commands
+A stack trace shows how execution reached the current location. It is especially valuable when a program crashes deep inside multiple function calls.
+Command				Meaning
+backtrace or bt			Show the function-call stack
+backtrace 			full	Show stack frames and available local variables
+frame 0				Select the current frame
+frame 1				Select the caller's frame
+up				Move one frame toward the caller
+down				Move one frame toward the called function
+info frame			Show information about the selected frame
+info args			Show arguments for the selected frame
+info locals			Show local variables for the selected frame
+return				Force the selected function to return immediately
+return 100			Force a return value of 100 where supported
+
+Example:
+(gdb) backtrace
+(gdb) frame 1
+(gdb) info args
+(gdb) info locals
+
+
+
+
+
+
+
+
+Save this as debug.c:
+#include <stdio.h>
+
+int calculate(int a, int b)
+{
+    int result = a - b;
+    return result;
+}
+
+int main(void)
+{
+    int x = 20;
+    int y = 10;
+
+    int answer = calculate(x, y);
+
+    printf("Answer = %d\n", answer);
+
+    return 0;
+}
+
+
+Suppose you intended to add the numbers, but the program subtracts them.
+Step 1: Compile
+gcc -g -O0 -Wall -Wextra debug.c -o debug
+
+
+Step 2: Start GDB
+gdb ./debug
+
+
+Step 3: Set a breakpoint
+(gdb) break calculate
+(gdb) run
+
+
+GDB pauses at the beginning of calculate().
+Step 4: Inspect arguments
+(gdb) print a
+(gdb) print b
+
+
+You should see that a is 20 and b is 10.
+Step 5: Execute the calculation
+(gdb) next
+(gdb) print result
+
+
+The value of result will be 10.
