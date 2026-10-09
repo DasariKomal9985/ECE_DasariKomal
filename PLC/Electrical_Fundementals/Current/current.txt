@@ -1,0 +1,69 @@
+⚡ What is Current?
+Definition: Electric current is the rate at which electric charge flows through a conductor or electrical circuit.
+In simple words, current tells us how much electric charge flows through a circuit per second.
+
+
+
+
+Symbol and Unit
+- Symbol: \(I\)
+- SI unit: Ampere (A)
+- Measuring instrument: Ammeter
+
+
+Formula
+I = Q/t
+
+Where:
+- \(I\) = Current (amperes)
+- \(Q\) = Electric charge (coulombs)
+- \(t\) = Time (seconds)
+
+
+
+Example:
+If 10 coulombs of charge flow through a wire in 2 seconds:
+
+I = 10/2 ie: 5A..
+
+Therefore, the current is 5 amperes.
+Types of Current
+
+
+
+
+DC — Direct Current
+Current flows in one direction.
+Example: batteries and 24 V DC PLC control circuits.
+
+
+
+
+
+AC — Alternating Current
+Current periodically changes direction.
+Example: household electrical supply and industrial AC motors.
+
+
+
+What determines the current?
+According to Ohm's Law:
+
+I = V/R
+
+Where \(V\) is voltage and \(R\) is resistance.
+For a fixed resistance:
+- Higher voltage → higher current.
+- Lower voltage → lower current.
+
+
+Industrial example 🏭
+Suppose a 24 V DC device has a resistance of 12 Ω.
+
+I = 24/12 ie: 2A
+
+The current is 2 amperes.
+
+In a PLC control panel, current flows through devices such as sensors, relay coils and other electrical loads when their circuits are energized.
+
+Remember: Voltage is the electrical potential difference, current is the rate of charge flow, and resistance opposes current flow. ⚡
