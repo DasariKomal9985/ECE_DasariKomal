@@ -1,0 +1,20 @@
+
+Command Use Example
+pwd Show current directory pwd
+ls List files and directories ls
+ls -l Detailed file listing ls -l
+ls -a Show hidden files ls -a
+ls -la Detailed + hidden files ls -la
+cd folder Enter a directory cd Documents
+cd .. Go one directory back cd ..
+cd ../.. Go back two directories cd ../..
+cd / Go to root directory cd /
+cd ~ Go to home directory cd ~
+cd Go to home directory cd
+cd - Return to previous directory cd -
+2. Directory Commands
+Command Use Example
+mkdir Create directory mkdir Test
+mkdir -p Create nested directories mkdir -p A/B/C
+rmdir Remove empty directory rmdir Test
+rm -r Remove directory and contents rm -r Test
