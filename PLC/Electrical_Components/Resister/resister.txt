@@ -1,0 +1,178 @@
+1. What is a resistor?
+A resistor is an electronic component that provides resistance to the flow of electric current in a circuit.
+- Symbol: R
+- Unit: Ohm Omega
+- Measuring instrument: Ohmmeter or a multimeter set to resistance mode
+- Circuit symbols: A zigzag line or a rectangular box, depending on the drawing standard.
+
+
+
+
+
+2. 🤔 Why do we need a resistor?
+A resistor is used to control current and create a required voltage drop in a circuit.
+Its main purposes are:
+- 🛡️ Protect components: Limit current to protect LEDs and other sensitive components.
+- 🎚️ Control current: Set how much current flows through a circuit.
+- ⚡ Drop voltage: Produce a voltage drop when current flows through it.
+- 📡 Set signal levels: Help create voltage-divider circuits for sensors and electronic inputs.
+- ⏱️ Control timing: Work with capacitors to create timing and filtering circuits.
+- 🔥 Produce heat: Convert electrical energy into heat, as in power resistors.
+- 🧪 Measure current: A small resistor, called a shunt resistor, can be used to measure current from its voltage drop.
+Example: An LED connected directly to a suitable voltage source may draw excessive current and get damaged. A series resistor limits that current. 💡
+
+
+
+
+
+3. 🔌 How does a resistor work?
+A resistor opposes the flow of current. For an ordinary fixed resistor, when its resistance increases and the supply voltage stays constant, the current decreases.
+Ohm's Law explains the relationship:
+
+V = IR
+
+
+I = V/R
+
+
+
+Where:
+- \(V\) = Voltage in volts
+- \(I\) = Current in amperes
+- \(R\) = Resistance in ohms
+
+
+
+
+
+4. 📏 What is resistance?
+Resistance is the opposition a material or component provides to electric current.
+- Symbol: R
+- Unit: Ohm 
+- Higher resistance generally means lower current at the same applied voltage.
+- Lower resistance generally means higher current at the same applied voltage.
+
+Common resistance units:
+
+Unit	Equivalent
+1 ohm (Ω)	1 Ω
+1 kilo-ohm (kΩ)	1,000 Ω
+1 mega-ohm (MΩ)	1,000,000 Ω
+For example 4.7kohm = 4,700 ohm
+
+
+
+
+
+5. 🌈 What is resistor colour coding?
+Resistors often have coloured bands printed on their bodies. These bands tell you the resistor's resistance value and tolerance.
+Colour coding is useful because tiny resistors may not have enough space to print their values as numbers.
+Resistor colour-code chart
+Colour		Digit		Multiplier
+⚫ Black	0		×1
+🟤 Brown	1		×10
+🔴 Red		2		×100
+🟠 Orange	3		×1,000
+🟡 Yellow	4		×10,000
+🟢 Green	5		×100,000
+🔵 Blue		6		×1,000,000
+🟣 Violet	7		×10,000,000
+🩶 Grey		8		×100,000,000
+⚪ White	9		×1,000,000,000
+🥇 Gold		—		×0.1
+🥈 Silver	—		×0.01
+Gold and silver are also commonly used for tolerance bands.
+
+
+
+
+What is tolerance?
+
+Tolerance tells you how much the actual resistance may differ from its marked nominal value.
+Band colour	Typical tolerance
+Brown		±1%
+Red		±2%
+Green		±0.5%
+Blue		±0.25%
+Violet		±0.1%
+Grey		±0.05%
+Gold		±5%
+Silver		±10%
+No band		±20%
+
+
+How to read a 4-band resistor
+A typical 4-band resistor uses:
+1. First band — first digit
+2. Second band — second digit
+3. Third band — multiplier
+4. Fourth band — tolerance
+
+Example: Brown – Black – Red – Gold
+
+- Brown = 1
+- Black = 0
+- Red = ×100
+- Gold = ±5%
+
+Calculation:
+
+R = 10*100=1000ohm
+
+Therefore, the resistor is 1 kΩ ±5%.
+Its actual resistance may typically lie between 950 Ω and 1,050 Ω.
+
+
+
+
+
+6. 🧰 Types of resistors
+Resistors can be classified as fixed, variable, or special-purpose resistors.
+
+
+
+
+
+
+
+
+
+1. Fixed resistor
+Its resistance is designed to remain approximately constant under specified operating conditions.
+- Carbon film
+- Metal film
+- Metal oxide
+- Wire-wound
+📌 Example: A 1 kΩ resistor used in a circuit.
+
+
+
+2. Variable resistor
+Its resistance or output voltage can be adjusted.
+- Potentiometer
+- Rheostat
+- Trimmer resistor
+📌 Example: A potentiometer used to adjust volume or set a control signal.
+
+
+
+
+3. Thermistor
+Its resistance changes significantly with temperature.
+- NTC: resistance decreases as temperature increases.
+- PTC: resistance increases as temperature increases over its relevant operating range.
+📌 Example: Temperature sensing and protection.
+
+
+
+
+4. LDR (Light Dependent Resistor)
+Its resistance changes according to the intensity of light. It typically decreases when light intensity increases.
+📌 Example: Automatic streetlights.
+
+
+
+
+5. Power resistor
+Designed to dissipate comparatively higher amounts of electrical power.
+📌 Example: Braking circuits, current limiting, and power supplies.
