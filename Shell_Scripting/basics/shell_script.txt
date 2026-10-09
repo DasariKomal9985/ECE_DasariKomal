@@ -1,0 +1,72 @@
+What is Shell Scripting? 💻
+
+Shell scripting is a way to write a sequence of Linux commands in a file and execute them together.
+
+- Shell: A program that accepts commands and communicates with the operating system.
+- Script: A file containing a sequence of commands.
+- Shell script: A file containing shell commands and programming logic.
+
+
+For example, instead of typing commands one by one in a terminal, you can write them in a file called add.sh and execute the entire program.
+
+
+Why do we use shell scripting?
+- ⚙️ Automate repetitive tasks.
+- 📂 Create, copy, and delete files.
+- 🔧 Test Linux kernel modules.
+- 🖥️ Execute system commands automatically.
+- 📊 Monitor CPU, memory, and disk usage.
+- 🐧 Automate embedded Linux and device-driver testing.
+
+
+
+Basic shell script structure
+Let's create a simple shell script.
+#!/bin/bash
+
+echo "Hello World"
+
+
+Explanation:
+Code	Meaning
+#!/bin/bash	Specifies Bash as the interpreter.
+echo	Prints text to the terminal.
+"Hello World"	The text to display.
+How to execute a shell script
+Step 1: Create a file.
+nano hello.sh
+
+
+Step 2: Write the code and save it.
+Step 3: Give execute permission.
+chmod +x hello.sh
+
+
+Step 4: Execute the script.
+./hello.sh
+
+
+Output:
+Hello World
+
+
+You can also execute it using:
+bash hello.sh
+
+
+
+
+
+Important shell scripting concepts 📝
+
+Concept		Example			Purpose
+Shebang		#!/bin/bash		Selects the interpreter
+Output		echo "Hello"		Displays text
+Input		read num		Accepts user input
+Variable	a=10			Stores a value
+Arithmetic	sum=$((a+b))		Performs calculations
+Condition	if ... then		Makes decisions
+Comparison	-eq, -gt, -lt		Compares integers
+Loop		for, while		Repeats commands
+Function	my_function() { ...; }	Reuses commands
+Exit status	$?			Gets the previous command's exit status
