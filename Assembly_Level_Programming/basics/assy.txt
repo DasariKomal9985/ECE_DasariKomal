@@ -1,0 +1,49 @@
+1. What is Assembly Level Programming? 💻
+Definition: Assembly Level Programming is a low-level programming language that uses mnemonic instructions to communicate with a processor.
+For example:
+- ADD — Addition
+- SUB — Subtraction
+- MUL — Multiplication
+- MOV — Move data
+- CMP — Compare values
+- JMP — Jump to another instruction
+
+
+
+
+
+
+High-level C vs Assembly
+C program:
+int a = 10, b = 5;
+int sum = a + b;
+
+
+Assembly example (8086):
+MOV AX, 10
+MOV BX, 5
+ADD AX, BX
+
+
+Here, the processor adds 10 and 5, and the result 15 is stored in register AX.
+
+
+
+
+2. Important Assembly Concepts 🧠
+Term			Meaning
+Register		Small, fast storage inside the CPU
+MOV			Copies data from source to destination
+ADD			Adds two operands
+SUB			Subtracts the source from the destination
+MUL			Multiplies operands
+CMP			Compares two operands
+JMP			Jumps to another instruction
+Label			A named location in a program
+Flag			A status bit updated by certain instructions
+
+
+
+
+
+
