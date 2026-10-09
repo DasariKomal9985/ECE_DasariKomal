@@ -1,0 +1,78 @@
+⚡ Voltage
+1. What is Voltage?
+Voltage is the electrical potential difference between two points in an electrical circuit. It provides the push that drives electric current through a circuit. ⚡
+
+
+
+
+
+2. 📘 Basic Concepts
+- Symbol: V
+- SI Unit: Volt (V)
+- Measuring Instrument: Voltmeter
+- Measurement: A voltmeter is connected in parallel across a component or power supply.
+- Common units:
+  - 1 millivolt (mV) = 0.001 V
+  - 1 volt (V) = 1,000 mV
+  - 1 kilovolt (kV) = 1,000 V
+
+
+
+
+3. 🔋 Types of Voltage
+1. DC Voltage (Direct Current) 🔋
+- Polarity remains the same: positive (+) and negative (−).
+- Examples: batteries, 12 V DC supplies, and 24 V DC PLC control circuits.
+- Commonly used to power industrial sensors and control systems.
+2. AC Voltage (Alternating Current) 🏠
+- Voltage changes its polarity periodically.
+- Examples: household electricity and industrial AC power supplies.
+- Commonly used to operate AC motors and industrial machines.
+
+
+
+
+
+4. 🔌 Relationship Between Voltage, Current and Resistance
+According to Ohm’s Law:
+
+V = I*R
+
+Where:
+- \(V\) = Voltage in volts (V)
+- \(I\) = Current in amperes (A)
+- \(R\) = Resistance in ohms (Ω)
+Example: Suppose a circuit has a current of 2 A and a resistance of 6 Ω.
+
+V = 2*6 = 12V
+
+Therefore, the voltage is 12 V. ✅
+
+
+
+
+
+5. 💡 How Voltage Works in a PLC Panel
+Imagine a PLC control panel in an industrial machine:
+- 🔌 The power supply receives 230 V AC.
+- ⚙️ The SMPS converts it into 24 V DC.
+- 📡 Sensors receive 24 V DC to operate.
+- 🧠 The PLC reads the sensor signals.
+- 🔄 The PLC output may control a relay or contactor, which switches a machine load.
+Important: Voltage alone does not determine the current. Current also depends on the load’s resistance or electrical characteristics.
+
+
+
+
+
+6. ⚠️ Important Points to Remember
+- Higher voltage can drive more current through the same fixed resistance.
+- If resistance increases while voltage remains constant, current decreases.
+- Voltage is measured in volts; current is measured in amperes.
+- Never measure voltage by connecting a multimeter in current mode across a power supply. This can cause a short circuit and damage the meter.
+- ⚡ Industrial voltages can be dangerous. Always follow electrical safety procedures.
+
+
+
+
+📝 One-line definition: Voltage is the electrical potential difference between two points that drives electric current through a circuit.
