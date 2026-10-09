@@ -1,0 +1,645 @@
+Multi-File Programming in C 💻
+Multi-file programming means dividing a C program into multiple source files instead of writing everything inside one large .c file.
+For example, in an embedded project, you might separate your code like this:
+- main.c — main program and application flow
+- gpio.c — GPIO operations
+- uart.c — UART communication
+- sensor.c — sensor operations
+- sensor.h — sensor function declarations
+- Makefile — commands for building the complete project
+This makes your program easier to maintain, debug, reuse, and expand.
+We'll learn .c files, .h files, extern, static functions, static global variables, and then Makefiles in detail.
+
+
+
+
+
+
+
+
+What are .c files?
+A .c file is a C source file. It contains function definitions, variable definitions, and executable logic.
+Example: math_utils.c
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int subtract(int a, int b)
+{
+    return a - b;
+}
+
+
+This file defines two functions:
+- add() adds two numbers.
+- subtract() subtracts two numbers.
+You can compile this file separately:
+gcc -c math_utils.c -o math_utils.o
+
+
+This produces math_utils.o, an object file that can be linked with other object files.
+
+
+
+
+
+
+
+What are .h files?
+A .h file is a header file. It typically contains declarations that other source files need to use.
+Example: math_utils.h
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int add(int a, int b);
+int subtract(int a, int b);
+
+#endif
+
+
+These lines are function declarations, also called function prototypes.
+They tell the compiler:
+- The function name
+- The parameter types
+- The return type
+The actual function bodies remain in math_utils.c.
+How .c and .h files work together
+math_utils.h
+Declarations: what functions are available
+
+main.c
+Includes the header and calls the functions
+
+Linked with
+
+math_utils.c
+Definitions: how the functions work
+
+Executable program
+
+
+Remember: .h usually declares functions; .c implements them. Including a header does not automatically link the corresponding .c file.
+
+
+
+
+
+
+
+
+Complete multi-file example
+Create a directory containing these three files.
+File 1: math_utils.h
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int add(int a, int b);
+int multiply(int a, int b);
+
+#endif
+
+
+File 2: math_utils.c
+#include "math_utils.h"
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int multiply(int a, int b)
+{
+    return a * b;
+}
+
+
+File 3: main.c
+#include <stdio.h>
+#include "math_utils.h"
+
+int main(void)
+{
+    printf("Addition = %d\n", add(10, 20));
+    printf("Multiplication = %d\n", multiply(10, 20));
+
+    return 0;
+}
+
+
+Compile and run:
+gcc main.c math_utils.c -o app
+./app
+
+
+Output:
+Addition = 30
+Multiplication = 200
+
+
+The compiler processes both source files, and the linker connects the function calls to their definitions.
+
+
+
+
+
+
+
+
+What is extern?
+extern is a storage-class specifier commonly used to declare a variable or function that is defined elsewhere.
+It tells the compiler that the name refers to an entity whose definition is provided elsewhere, rather than creating a separate variable definition in the usual case.
+Example: sharing a global variable between files
+Project structure:
+project/
+├── main.c
+├── data.c
+└── data.h
+
+
+data.h
+#ifndef DATA_H
+#define DATA_H
+
+extern int count;
+
+void increment(void);
+
+#endif
+
+
+data.c
+#include "data.h"
+
+int count = 10;
+
+void increment(void)
+{
+    count++;
+}
+
+
+main.c
+#include <stdio.h>
+#include "data.h"
+
+int main(void)
+{
+    printf("Before = %d\n", count);
+
+    increment();
+
+    printf("After = %d\n", count);
+
+    return 0;
+}
+
+
+Compile and run:
+gcc main.c data.c -o app
+./app
+
+
+Output:
+Before = 10
+After = 11
+
+
+How does extern work here?
+- extern int count; in the header declares the variable.
+- int count = 10; in data.c defines the variable.
+- Both files refer to the same variable after linking.
+Important: Including a header containing extern int count; in multiple .c files does not create multiple definitions of count.
+
+
+
+
+
+
+
+
+What is static in multi-file programming?
+In this context, static has two particularly important uses:
+1. A static function can be called only from within the same source file.
+2. A static global variable can be accessed by name only within the same source file.
+At file scope, static gives the name internal linkage. The object itself can still exist for the entire program execution.
+A. Static function
+Example: math_utils.c
+#include "math_utils.h"
+
+static int square(int n)
+{
+    return n * n;
+}
+
+int calculate(int n)
+{
+    return square(n);
+}
+
+
+Here, square() is a private helper function. It can be called from calculate() in the same file, but another .c file cannot directly call square() by linking against it.
+The header would declare only the public function:
+int calculate(int n);
+
+
+Why use it? To hide internal implementation details and prevent other source files from depending on helper functions.
+B. Static global variable
+Example: counter.c
+static int count = 0;
+
+void increment(void)
+{
+    count++;
+}
+
+int get_count(void)
+{
+    return count;
+}
+
+
+The variable count is accessible by name only inside counter.c. Other source files can access its value through the public functions.
+Header file counter.h:
+#ifndef COUNTER_H
+#define COUNTER_H
+
+void increment(void);
+int get_count(void);
+
+#endif
+
+
+Caller main.c:
+#include <stdio.h>
+#include "counter.h"
+
+int main(void)
+{
+    increment();
+    increment();
+
+    printf("Count = %d\n", get_count());
+
+    return 0;
+}
+
+
+Output:
+Count = 2
+
+
+
+
+
+
+
+
+extern vs static
+Feature					extern							static at file scope
+Purpose					Refers to an entity defined elsewhere			Restricts a name to its source file
+Linkage					Usually external					Internal
+Shared across source files by name	Yes, if externally linked and visible			No
+Typical use				Public global variables and function declarations	Private helper functions and private global state
+
+
+
+
+
+
+Makefiles
+
+A Makefile is a file used by the make build tool to automate compilation and linking.
+Imagine a project with 20 .c files. Without a Makefile, you might need to remember many compiler commands and rerun them manually. A Makefile records the build rules so you can type:
+make
+
+
+The make tool determines which outputs need to be rebuilt based on the rules and file modification times.
+6.1 Why do we need Makefiles?
+Suppose your project has these files:
+project/
+├── main.c
+├── math_utils.c
+├── math_utils.h
+└── logger.c
+
+
+Without a Makefile, you might use:
+gcc -c main.c -o main.o
+gcc -c math_utils.c -o math_utils.o
+gcc -c logger.c -o logger.o
+gcc main.o math_utils.o logger.o -o app
+
+
+This works, but it becomes tedious as the project grows.
+A Makefile lets you define those commands once and reuse them. It can also avoid recompiling source files whose outputs are already up to date.
+6.2 Makefile syntax
+A basic rule looks like this:
+target: prerequisites
+	command
+
+
+There are three important parts:
+- Target: The file or action you want to build.
+- Prerequisites: Files that the target depends on.
+- Recipe: The command that creates the target.
+For example:
+app: main.o math_utils.o
+	gcc main.o math_utils.o -o app
+
+
+This says that app depends on main.o and math_utils.o. If a required object file is missing or out of date, make tries to rebuild it before linking app.
+Important: The command line under a rule must begin with a real tab character, not spaces, in a traditional Makefile.
+6.3 A complete working project with a Makefile
+Create this directory structure:
+project/
+├── main.c
+├── math_utils.c
+├── math_utils.h
+└── Makefile
+
+
+File 1: math_utils.h
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int add(int a, int b);
+int multiply(int a, int b);
+
+#endif
+
+
+File 2: math_utils.c
+#include "math_utils.h"
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int multiply(int a, int b)
+{
+    return a * b;
+}
+
+
+File 3: main.c
+#include <stdio.h>
+#include "math_utils.h"
+
+int main(void)
+{
+    printf("Addition = %d\n", add(10, 20));
+    printf("Multiplication = %d\n", multiply(10, 20));
+
+    return 0;
+}
+
+
+File 4: Makefile
+The following is a complete Makefile for this project:
+CC = gcc
+CFLAGS = -Wall -Wextra -std=c11
+TARGET = app
+
+OBJ = main.o math_utils.o
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $(TARGET)
+
+main.o: main.c math_utils.h
+	$(CC) $(CFLAGS) -c main.c -o main.o
+
+math_utils.o: math_utils.c math_utils.h
+	$(CC) $(CFLAGS) -c math_utils.c -o math_utils.o
+
+clean:
+	rm -f $(OBJ) $(TARGET)
+
+.PHONY: all clean
+
+
+Run the project
+From the directory containing the Makefile:
+make
+
+
+Then run the executable:
+./app
+
+
+Output:
+Addition = 30
+Multiplication = 200
+
+
+To remove the generated object files and executable:
+make clean
+
+
+
+
+
+
+
+Let's break down the example one line at a time.
+Variables
+CC = gcc
+CFLAGS = -Wall -Wextra -std=c11
+TARGET = app
+OBJ = main.o math_utils.o
+
+
+Variable	Meaning
+CC	C compiler to use
+CFLAGS	Compiler options
+TARGET	Name of the final executable
+OBJ	List of object files
+-Wall and -Wextra enable many useful warnings. -std=c11 selects the C11 language standard.
+Variables are referenced using $(VARIABLE):
+$(CC) $(CFLAGS) -c main.c -o main.o
+
+
+This expands to:
+gcc -Wall -Wextra -std=c11 -c main.c -o main.o
+
+
+The all target
+all: $(TARGET)
+
+
+This makes all depend on the executable named by TARGET.
+When you run make without specifying a target, Make normally executes the first target in the Makefile. Here, that target is all.
+The executable target
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $(TARGET)
+
+
+This means:
+1. Check whether the object files exist and are up to date.
+2. Rebuild any object files that need rebuilding.
+3. Link the object files to produce app.
+The object-file targets
+main.o: main.c math_utils.h
+	$(CC) $(CFLAGS) -c main.c -o main.o
+
+
+This tells make that main.o depends on both main.c and math_utils.h.
+If either file changes, make recompiles main.o.
+Likewise:
+math_utils.o: math_utils.c math_utils.h
+	$(CC) $(CFLAGS) -c math_utils.c -o math_utils.o
+
+
+If the implementation or its header changes, the corresponding object file is rebuilt.
+The clean target
+clean:
+	rm -f $(OBJ) $(TARGET)
+
+
+This removes the generated object files and executable.
+Run it with:
+make clean
+
+
+clean is not a file you want to build. It is a command you want to run, which is why we mark it as a phony target.
+The .PHONY directive
+.PHONY: all clean
+
+
+This tells make that all and clean are action names, not actual files.
+Without this declaration, a file named clean in the directory could prevent the cleanup recipe from running.
+6.5 Important automatic variables
+Make provides special variables that help you avoid repeating filenames.
+Variable	Meaning
+$@	The current target
+$<	The first prerequisite
+$^	All prerequisites, with duplicates removed
+For example:
+app: main.o math_utils.o
+	gcc $^ -o $@
+
+
+This expands to:
+gcc main.o math_utils.o -o app
+
+
+Another example:
+main.o: main.c math_utils.h
+	gcc -c $< -o $@
+
+
+This expands to:
+gcc -c main.c -o main.o
+
+
+Here, $< is main.c, the first prerequisite, and $@ is main.o, the target.
+6.6 A shorter Makefile using a pattern rule
+For a larger project, you can reduce repeated compilation rules.
+CC = gcc
+CFLAGS = -Wall -Wextra -std=c11
+TARGET = app
+OBJ = main.o math_utils.o
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $^ -o $@
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(OBJ) $(TARGET)
+
+.PHONY: all clean
+
+
+The pattern rule:
+%.o: %.c
+
+
+means that an object file can be compiled from a source file with the same base name. For example, main.o can be built from main.c.
+One limitation: This short version does not explicitly track header dependencies. If a header changes, a dependent object file may not be rebuilt automatically. The next version handles that.
+6.7 Automatic header dependency tracking
+For a more practical GCC-based project, use -MMD -MP to generate dependency files automatically.
+CC = gcc
+CFLAGS = -Wall -Wextra -std=c11 -MMD -MP
+
+TARGET = app
+OBJ = main.o math_utils.o
+DEP = $(OBJ:.o=.d)
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $@
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+-include $(DEP)
+
+clean:
+	rm -f $(OBJ) $(DEP) $(TARGET)
+
+.PHONY: all clean
+
+
+What is new?
+- -MMD generates a .d file listing the user header files included by a source file.
+- -MP adds empty rules for headers to help avoid errors if a tracked header is removed.
+- -include $(DEP) loads the dependency files when they exist.
+- $(OBJ:.o=.d) converts main.o math_utils.o into main.d math_utils.d.
+Now, when you change math_utils.h, make can identify which object files depend on it and rebuild them.
+This is a useful pattern for embedded C projects with many modules and headers.
+6.8 Incremental compilation — the biggest advantage
+Suppose you initially run:
+make
+
+
+Make compiles the source files and links the executable.
+Next, you edit only math_utils.c and run make again.
+Make can:
+1. Recompile math_utils.c into math_utils.o.
+2. Leave main.o alone if its dependencies have not changed.
+3. Relink the executable using the updated object file.
+This is called incremental building. It saves time in larger projects.
+You can preview commands without executing them:
+make -n
+
+
+You can request a specific target:
+make clean
+make all
+
+
+6.9 Common Makefile mistakes
+- Missing tab: Recipe lines must begin with a tab in a traditional Makefile.
+- Missing source file: A rule may fail if a required .c file does not exist.
+- Missing dependency: If you omit a header from a target's dependencies, a change to that header might not trigger a rebuild.
+- Undefined function: The source containing the function's definition might not be included in the linking command.
+- Multiple definitions: Defining the same externally linked function or global variable in multiple object files can cause linker errors.
+- Wrong working directory: Run make in the directory containing the Makefile, unless you explicitly specify another file or directory.
+- Stale executable: If you change build settings but Make does not recognize that an output needs rebuilding, a clean rebuild may be necessary.
+
+
+
+
+
+
+
+Concept				Purpose
+.c file				Implements program logic
+.h file				Shares declarations and types
+extern				Declares an entity defined elsewhere
+static function			Restricts the function name to its source file
+static global variable		Restricts the variable name to its source file
+gcc -c				Compiles a source file into an object file without linking
+Linker				Resolves references between object files and libraries
+Makefile			Automates build commands and dependencies
+make				Builds the default target
+make clean			Removes specified generated files
+make -n				Prints commands without executing them
