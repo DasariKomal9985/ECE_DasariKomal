@@ -1,0 +1,80 @@
+Command					Use
+pwd				Displays the current working directory.
+ls				Lists files and directories.
+ls -l				Lists files with detailed information.
+ls -a				Displays hidden files and directories.
+cd				Changes the current directory.
+cd ..				Moves to the parent directory.
+cd ~				Moves to the home directory.
+mkdir test			Creates a directory named test.
+rmdir test			Removes an empty directory.
+touch file.txt			Creates an empty file or updates its timestamp.
+cat file.txt			Displays file contents.
+less file.txt			Views a file page by page.
+head file.txt			Displays the first 10 lines of a file.
+tail file.txt			Displays the last 10 lines of a file.
+cp a.txt b.txt			Copies a file.
+mv a.txt b.txt			Moves or renames a file.
+rm file.txt			Removes a file.
+clear				Clears the terminal screen.
+echo "Hello"			Prints text or variable values.
+man ls				Opens the manual for a command.
+which gcc			Shows the executable path of a command.
+whoami				Displays the current username.
+date				Displays the current date and time.
+cal				Displays a calendar, if installed.
+history				Displays previously entered shell commands.
+uname -a			Displays system and kernel information.
+df -h				Displays filesystem disk usage.
+du -sh folder			Displays the total size of a directory.
+free -h				Displays memory usage.
+top				Displays running processes and resource usage.
+ps				Displays processes associated with the current terminal.
+ps -ef				Lists processes running on the system.
+pstree -p			Displays the process hierarchy with PIDs, if installed.
+getconf LONG_BIT		Displays the system's user-space long integer width in bits.
+kill PID			Sends a termination signal to a process.
+sleep 5				Pauses for five seconds.
+exit				Exits the current shell.
+gcc file.c -o app		Compiles a C program into an executable named app.
+./app				Runs an executable in the current directory.
+chmod +x file.sh		Adds execute permission to a file.
+grep "text" file.txt		Searches for matching text in a file.
+find . -name "*.c"		Finds C source files under the current directory.
+wc -l file.txt			Counts the lines in a file.
+sort file.txt			Sorts lines of text.
+uniq file.txt			Removes adjacent duplicate lines from output.
+>				Redirects output to a file, replacing its contents.
+>>				Appends output to a file.
+<				Takes input from a file.
+\|				Sends one command's output to another command.
+command &			Runs a command in the background.
+sudo command			Runs a command with elevated privileges, subject to authorization.
+apt update			Refreshes package repository information on Ubuntu/Debian.
+apt install package		Installs a package on Ubuntu/Debian.
+ip addr				Displays network interface addresses.
+ping example.com		Tests network reachability.
+ip route			Displays the IP routing table.
+
+
+
+
+🔧 Linux System Programming Commands
+
+Command					Use
+strace ./app			Traces system calls made by a program.
+ltrace ./app			Traces calls to library functions, if installed.
+dmesg				Displays kernel messages.
+ls /proc			Lists entries in the virtual /proc filesystem.
+cat /proc/PID/status		Displays status information for a process.
+ls -l /proc/PID/fd		Lists file descriptors of a process, subject to permissions.
+ulimit -a			Displays shell resource limits.
+jobs				Lists jobs managed by the current shell.
+bg				Resumes a stopped job in the background.
+fg				Brings a job to the foreground.
+wait				Waits for jobs started by the current shell.
+gcc -Wall file.c -o app		Compiles C code with common warnings enabled.
+gdb ./app			Starts the GNU debugger, if installed.
+valgrind ./app			Checks for memory errors and leaks, if installed.
+fuser file.txt			Identifies processes using a file or filesystem, if installed.
+lsof				Lists open files, if installed.
