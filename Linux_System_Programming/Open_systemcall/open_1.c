@@ -24,6 +24,106 @@ int main()
 
 
 
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int main()
+{
+    int fd = open("test.txt", O_WRONLY);
+
+    if (fd == -1)
+    {
+        perror("open");
+        return 1;
+    }
+
+    printf("File opened for writing\n");
+
+    close(fd);
+    return 0;
+}
+
+
+
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int main()
+{
+    int fd = open("test.txt", O_RDWR);
+
+    if (fd == -1)
+    {
+        perror("open");
+        return 1;
+    }
+
+    printf("File opened for reading and writing\n");
+
+    close(fd);
+    return 0;
+}
+
+
+
+
+
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int main()
+{
+    int fd = open("newfile.txt",
+                  O_WRONLY | O_CREAT,
+                  0644);
+
+    if (fd == -1)
+    {
+        perror("open");
+        return 1;
+    }
+
+    printf("File opened or created successfully\n");
+
+    close(fd);
+    return 0;
+}
+
+
+
+
+
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+
+int main()
+{
+    int fd = open("test.txt",
+                  O_WRONLY | O_APPEND);
+
+    if (fd == -1)
+    {
+        perror("open");
+        return 1;
+    }
+
+    char data[] = "New line\n";
+
+    write(fd, data, strlen(data));
+
+    printf("Data appended successfully\n");
+
+    close(fd);
+    return 0;
+}
+
+
+
 /*
  
 🔹 open() System Call in Linux
