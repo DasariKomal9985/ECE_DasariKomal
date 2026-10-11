@@ -1,0 +1,39 @@
+1. System Calls ⚙️
+A system call is a way for a user program to request a service from the Linux kernel.
+
+Examples: read(), write(), open(), fork(), close().
+
+
+
+2. Library Functions 📚
+A library function is a ready-made function provided by a library to make programming easier. It may perform calculations or use system calls when needed.
+
+Examples: printf(), scanf(), strlen(), strcpy().
+
+
+
+
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    printf("Hello\n");             // Library function
+    write(1, "Linux\n", 6);        // System call
+
+    return 0;
+}
+
+
+
+Hello
+Linux
+
+
+
+System Call						Library Function
+
+Requests a service from the kernel.		Provides a programming function.
+Example: write()				Example: printf()
+Executes through the kernel interface.		Usually runs in user space.
+Used to access OS services.			Makes programming easier.
