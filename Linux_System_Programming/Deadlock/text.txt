@@ -1,0 +1,57 @@
+🔒 Deadlock in Linux System Programming
+1. What is a Deadlock?
+
+A deadlock occurs when two or more threads or processes wait indefinitely for resources held by one another, so none of them can proceed.
+
+For example:
+
+Thread 1 locks Resource A and waits for Resource B.
+
+Thread 2 locks Resource B and waits for Resource A.
+
+Both threads wait forever! 🔄
+
+
+
+
+
+
+3. How to prevent deadlock? ✅
+
+A simple approach is to lock resources in the same order in every thread.
+
+For example, both threads should lock A first and then B.
+
+pthread_mutex_lock(&A);
+pthread_mutex_lock(&B);
+
+/* Critical section */
+
+pthread_mutex_unlock(&B);
+pthread_mutex_unlock(&A);
+
+This removes the circular-wait condition in this example, provided every thread follows the same locking order.
+
+Other techniques include:
+
+Avoid holding locks longer than necessary.
+
+Use pthread_mutex_trylock() where appropriate.
+
+Use timed locking with pthread_mutex_timedlock() where suitable.
+
+4. Four necessary conditions for deadlock
+
+Condition						Meaning
+
+Mutual exclusion				A resource can be held by only one thread at a time
+
+Hold and wait					A thread holds one resource while waiting for another
+
+No preemption					A resource cannot simply be taken away from its holder
+
+Circular wait					Threads form a cycle of waiting for one another
+
+All four conditions must be present for this classical resource deadlock to occur.
+
+One-line definition: Deadlock is a situation where two or more threads or processes wait indefinitely for resources held by one another. 🔒

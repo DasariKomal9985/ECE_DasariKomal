@@ -1,0 +1,47 @@
+🔐 Critical Section in Linux System Programming
+1. What is a Critical Section?
+
+A critical section is the part of a program where shared data or a shared resource is accessed or modified.
+
+If multiple threads enter the same critical section simultaneously without proper synchronization, a race condition can occur.
+
+For example, when two threads update a shared variable counter, the statement counter++ is the critical operation that needs protection.
+
+
+
+Compile and run:
+
+gcc critical_mutex.c -o critical_mutex -pthread
+./critical_mutex
+
+Output:
+
+Counter = 2000000
+
+
+
+4. How does it work? 🔄
+Thread requests the mutex
+
+Critical Section
+
+Access or update shared data
+
+Unlock the mutex
+
+
+
+5. Critical Section vs Race Condition
+
+Critical section						Race condition
+
+A part of the program that accesses shared resources		A bug caused by unsafe concurrent access
+
+Exists intentionally in a program				Can occur if access is not properly synchronized
+
+Protected using mutexes or other synchronization methods	Can be prevented with suitable synchronization
+
+
+
+
+One-line definition: A critical section is the portion of code that accesses shared data and must be protected when concurrent access could cause incorrect results. 🔐

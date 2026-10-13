@@ -1,0 +1,129 @@
+🔐 Mutex in Linux System Programming (C)
+
+Let's learn Mutex from basics with practical C programs, including what happens when we use and don't use a mutex.
+
+1. What is a Mutex?
+
+Mutex stands for Mutual Exclusion.
+A mutex is a synchronization mechanism that allows only one thread at a time to access a protected shared resource or critical section.
+Think of a bathroom with one key 🔑. If one person has the key, another person must wait until the key is released.
+Similarly, when one thread locks a mutex, another thread trying to lock the same mutex must wait until it becomes available.
+2. Why do we use a Mutex?
+Consider two threads accessing the same variable:
+int counter = 0;
+
+
+Both threads execute:
+counter++;
+
+
+It looks like one operation, but internally it involves reading the value, adding one, and writing the result.
+For example:
+Without mutex ⚠️
+Thread 1
+Reads counter = 0
+Calculates 1
+
+
+Thread 2
+Reads counter = 0
+Calculates 1
+
+
+
+Both write 1
+Final result: 1 instead of 2
+
+
+With mutex ✅
+Thread 1 locks the mutex and updates the counter to 1.
+Thread 1 unlocks; Thread 2 locks and updates the counter to 2.
+Final result: 2
+
+
+The example shows one possible race condition. Without a mutex, the result is not guaranteed; in C, unsynchronized concurrent access to a normal shared variable can also cause undefined behavior.
+3. How to use a Mutex?
+In Linux C programming, the POSIX Threads (pthreads) library provides mutex functions.
+Function	Purpose
+pthread_mutex_init()	Initializes a mutex
+pthread_mutex_lock()	Locks the mutex; waits if another thread holds it
+pthread_mutex_unlock()	Releases the mutex
+pthread_mutex_destroy()	Destroys an initialized mutex when no thread is using it
+Basic syntax:
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+pthread_mutex_lock(&lock);
+
+/* Critical section: access shared data */
+
+pthread_mutex_unlock(&lock);
+
+
+Remember: Lock before accessing the shared resource, and unlock after you're finished.
+
+
+
+4. Code without Mutex ❌
+This program creates two threads. Each thread increments the same shared counter one million times.
+
+Compile and run
+gcc without_mutex.c -o without_mutex -pthread
+./without_mutex
+
+
+Expected value if every increment were safely counted:
+Counter = 2000000
+
+
+But the actual result is not guaranteed to be 2,000,000 because both threads access and modify counter without synchronization.
+Possible effects include:
+- Lost updates.
+- Incorrect counter values.
+- Other unpredictable behavior due to the C data race.
+You might sometimes see the expected value, but that does not mean the code is safe.
+
+
+
+
+
+5. Code with Mutex ✅
+Now let's protect the shared counter with a mutex.
+
+Compile and run
+gcc with_mutex.c -o with_mutex -pthread
+./with_mutex
+
+
+Output:
+Counter = 2000000
+
+
+The mutex ensures that only one thread at a time performs the shared counter update. After both threads finish, the result is exactly 2000000.
+For production code, check the return values of pthread functions and ensure a thread releases any mutex it holds before exiting.
+6. Compare both programs
+Feature	Without mutex	With mutex
+Shared counter protection	No	Yes
+Race condition	Yes	Prevented for this access
+Result	Not guaranteed	Exactly 2,000,000
+Thread coordination	No mutual exclusion	Mutual exclusion
+Performance overhead	Lower synchronization overhead	Lock/unlock overhead
+
+7. Where are mutexes used? 🛠️
+Mutexes are useful whenever multiple threads share mutable data or a resource that must be accessed by only one thread at a time.
+- Linux System Programming: Protect shared variables and data structures.
+- Embedded Linux: Coordinate threads handling sensors, buffers, and shared device state.
+- Multithreaded servers: Protect shared client lists, caches, and counters.
+- File and logging operations: Coordinate updates to shared application state and prevent interleaved operations where needed.
+- Producer-consumer programs: Protect shared queues, usually combined with condition variables.
+- Memory management: Protect shared allocators or application-managed memory structures.
+
+In Linux kernel programming, kernel mutexes are a related but different API; userspace pthread_mutex_t should not be used inside a kernel driver.
+8. Important rules to remember ⚠️
+1. Every thread accessing the same shared data must follow the same synchronization strategy.
+2. Always unlock a mutex after the protected work is complete.
+3. Keep the critical section as short as practical.
+4. Avoid locking the same normal mutex twice from the same thread; this can deadlock.
+5. Acquiring multiple mutexes in inconsistent orders can cause deadlock.
+6. A mutex protects only the data accesses that are properly synchronized by that mutex.
+🎯 One-line definition
+A mutex is a synchronization mechanism that allows only one thread at a time to access a protected shared resource, preventing race conditions when used correctly.

@@ -1,0 +1,108 @@
+🔒 Spinlock in Linux System Programming (C)
+1. What is a Spinlock?
+A spinlock is a synchronization mechanism that makes a thread repeatedly check whether a lock is available until it can acquire it.
+Unlike a normal mutex, which generally puts a waiting thread to sleep, a spinlock busy-waits while the lock is held.
+Think of two people waiting to use a machine. 🏭
+- Thread 1 is using the machine and holds the lock.
+- Thread 2 keeps checking whether the machine is free.
+- When Thread 1 releases the lock, Thread 2 acquires it.
+That repeated checking is called spinning.
+
+
+
+2. Why do we use a spinlock?
+Spinlocks are useful when the protected operation is very short and the expected wait is tiny.
+- 🔐 Protect shared data from concurrent access.
+- ⚡ Avoid sleeping and waking a waiting thread.
+- 🧵 Coordinate threads running concurrently on different CPU cores.
+- 🐧 Protect certain shared data structures in operating-system kernels.
+Important: A spinlock can waste CPU time while waiting. It is not automatically faster than a mutex.
+
+
+
+3. How does a spinlock work?
+Thread 1 acquires the lock
+
+Thread 1 accesses shared data
+
+Thread 2 attempts to acquire the lock
+Lock unavailable → keep checking (spin)
+
+Thread 1 releases the lock
+
+Thread 2 acquires the lock
+
+
+The lock must be implemented using atomic operations so that two threads cannot acquire it simultaneously.
+
+
+
+
+Compile and run:
+gcc without_spinlock.c -o without_spinlock -pthread
+./without_spinlock
+
+
+The expected mathematical total is 2000000, but the program does not guarantee that result. Concurrent unsynchronized updates to counter cause a data race in C.
+
+
+
+
+
+Compile and run
+gcc with_spinlock.c -o with_spinlock -pthread
+./with_spinlock
+
+
+Expected output:
+Counter = 2000000
+
+
+The spinlock allows only one thread at a time to update the counter.
+Note: This is a learning example. Production code should check every pthread function's return value; pthread functions generally return an error number directly rather than setting errno. For this simple userspace program, a pthread_mutex_t is often the more practical choice.
+
+
+
+6. Spinlock vs Mutex
+Feature	Spinlock	Mutex
+Waiting method	Repeatedly checks the lock	Usually blocks/sleeps while waiting
+CPU usage while waiting	Can be high	Usually low
+Best suited for	Very short critical sections	Short or longer critical sections
+Context switching	May avoid sleeping-related switches	May involve blocking and waking
+Risk	Wastes CPU if held too long	Can incur blocking overhead
+Typical choice	Specialized, short waits	General-purpose userspace synchronization
+
+
+
+7. Where are spinlocks used? 🛠️
+- Operating-system kernels: Protect shared kernel data in appropriate contexts.
+- Multicore systems: Coordinate brief access to shared data.
+- Low-level synchronization: When sleeping is not allowed or appropriate.
+- Specialized high-performance code: Where the expected wait is very short and measured performance justifies spinning.
+Linux kernel spinlock vs userspace spinlock
+These are related concepts, but their APIs are different.
+Userspace pthread API:
+pthread_spin_lock(&lock);
+pthread_spin_unlock(&lock);
+
+
+Linux kernel API:
+spin_lock(&lock);
+/* Critical section */
+spin_unlock(&lock);
+
+
+The kernel API has additional rules, especially around interrupts, preemption, and whether sleeping is allowed. Do not use kernel spin_lock() in ordinary userspace programs.
+
+
+8. Important precautions ⚠️
+1. Keep the critical section very short.
+2. Always release the lock after accessing shared data.
+3. Never sleep or perform a long operation while holding a spinlock if it defeats the purpose or violates the execution context's rules.
+4. Avoid deadlocks caused by acquiring locks in inconsistent orders.
+5. Don't assume a spinlock is always faster than a mutex; performance depends on contention and scheduling.
+
+
+
+🎯 One-line definition
+A spinlock is a synchronization mechanism in which a waiting thread repeatedly checks a lock until it becomes available, rather than sleeping while waiting.
