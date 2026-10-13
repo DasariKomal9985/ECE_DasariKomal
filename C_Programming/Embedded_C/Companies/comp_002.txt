@@ -1,0 +1,130 @@
+1. e-Con Systems
+2. Zilogic Systems
+3. Sanmina
+4. Nokia
+5. Samsung Electronics
+6. Tata Electronics
+7. VVDN Technologies
+8. Syrma SGS
+9. Avalon Technologies
+10. Flex
+11. Foxconn
+12. Salcomp
+13. Bharat FIH
+14. MosChip Technologies
+15. L&T Technology Services
+16. Tata Elxsi
+17. HCLTech
+18. Wipro
+19. Capgemini Engineering
+20. KPIT Technologies
+21. Quest Global
+22. Cyient
+23. Sasken Technologies
+24. Renault Nissan Technology & Business Centre India
+25. Valeo
+26. Aptiv
+27. Bosch
+28. Continental
+29. ZF
+30. Siemens
+31. Vi Micro Systems
+32. InCore Semiconductors
+33. eInfochips
+34. TVS Electronics
+35. Apna Technologies & Solutions
+
+
+2. Bengaluru, Karnataka
+36. Qualcomm
+37. Intel
+38. AMD
+39. NVIDIA
+40. Texas Instruments
+41. Analog Devices
+42. Microchip Technology
+43. NXP Semiconductors
+44. Renesas Electronics
+45. STMicroelectronics
+46. Infineon Technologies
+47. ARM
+48. Sasken Technologies
+49. Accord Software & Systems
+50. AllGo Embedded Systems
+51. iWave Systems
+52. PHYTEC Embedded India
+53. Tata Elxsi
+54. KPIT Technologies
+55. Quest Global
+56. L&T Technology Services
+57. HCLTech
+58. Wipro
+59. Cyient
+60. MosChip Technologies
+61. eInfochips
+62. Sasken Technologies
+63. Bosch
+64. Continental
+65. Aptiv
+66. Valeo
+67. ZF
+68. Harman
+69. Mercedes-Benz Research and Development India
+70. Volvo Group
+71. Ather Energy
+72. Siemens
+73. Honeywell
+74. BEL
+75. Centum Electronics
+76. Tejas Networks
+77. VVDN Technologies
+78. SION Semiconductors
+79. Sasken Technologies
+80. Mistral Solutions
+
+
+3. Hyderabad, Telangana
+81. Qualcomm
+82. Cyient
+83. MosChip Technologies
+84. HCLTech
+85. Wipro
+86. Capgemini Engineering
+87. Tata Elxsi
+88. eInfochips
+89. Honeywell
+90. Medtronic
+91. AMD
+92. Micron Technology
+93. NVIDIA
+94. Analog Devices
+95. Siemens
+96. Motorola Solutions
+97. Innominds
+98. Zen Technologies
+99. Bharat Electronics Limited
+100. Tata Advanced Systems
+101. Mahindra University / research-linked embedded opportunities
+102. Silicon Labs
+103. Renesas Electronics
+104. Qualcomm India
+105. Cyient DLM
+106. Menlopark Technologies
+107. Silicon Patterns
+108. Argus Embedded Systems
+
+
+
+4. Andhra Pradesh and Sri City
+109. Foxconn
+110. Bharat FIH
+111. Dixon Technologies
+112. Celkon
+113. Amara Raja
+114. Bharat Electronics Limited
+115. Tata Consultancy Services — embedded engineering roles
+116. Cyient
+117. Kaynes Technology
+118. Syrma SGS
+119. VVDN Technologies
+120. HCLTech
