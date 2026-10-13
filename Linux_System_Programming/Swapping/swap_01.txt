@@ -1,0 +1,114 @@
+1. What is swapping? 🤔
+Swapping is a memory-management technique in which the operating system moves memory pages between RAM and secondary storage to manage memory pressure.
+When RAM is running low, Linux can move less-active memory pages to a swap area, freeing physical RAM for other uses.
+📌 In modern Linux, swapping generally operates on memory pages, rather than moving an entire process out of RAM as older descriptions often suggest.
+
+
+
+
+2. Why do we need swapping? 🎯
+- 🧠 To manage limited physical RAM.
+- 💾 To free RAM for actively used memory.
+- ⚙️ To help the system continue running when memory demand is high.
+- 🔄 To support memory overcommitment, depending on system configuration.
+- 💤 To move less-active pages out of RAM.
+Example: Suppose your computer has 8 GB of RAM, and several applications are using a large amount of memory. Linux may move some inactive pages to swap space to make room for other pages.
+However, swap is much slower than RAM, especially when backed by a disk, so excessive swapping can make a system slow.
+
+
+
+
+
+3. How does swapping work? 🔄
+RAM
+Active and inactive memory pages
+
+Linux memory manager
+Selects pages to reclaim under memory pressure
+
+Swap area
+Disk partition or swap file
+
+
+The basic process:
+1. A program uses memory allocated from RAM.
+2. Memory pressure increases.
+3. Linux may move eligible, less-active anonymous memory pages to swap.
+4. RAM becomes available for other uses.
+5. If the program needs a swapped-out page again, a page fault occurs and Linux brings the page back into RAM, potentially moving another page out.
+Not all memory is swapped. For example, ordinary file-backed pages can often be reclaimed by discarding clean pages and reading them from the file again later.
+
+
+
+
+
+4. What is swap space? 💾
+Swap space is disk storage that Linux can use to hold memory pages that are not currently kept in physical RAM.
+Linux commonly supports two types:
+Swap partition
+A dedicated disk partition reserved for swap.
+
+
+Swap file
+A file on a filesystem configured for swap use.
+
+
+
+5. How to check swapping in Linux 💻
+Step 1: Check RAM and swap usage
+free -h
+
+
+Example output:
+               total   used   free
+Mem:            7.6Gi  3.2Gi  1.1Gi
+Swap:            2.0Gi  256Mi  1.7Gi
+
+
+These are illustrative values. The actual output on your computer will differ.
+Step 2: Check active swap areas
+swapon --show
+
+
+This displays active swap files or partitions.
+Step 3: Check detailed memory information
+cat /proc/meminfo
+
+
+Useful entries include:
+- MemTotal — total physical RAM.
+- MemAvailable — estimated RAM available for new applications without swapping.
+- SwapTotal — total configured swap space.
+- SwapFree — unused swap space.
+- SwapCached — memory pages associated with swap that are also currently in RAM.
+
+
+
+
+Step 4: Observe swapping activity
+vmstat 1
+
+
+Look at these columns:
+Column	Meaning
+si	Amount of memory swapped in per second
+so	Amount of memory swapped out per second
+free	Free physical memory
+wa	CPU time waiting for I/O
+Sustained nonzero si and so can indicate active swapping. Occasional activity alone does not necessarily indicate a problem.
+
+
+
+
+6. Swapping vs paging
+These terms are related but not identical in modern Linux.
+Paging	Swapping
+Memory is managed in fixed-size pages.	Often refers to moving anonymous memory pages between RAM and swap storage.
+Pages can be loaded on demand from files or other backing storage.	Swap provides backing storage for eligible memory pages.
+Fundamental virtual-memory mechanism.	One memory-reclamation technique.
+
+
+
+
+📝 One-line definition
+Swapping in Linux is the process of moving eligible memory pages between RAM and swap storage to help manage physical memory pressure.

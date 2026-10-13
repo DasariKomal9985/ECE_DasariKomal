@@ -1,0 +1,194 @@
+1. What is a Shell? 🤔
+A shell is a command interpreter that allows users to interact with the operating system by entering commands or running scripts.
+In simple words, you type a command, and the shell interprets it and arranges for the requested operation to happen.
+Example
+ls
+
+
+This command lists files and directories in your current directory.
+The shell interprets the command and runs the appropriate program.
+
+
+
+
+
+
+2. How Does a Shell Work?
+👤 User
+Types a command: ls
+
+🐚 Shell
+Interprets the command
+
+⚙️ Program / OS services
+The command executes and may request kernel services
+
+🖥️ Output
+The result appears in the terminal
+
+
+Note: The shell is not the kernel. It runs in user space and invokes programs and operating-system interfaces as needed.
+
+
+
+
+
+
+3. Types of Shells
+Shell				Full name / Description			Common use
+sh				Bourne-style shell interface		Portable shell scripts
+bash				Bourne Again Shell			Common Linux interactive shell and scripting
+zsh				Z Shell					Interactive use and customization
+ksh				KornShell				Scripting and interactive use
+csh				C Shell					C-like command syntax
+fish				Friendly Interactive Shell		User-friendly interactive terminal
+On Ubuntu, Bash is commonly available. To check which shell you're using:
+echo "$SHELL"
+
+
+To check the Bash version:
+bash --version
+
+
+
+
+
+4. Shell vs Terminal vs Kernel
+Component	Meaning
+Terminal	Provides the interface where you enter commands and see output
+Shell		Interprets commands and runs programs
+Kernel		Manages CPU, memory, processes, devices, and other system resources
+Example: Ubuntu Terminal is the application window, Bash is the shell running inside it, and Linux is the kernel.
+
+
+
+
+
+5. Basic Shell Commands 🛠️
+Try these commands in your Ubuntu terminal.
+Command	Purpose
+pwd	Display current directory
+ls	List files and directories
+cd Documents	Change directory
+mkdir demo	Create a directory
+touch file.txt	Create an empty file
+cat file.txt	Display file contents
+cp file.txt copy.txt	Copy a file
+mv file.txt new.txt	Move or rename a file
+rm file.txt	Delete a file
+clear	Clear terminal display
+whoami	Display current username
+date	Display date and time
+
+
+
+
+6. What Is Shell Scripting? 📝
+Shell scripting is writing a series of shell commands in a file so they can execute as a script.
+It helps automate repetitive tasks such as backups, compiling programs, testing Linux kernel modules, and collecting system information.
+Example 1: Hello World
+Create a file:
+nano hello.sh
+
+
+Write the following:
+
+#!/bin/bash
+
+echo "Hello, World!"
+echo "Welcome to Linux Shell Scripting"
+
+
+
+Save the file, then execute:
+chmod +x hello.sh
+./hello.sh
+
+
+Output:
+Hello, World!
+Welcome to Linux Shell Scripting
+
+
+Explanation:
+- #!/bin/bash tells the system to use Bash to interpret the script when executed directly.
+- echo prints text.
+- chmod +x adds execute permission.
+- ./hello.sh runs the script from the current directory.
+You can also run it with bash hello.sh without adding execute permission.
+Example 2: Add Two Numbers ➕
+#!/bin/bash
+
+a=10
+b=20
+
+sum=$((a + b))
+
+echo "Sum = $sum"
+
+
+Output:
+Sum = 30
+
+
+Notice that Bash variable assignments have no spaces around =.
+Example 3: Check Even or Odd
+#!/bin/bash
+
+read -p "Enter a number: " num
+
+if (( num % 2 == 0 )); then
+    echo "Even number"
+else
+    echo "Odd number"
+fi
+
+
+Run the script and enter a number when prompted.
+Example output:
+Enter a number: 7
+Odd number
+
+
+
+
+
+7. Shell Built-in Commands vs External Commands
+Shell commands can be built into the shell or provided by separate executable programs.
+Built-in example	External program example
+cd	ls
+echo	grep
+read	find
+export	gcc
+The distinction isn't always absolute: some commands, such as echo, may exist both as a shell built-in and as an external executable.
+To check how Bash resolves a command:
+type cd
+type ls
+type echo
+
+
+
+
+
+8. Important Shell Scripting Topics 📚
+Learn these in order:
+1. Shell basics and shell types
+2. Variables and environment variables
+3. Input and output (read, echo)
+4. Operators and arithmetic
+5. Conditional statements (if, case)
+6. Loops (for, while, until)
+7. Functions
+8. Positional parameters ($1, $2, $@)
+9. Exit status ($?)
+10. Pipes and redirection (|, >, >>, 2>)
+11. Command substitution ($(command))
+12. Text processing (grep, sed, awk)
+13. Process management
+14. Signals and error handling
+15. Automation using cron and systemd services
+
+
+
+
+One-line definition: A shell is a command interpreter that lets users interact with the operating system, while shell scripting automates tasks by combining commands in a script.

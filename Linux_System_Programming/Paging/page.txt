@@ -1,0 +1,142 @@
+1. What is Paging? 🤔
+Paging is a memory management technique in which virtual memory is divided into fixed-size blocks called pages, and physical RAM is divided into fixed-size blocks called frames.
+The operating system maps virtual pages to physical frames so a process can use memory without requiring its memory to be stored contiguously in RAM.
+💡 Simple example
+Imagine a process needs 4 pages of memory, but free RAM is available in different locations.
+Paging allows the operating system to place those pages in different physical frames rather than requiring one continuous block of RAM.
+
+
+
+
+2. Page vs Frame
+
+Page 📄
+A fixed-size block of a process's virtual address space.
+
+Frame 🧱
+A fixed-size block of physical RAM that can hold a page.
+
+
+
+Important: Page size and frame size are equal. A common page size is 4 KiB, although systems can support other sizes.
+
+
+
+
+
+
+3. How Does Paging Work? ⚙️
+CPU generates a virtual address
+
+MMU + Page Table
+Translate virtual page number to physical frame number
+
+Physical RAM
+Access the corresponding frame and offset
+
+
+The MMU (Memory Management Unit) is hardware that performs address translation, using page-table information maintained by the operating system. A TLB (Translation Lookaside Buffer) caches recent translations to speed up this process.
+Example page table
+Suppose a process has four virtual pages.
+Virtual page	Physical frame
+Page 0	Frame 5
+Page 1	Frame 2
+Page 2	Frame 8
+Page 3	Frame 1
+If the CPU accesses Page 2, the page table says it is stored in Frame 8.
+The offset within the page stays the same during translation.
+
+
+
+
+
+
+4. Virtual Address to Physical Address
+A virtual address is divided into two parts:
+- Page number: Identifies the virtual page.
+- Page offset: Identifies a byte within that page.
+The page table maps the page number to a frame number.
+\[
+\text{Physical address}
+= (\text{Frame number} \times \text{Page size}) + \text{Offset}
+\]
+
+Worked example
+Assume:
+- Page size = 4,096 bytes (4 KiB)
+- Virtual address = 8,500
+- Virtual page 2 maps to physical frame 7
+Calculate the page number and offset:
+\[
+\text{Page number} = \lfloor 8500/4096 \rfloor = 2
+\]
+
+\[
+\text{Offset} = 8500 - (2 \times 4096) = 308
+\]
+
+The physical address is:
+\[
+(7 \times 4096) + 308 = 29,000
+\]
+
+So the virtual address 8,500 translates to physical address 29,000, under these assumptions.
+
+
+
+
+
+
+5. What Is a Page Fault? ⚠️
+A page fault occurs when a process accesses a virtual memory page that cannot currently be accessed through the existing page-table mapping.
+Possible reasons include:
+- The page is valid but not currently resident in RAM and must be loaded.
+- The page needs to be allocated or mapped on demand.
+- The access violates the page's permissions or refers to an invalid address.
+A page fault does not always mean an error. Many page faults are handled normally by the operating system.
+
+
+
+
+
+6. Advantages and Disadvantages of Paging
+Advantages ✅	Disadvantages ⚠️
+Avoids external fragmentation in physical memory allocation	Page tables consume memory
+Allows non-contiguous physical allocation	Address translation adds overhead
+Supports virtual memory and process isolation	Page faults can be expensive
+Supports per-page access permissions	Small allocations can waste space within a page (internal fragmentation)
+
+
+
+
+
+7. Paging vs Swapping
+Paging	Swapping
+Divides virtual memory into pages and RAM into frames	Commonly refers to moving eligible memory pages between RAM and swap storage in modern Linux
+Used for address translation and memory allocation	Helps manage memory pressure
+Can operate entirely with pages resident in RAM	May involve moving pages out of and back into RAM
+
+
+
+
+
+8. Paging in Linux 🐧
+For Linux System Programming, these topics are especially important:
+- Virtual memory and physical memory.
+- Page tables and the MMU.
+- TLB and address translation.
+- Demand paging and page faults.
+- Page replacement and reclaim.
+- Anonymous memory and file-backed mappings.
+- mmap() and memory protection.
+- /proc/PID/maps for inspecting a process's virtual memory mappings.
+You can inspect the virtual memory mappings of a process using:
+cat /proc/self/maps
+
+
+This displays mapped address ranges and their permissions; it does not directly show the physical RAM frame for every virtual page.
+
+
+
+
+One-line definition: Paging is a memory management technique that divides virtual memory into pages and physical memory into frames, mapping pages to frames to support efficient memory allocation and virtual addressing.

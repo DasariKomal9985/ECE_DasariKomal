@@ -1,0 +1,154 @@
+🐧 Linux System Programming: mmap() and munmap()
+1. What is mmap()? 🤔
+mmap() stands for Memory Mapping.
+It is a Linux system call used to map a file or another object into a process's virtual memory. It can also allocate a region of memory that is not backed by a file.
+Instead of accessing a file only through read() and write(), a program can access a mapped file through a memory address, much like an array.
+Why do we use mmap()?
+- 📂 Access file contents through memory.
+- ⚡ Work efficiently with large files.
+- 🔄 Share memory between processes.
+- 🧠 Allocate memory regions.
+- 🔧 Map device memory in supported applications and drivers.
+
+
+
+
+2. What is munmap()? 🧹
+munmap() removes a memory mapping from the calling process's virtual address space.
+When you no longer need a mapped region, use munmap() to release that mapping.
+Remember: mmap() creates a mapping; munmap() removes it.
+
+
+
+
+3. Syntax of mmap() and munmap()
+#include <sys/mman.h>
+
+void *mmap(void *addr, size_t length,
+           int prot, int flags,
+           int fd, off_t offset);
+
+int munmap(void *addr, size_t length);
+
+
+Parameters of mmap()
+Parameter	Meaning
+addr	Preferred starting address; usually NULL
+length	Number of bytes to map
+prot	Memory protection permissions
+flags	Mapping type and behavior
+fd	File descriptor, or -1 for an anonymous mapping
+offset	Offset in the file; must be page-aligned
+
+
+Important protection flags
+Flag	Meaning
+PROT_READ	Memory can be read
+PROT_WRITE	Memory can be written
+PROT_EXEC	Memory can be executed
+PROT_NONE	No access permitted
+
+
+Important mapping flags
+Flag	Meaning
+MAP_SHARED	Changes to a file-backed mapping can be shared and written back to the file
+MAP_PRIVATE	Private, copy-on-write mapping
+MAP_ANONYMOUS	Mapping is not backed by a file
+If mmap() fails, it returns MAP_FAILED, not NULL.
+
+
+
+
+How to compile and run ▶️
+Save the program as mmap_demo.c.
+gcc mmap_demo.c -o mmap_demo
+./mmap_demo
+cat demo.txt
+
+
+Example output:
+Mapped memory contains: Hello Linux mmap!
+Memory mapping removed successfully.
+Hello Linux mmap!
+
+
+
+How does this work?
+1. open() opens or creates the file.
+2. ftruncate() sets the file size to the required number of bytes.
+3. mmap() maps the file into virtual memory.
+4. memcpy() writes the message through the mapped address.
+5. msync() requests synchronization of changes with the file.
+6. munmap() removes the mapping.
+7. close() closes the file descriptor.
+Why use MAP_SHARED? The memory changes are shared with the underlying file and can be written back to it. With MAP_PRIVATE, modifications are private and do not update the file.
+
+
+
+Compile and run:
+gcc anonymous_mmap.c -o anonymous_mmap
+./anonymous_mmap
+
+
+Output:
+Anonymous memory mapping
+
+
+Here, no file is created. The program receives a memory region, uses it, and releases the mapping.
+
+
+
+
+
+6. How mmap() works internally 🔄
+User-space program
+Calls mmap()
+
+Virtual memory mapping
+The kernel establishes a mapping in the process's virtual address space
+
+Physical memory / file-backed pages
+Pages are generally brought into memory when accessed, as needed
+
+
+When finished, munmap() removes the mapping from the process.
+
+One important detail: mmap() generally does not immediately read the entire file into RAM. Linux can load pages on demand when the program accesses them.
+
+
+
+
+
+7. read() / write() vs mmap()
+Feature	read() / write()	mmap()
+File access	Explicit system calls	Access through mapped memory
+Data access	Uses a buffer	Uses a memory address
+Large files	Often processed in chunks	Can map a region of the file
+Cleanup	Close the file	munmap() and close the file when appropriate
+Shared access	Depends on the I/O operation	MAP_SHARED can share file-backed changes
+mmap() is not always faster. Performance depends on the workload, file size, access pattern, and memory pressure.
+
+
+
+
+
+8. Where are mmap() and munmap() used? ⚙️
+- Linux system programming: File mapping and memory management.
+- Embedded Linux: Mapping supported device or peripheral memory.
+- Inter-process communication (IPC): Shared-memory mappings.
+- Databases: Mapping database files or data regions.
+- Operating systems: Loading executable and shared-library segments.
+For Linux device drivers, the kernel can expose a mapping through a driver's .mmap file operation. User space may then call mmap() on the device file, subject to the driver's implementation and permissions.
+⚠️ Important points
+- Always check mmap() against MAP_FAILED.
+- Do not access memory after munmap().
+- The mapping length and file size must be handled carefully; accessing beyond the valid mapped file region can cause SIGBUS.
+- munmap() does not close the file descriptor; call close() separately when appropriate.
+- msync() can request writeback for shared file mappings, but successful synchronization does not by itself guarantee that data survives every possible hardware or system failure.
+
+
+
+
+📝 One-line definitions
+- mmap(): Maps a file or anonymous memory region into a process's virtual address space.
+- munmap(): Removes a memory mapping from a process's virtual address space.

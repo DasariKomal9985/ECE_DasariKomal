@@ -1,0 +1,163 @@
+1. What is CPU Scheduling? 🤔
+CPU scheduling is the process of selecting which process should execute on the CPU next.
+When multiple processes are ready to execute, the operating system decides which one gets CPU time and for how long.
+Example
+Suppose three processes are waiting for the CPU:
+Process	CPU Burst Time
+P1	5 ms
+P2	3 ms
+P3	2 ms
+The CPU scheduler decides the execution order, such as P1 → P2 → P3, or another order based on the scheduling algorithm.
+
+
+
+
+
+
+2. Types of CPU Scheduling
+
+1. Non-preemptive scheduling
+Once a process gets the CPU, it continues until it finishes or voluntarily gives up the CPU.
+Example: FCFS, non-preemptive SJF.
+
+
+
+2. Preemptive scheduling
+The OS can interrupt a running process and give the CPU to another process.
+Example: Round Robin, preemptive SJF (SRTF).
+
+
+
+3. Important CPU Scheduling Algorithms
+
+
+
+
+
+1. FCFS — First Come, First Served
+Processes execute in the order they arrive.
+- Simple to implement.
+- Usually non-preemptive.
+- A long process can make shorter processes wait.
+
+
+
+
+
+
+
+
+2. SJF — Shortest Job First
+The process with the shortest expected CPU burst is selected first.
+- Can reduce average waiting time.
+- Requires an estimate of CPU burst time.
+- Basic SJF is non-preemptive.
+
+
+
+
+
+
+
+
+3. SRTF — Shortest Remaining Time First
+The process with the shortest remaining CPU time gets the CPU.
+- Preemptive version of SJF.
+- A newly arrived shorter job can interrupt the running process.
+
+
+
+
+
+
+
+
+4. Round Robin (RR)
+Each process receives CPU time for a fixed duration called the time quantum.
+- Preemptive.
+- Commonly taught for time-sharing systems.
+- Very small time quantum causes frequent context switches.
+
+
+
+
+
+
+
+
+5. Priority Scheduling
+The process with the highest priority is selected first.
+- Can be preemptive or non-preemptive.
+- Low-priority processes may suffer starvation.
+- Aging can gradually increase waiting processes' priorities.
+
+
+
+
+
+
+
+
+6. Multilevel Queue Scheduling
+Processes are separated into different queues based on their categories, such as interactive and background processes.
+- Each queue can have its own scheduling policy.
+- Processes generally remain in their assigned queue.
+
+
+
+
+
+
+
+
+7. Multilevel Feedback Queue (MLFQ)
+Processes can move between queues based on their behavior and CPU usage.
+- Flexible scheduling.
+- Can favor interactive processes.
+- More complex to configure.
+
+
+
+4. Quick Comparison 📊
+Algorithm			Preemptive?			Selection rule
+FCFS				Usually no			Arrival order
+SJF				Usually no			Shortest CPU burst
+SRTF				Yes				Shortest remaining time
+Round Robin			Yes				Fixed time quantum
+Priority			Either				Highest priority
+Multilevel 			Queue				Depends	Assigned queue
+MLFQ				Commonly yes			Dynamic queue and priority
+
+
+
+
+5. Important Scheduling Terms
+- Arrival Time: When a process enters the ready queue.
+- Burst Time: CPU time a process needs to execute.
+- Completion Time: When the process finishes.
+- Turnaround Time: Completion Time − Arrival Time.
+- Waiting Time: Turnaround Time − Burst Time, for the standard single CPU-burst model.
+- Response Time: First CPU start time − Arrival Time.
+- Context Switch: Saving one task's execution state and restoring another task's state.
+- Starvation: A process waits indefinitely because other processes keep getting selected.
+- Aging: Gradually increasing the priority of waiting processes to reduce starvation.
+
+
+
+
+6. CPU Scheduling in Linux 🐧
+Since you're learning Linux System Programming, these are useful next topics:
+- Linux scheduling classes.
+- SCHED_OTHER — normal time-sharing scheduling.
+- SCHED_FIFO — real-time first-in, first-out scheduling.
+- SCHED_RR — real-time round-robin scheduling.
+- Process priorities and nice values.
+- Task states and context switching.
+- Scheduling system calls such as sched_setscheduler() and sched_getscheduler().
+Remember: The algorithms taught in OS fundamentals explain the basic concepts. Modern Linux uses more advanced scheduling implementations; it does not simply run all processes using FCFS or textbook Round Robin.
+
+
+
+
+🎯 What should we learn next?
+I recommend starting with FCFS, using a step-by-step example with a Gantt chart and calculating waiting time and turnaround time, then moving to SJF, Round Robin, and Priority Scheduling.

@@ -1,0 +1,203 @@
+1. What is POSIX? 🤔
+POSIX stands for Portable Operating System Interface.
+It is a family of standards defined by IEEE that specifies common interfaces and behaviors for operating systems, helping programs work across different POSIX-compliant systems.
+In simple words, POSIX provides standard rules for how programs interact with an operating system.
+💡 Example
+Suppose you write a C program on Ubuntu Linux using open() to open a file.
+If another system, such as macOS, supports the same POSIX interface, you can often compile and run the same program there with few or no changes, assuming other dependencies are compatible.
+
+
+
+
+
+
+2. Why Do We Need POSIX?
+- 🔄 Portability: Makes it easier to move programs between compatible operating systems.
+- 📏 Standardization: Defines common APIs and their expected behavior.
+- 🧵 Thread support: Defines standard thread operations and synchronization interfaces.
+- 📂 File handling: Specifies interfaces for opening, reading, writing, and closing files.
+- ⚙️ Process management: Provides standard interfaces for creating and managing processes.
+
+
+
+
+
+
+3. Important POSIX APIs
+These are especially useful for Linux System Programming.
+Category			POSIX function/API			Purpose
+File operations			open()				Open or create a file
+File operations			read()				Read bytes from a file descriptor
+File operations			write()				Write bytes to a file descriptor
+File operations			close()				Close a file descriptor
+Process management		fork()				Create a child process
+Process management		exec() family			Replace the current process image
+Process management		wait() / waitpid()		Wait for a child process
+Threads				pthread_create()		Create a thread
+Threads				pthread_join()			Wait for a thread to finish
+Synchronization			pthread_mutex_lock()		Acquire a mutex
+Synchronization			pthread_mutex_unlock()		Release a mutex
+Time				nanosleep()			Pause execution for a duration
+Important: Linux implements many POSIX interfaces, but not every Linux API is POSIX. For example, epoll() and inotify() are Linux-specific interfaces.
+
+
+
+
+
+
+
+4. POSIX vs System Calls
+These terms are related, but they are not the same.
+- POSIX: A set of operating-system interface standards.
+- System call: A mechanism through which a user-space program requests a service from the kernel.
+- Library function: A function provided by a library, sometimes using system calls internally.
+For example, open() is a POSIX interface on supported systems. On Linux, the C library typically implements it by invoking the underlying kernel system-call interface.
+
+
+
+
+
+5. Example 1: POSIX File Operations in C 📄
+This program opens a file, writes a message, and closes the file.
+
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+    int fd;
+    const char message[] = "Hello from POSIX!\n";
+
+    fd = open("demo.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
+    if (fd == -1)
+    {
+        perror("open");
+        return 1;
+    }
+
+    ssize_t written = write(fd, message, strlen(message));
+
+    if (written == -1)
+    {
+        perror("write");
+        close(fd);
+        return 1;
+    }
+
+    if (close(fd) == -1)
+    {
+        perror("close");
+        return 1;
+    }
+
+    printf("File operation completed.\n");
+
+    return 0;
+}
+
+
+
+Compile and run ▶️
+Save the file as posix_file.c.
+gcc -Wall -Wextra posix_file.c -o posix_file
+./posix_file
+cat demo.txt
+
+
+Expected output:
+File operation completed.
+Hello from POSIX!
+
+
+Explanation
+1. open() opens or creates demo.txt.
+2. O_WRONLY opens it for writing.
+3. O_CREAT creates it if it does not exist.
+4. O_TRUNC clears its previous contents.
+5. write() writes the message.
+6. close() closes the file descriptor.
+For production code, handle partial writes too: write() can successfully write fewer bytes than requested.
+
+
+
+
+
+6. Example 2: POSIX Threads 🧵
+POSIX also defines the Pthreads API, which allows a program to create and manage threads.
+
+#include <stdio.h>
+#include <pthread.h>
+
+void *task(void *arg)
+{
+    (void)arg;
+    printf("Hello from the thread!\n");
+    return NULL;
+}
+
+int main(void)
+{
+    pthread_t thread;
+
+    if (pthread_create(&thread, NULL, task, NULL) != 0)
+    {
+        fprintf(stderr, "Thread creation failed\n");
+        return 1;
+    }
+
+    if (pthread_join(thread, NULL) != 0)
+    {
+        fprintf(stderr, "Thread join failed\n");
+        return 1;
+    }
+
+    printf("Main thread completed.\n");
+    return 0;
+}
+
+
+
+Compile and run:
+gcc -Wall -Wextra posix_thread.c -o posix_thread -pthread
+./posix_thread
+
+
+Expected output, with the thread message appearing first:
+Hello from the thread!
+Main thread completed.
+
+
+pthread_create() starts the new thread, and pthread_join() waits for it to finish.
+
+
+
+
+
+
+7. POSIX vs Linux-Specific APIs
+Feature	POSIX interface	Linux-specific example
+File operations	open(), read(), write()	ioctl() is widely used on Linux and is not a single universally standardized POSIX interface
+Threads	pthread_create()	clone()
+I/O multiplexing	select(), pselect()	epoll()
+File-system notifications	No general POSIX equivalent to Linux inotify	inotify
+Process information	waitpid()	/proc interface
+8. POSIX Topics to Learn Next 📚
+For your Linux System Programming preparation, follow this order:
+1. POSIX standards and APIs
+2. File descriptors and file I/O
+3. Process creation: fork(), exec(), waitpid()
+4. Signals
+5. Pipes and named pipes (FIFOs)
+6. POSIX shared memory and message queues
+7. Pthreads
+8. Mutexes, semaphores, and condition variables
+9. POSIX timers and signals
+10. POSIX sockets and networking interfaces
+
+
+
+
+One-line definition: POSIX is a family of standards that defines common operating-system interfaces and behavior to improve application portability across compatible systems.

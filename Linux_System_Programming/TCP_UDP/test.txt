@@ -1,0 +1,177 @@
+1. What is TCP? 🌐
+TCP stands for Transmission Control Protocol.
+TCP is a connection-oriented protocol. It establishes a connection between two endpoints before sending application data and provides reliable, ordered delivery of a byte stream.
+
+
+Why do we use TCP?
+TCP is useful when data must arrive correctly and in order.
+Examples:
+- 🌍 Web browsing using HTTP/HTTPS over TCP.
+- 📧 Email communication.
+- 📂 File transfers.
+- 🔐 Remote login using SSH.
+- 💬 Applications where reliable delivery is important.
+
+
+
+How does TCP work?
+Client
+Requests a connection
+
+TCP three-way handshake
+SYN → SYN-ACK → ACK
+
+Data transfer
+Reliable, ordered byte stream
+
+Connection termination
+Endpoints close the connection
+
+
+TCP uses acknowledgements, sequence numbers, retransmissions and flow/congestion control to provide reliable delivery.
+
+
+
+
+2. What is UDP? ⚡
+UDP stands for User Datagram Protocol.
+UDP is a connectionless transport protocol. It sends independent packets called datagrams without establishing a connection first.
+Why do we use UDP?
+UDP is useful when low overhead and timely delivery matter, or when the application manages reliability itself.
+Examples:
+- 🎮 Online gaming.
+- 📞 Real-time voice and video applications.
+- 📡 DNS queries.
+- 📢 Some forms of device discovery and telemetry.
+- 📦 Applications that can tolerate occasional packet loss.
+UDP does not guarantee delivery, ordering, or duplicate protection. A datagram may be lost, arrive out of order, or be delivered more than once.
+
+
+
+
+3. TCP vs UDP — Main differences 📊
+Feature					TCP				UDP
+Connection				Connection-oriented		Connectionless
+Reliability				Reliable delivery mechanism	No delivery guarantee
+Ordering				Preserves byte-stream order	No ordering guarantee
+Speed/overhead				More protocol overhead		Lower protocol overhead
+Data format				Byte stream			Separate datagrams
+Acknowledgements			TCP handles them		Application must implement them if needed
+Example					SSH, web traffic over TCP	DNS, many real-time applications
+Easy way to remember: TCP prioritizes reliable, ordered delivery; UDP sends datagrams without TCP's delivery guarantees.
+
+
+
+
+4. How TCP and UDP are used in Linux C programming
+Both commonly use sockets.
+A socket is a communication endpoint that an application uses to send and receive data over a network.
+Common socket functions:
+Function	Purpose
+socket()	Create a socket
+bind()	Assign a local IP address and port
+listen()	Mark a TCP socket as ready to accept connections
+accept()	Accept a TCP client connection
+connect()	Connect a client socket to a remote endpoint
+send() / recv()	Send or receive data
+sendto() / recvfrom()	Send or receive datagrams, commonly with UDP
+close()	Close the socket
+
+
+
+
+5. TCP program in C — Client and server 💻
+We'll create a simple TCP server and client. The client sends a message, and the server replies.
+
+
+
+
+Step 1: Create the TCP server
+Create tcp_server.c:
+
+
+Step 2: Create the TCP client
+Create tcp_client.c:
+
+
+Step 3: Compile both programs
+gcc tcp_server.c -o tcp_server
+gcc tcp_client.c -o tcp_client
+
+
+Step 4: Run the server and client
+Open Terminal 1:
+./tcp_server
+
+
+Open Terminal 2:
+./tcp_client
+
+
+Expected output on the client:
+Server: Hello from TCP server!
+
+
+Expected output on the server:
+TCP server waiting on port 8080...
+Client: Hello from TCP client!
+
+
+Here, SOCK_STREAM selects TCP. The server waits for a client with accept(), while the client connects using connect().
+
+
+
+
+6. UDP program in C — Client and server ⚡
+Unlike TCP, UDP doesn't require listen(), accept(), or a connection handshake. The server receives datagrams and replies to the sender's address.
+Step 1: Create the UDP server
+Create udp_server.c:
+
+
+Step 3: Compile both programs
+gcc udp_server.c -o udp_server
+gcc udp_client.c -o udp_client
+
+
+Step 4: Run them
+Open Terminal 1:
+./udp_server
+
+
+Open Terminal 2:
+./udp_client
+
+
+Expected client output:
+Server: Hello from UDP server!
+
+
+Expected server output:
+UDP server waiting on port 8081...
+Client: Hello from UDP client!
+
+
+Here, SOCK_DGRAM selects UDP. The server uses recvfrom() to receive a datagram and sendto() to send a reply.
+This basic example assumes the datagram arrives and the reply is returned. UDP does not guarantee either event; the client may wait indefinitely if the server is unavailable. Real applications should implement timeouts and handle packet loss when appropriate.
+
+
+7. Important socket concepts 🧠
+Concept	Meaning
+IP address	Identifies a network interface or host address
+Port number	Identifies an application endpoint on a host
+AF_INET	IPv4 address family
+SOCK_STREAM	TCP-style byte stream
+SOCK_DGRAM	UDP-style datagrams
+htons()	Converts a 16-bit value to network byte order
+INADDR_ANY	Binds the server to all local IPv4 interfaces
+127.0.0.1	Loopback address; communicates with the same machine
+Note: Both examples use localhost, so you can practice without a second computer. To communicate between different machines, use the server's reachable IP address, configure firewall rules as needed, and bind the server to an appropriate interface.
+
+
+
+8. One-line definitions 📝
+- TCP: A connection-oriented transport protocol that provides a reliable, ordered byte stream.
+- UDP: A connectionless transport protocol that sends independent datagrams without guaranteeing delivery or order.
+
+
+Recommended learning order: First run the TCP client/server programs, understand socket(), bind(), listen(), accept(), and connect(), then run the UDP programs and compare recvfrom() and sendto(). 🚀

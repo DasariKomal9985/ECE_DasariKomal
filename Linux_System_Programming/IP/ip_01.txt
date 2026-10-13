@@ -1,0 +1,178 @@
+1. What is an IP address? 🤔
+IP stands for Internet Protocol.
+An IP address is a logical network address used to identify a network interface and help route data between devices on a network.
+For example, when your laptop communicates with a server, IP addressing helps the network deliver packets toward the correct destination.
+Example IPv4 address:
+192.168.1.10
+Example private IPv4 address
+
+
+
+2. Why do we need IP addresses? 🎯
+- 🌐 Identify network interfaces.
+- 💻 Allow devices to communicate over a network.
+- 📦 Help route packets from source to destination.
+- 🖥️ Allow client applications to connect to servers.
+- 🔧 Configure networking in Linux and embedded Linux.
+For example, in your TCP client program, you used:
+inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
+
+
+Here, 127.0.0.1 is the loopback IPv4 address, which refers to your own computer.
+
+
+
+
+3. Types of IP addresses
+There are two main IP versions.
+IPv4
+32 bits
+Four decimal numbers separated by dots.
+Example: 192.168.1.10
+
+
+IPv6
+128 bits
+Hexadecimal groups separated by colons.
+Example: 2001:db8::10
+
+
+
+IPv4 has about 4.3 billion possible addresses. IPv6 provides a vastly larger address space.
+
+
+
+
+4. Public IP vs private IP
+Private IP	Public IP
+Used within private networks	Used for routing across the public internet
+Commonly assigned by a router	Commonly assigned by an ISP or network provider
+Usually not directly reachable from the public internet	Can be internet-routable, subject to network configuration
+Example: 192.168.1.10	Example: 8.8.8.8
+Common IPv4 private address ranges:
+- 10.0.0.0 – 10.255.255.255
+- 172.16.0.0 – 172.31.255.255
+- 192.168.0.0 – 192.168.255.255
+
+
+
+
+5. How does an IP address work? 🔄
+Client laptop
+Source IP: 192.168.1.10
+
+Router / network
+Forwards packets toward the destination
+
+Server
+Destination IP: 192.168.1.20
+
+
+The source and destination IP addresses are included in IP packet headers. Routers examine the destination address to decide where to forward packets.
+When using TCP or UDP, the transport protocol also uses port numbers to identify application endpoints.
+
+
+
+
+6. Important concepts: IP, MAC, and port
+Concept	Purpose	Example
+IP address	Network-layer addressing	192.168.1.10
+MAC address	Link-layer interface addressing	00:1A:2B:3C:4D:5E
+Port number	Identifies a transport-layer endpoint	8080
+Think of it like sending a parcel 📦:
+- IP address: The destination building.
+- Port number: The particular service or endpoint at that destination.
+- MAC address: The local link-layer address used to deliver frames across a network segment.
+The analogy is simplified: MAC addresses are used on local network links, while routers forward packets between networks.
+
+
+
+
+7. How to check your IP address in Linux 💻
+Step 1: Check network interfaces
+ip addr
+
+
+Or use the shorter command:
+ip a
+
+
+Look for an interface such as eth0, wlan0, or enp..., and find its inet or inet6 entry.
+Step 2: Display only IPv4 addresses
+ip -4 addr
+
+
+Step 3: Check your routing table
+ip route
+
+
+This shows routes and often includes the default gateway.
+Step 4: Check your network interfaces
+ip link
+
+
+This displays interfaces and their link-layer information.
+Step 5: Check connectivity to a server
+ping -c 4 8.8.8.8
+
+
+This sends four ICMP echo requests. A failure does not always mean the destination is unreachable; ICMP traffic may be blocked.
+
+
+
+
+
+8. IP address in C programming ⚙️
+In Linux socket programming, we commonly use struct sockaddr_in for IPv4 addresses.
+Example:
+#include <stdio.h>
+#include <arpa/inet.h>
+
+int main(void)
+{
+    struct in_addr ip;
+
+    if (inet_pton(AF_INET, "192.168.1.10", &ip) != 1)
+    {
+        printf("Invalid IPv4 address\n");
+        return 1;
+    }
+
+    printf("Valid IPv4 address\n");
+    return 0;
+}
+
+
+Compile and run:
+gcc ip_demo.c -o ip_demo
+./ip_demo
+
+
+Output:
+Valid IPv4 address
+
+
+Here:
+- AF_INET specifies IPv4.
+- inet_pton() converts the text IP address into binary network format.
+- struct in_addr stores the IPv4 address in the form used by socket APIs.
+
+
+
+
+
+9. How IP is used in embedded Linux 🔌
+In embedded systems, IP networking is used for:
+- Sending sensor data to a server.
+- Communicating with an IoT device.
+- Connecting a Raspberry Pi to a remote computer.
+- TCP client/server applications.
+- UDP telemetry and device discovery.
+- Remote debugging and device management over SSH.
+For example, your Raspberry Pi can read sensor data and send it to another computer using TCP or UDP over an IP network.
+
+
+
+
+📝 One-line definition
+An IP address is a network-layer address used to identify a network interface and route packets between devices.
