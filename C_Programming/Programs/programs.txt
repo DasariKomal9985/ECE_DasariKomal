@@ -28,7 +28,6 @@
 27. Find largest digit in a number
 28. Find smallest digit in a number
 29. Count digits
-Page 130. Sum of digits
 31. Product of digits
 32. Reverse a number
 33. Check palindrome number
