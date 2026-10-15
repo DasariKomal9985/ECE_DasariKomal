@@ -1,0 +1,505 @@
+1. Basic Programs
+1. Hello World
+2. Add two numbers
+3. Subtract two numbers
+4. Multiply two numbers
+5. Divide two numbers
+6. Find remainder
+7. Swap two numbers using temporary variable
+8. Swap two numbers without temporary variable
+9. Find biggest of two numbers
+10. Find biggest of three numbers
+11. Find smallest of two numbers
+12. Find smallest of three numbers
+13. Check positive, negative, or zero
+14. Check even or odd
+15. Check divisible by 5
+16. Check divisible by 5 and 11
+17. Find ASCII value of a character
+18. Convert uppercase to lowercase
+19. Convert lowercase to uppercase
+20. Simple calculator using switch
+21. Find absolute value
+22. Calculate power
+23. Calculate square and cube
+24. Calculate percentage
+25. Calculate simple interest
+26. Calculate compound interest
+27. Find largest digit in a number
+28. Find smallest digit in a number
+29. Count digits
+Page 130. Sum of digits
+31. Product of digits
+32. Reverse a number
+33. Check palindrome number
+34. Check Armstrong number
+35. Check perfect number
+36. Check strong number
+37. Check automorphic number
+38. Check neon number
+39. Check spy number
+2. Number & Loop Programs
+1. Fibonacci series
+2. Fibonacci nth term
+3. Factorial
+4. Factorial using recursion
+5. Prime number
+6. Prime numbers in a range
+7. Count prime numbers in a range
+8. Check palindrome
+9. Print palindrome numbers in a range
+10. Reverse a number
+11. GCD of two numbers
+12. LCM of two numbers
+13. Sum of numbers from 1 to N
+14. Sum of even numbers
+15. Sum of odd numbers
+16. Print multiplication table
+17. Print factors of a number
+18. Count factors
+19. Find perfect numbers in a range
+20. Generate Armstrong numbers
+21. Generate Fibonacci numbers within a limit
+3. Character Programs
+1. Check vowel or consonant
+2. Count vowels
+3. Count consonants
+4. Count digits in a string
+5. Count spaces
+Page 26. Count special characters
+7. Find ASCII value
+8. Check alphabet
+9. Check uppercase/lowercase
+10. Convert uppercase to lowercase without library function
+11. Convert lowercase to uppercase without library function
+12. Toggle character case
+13. Find frequency of a character
+4. String Programs
+1. Find string length
+2. Copy string
+3. Compare two strings
+4. Concatenate two strings
+5. Reverse a string
+6. Reverse a string using pointers
+7. Reverse a word
+8. Reverse words in a sentence
+9. Count words in a sentence
+10. Find number of spaces
+11. Count vowels in string
+12. Count consonants
+13. Find frequency of each character
+14. Find duplicate characters
+15. Remove duplicate characters
+16. Find first non-repeated character
+17. Find first repeated character
+18. Check palindrome string
+19. Check anagram
+20. Remove spaces
+21. Remove all vowels
+22. Remove special characters
+23. Replace a character
+24. Replace a word
+25. Find substring
+26. Count occurrences of a substring
+27. Find longest word
+28. Find shortest word
+29. Reverse each word individually
+30. Reverse complete sentence
+Page 331. Find number of words
+32. Sort characters
+33. Sort words
+34. Convert string to uppercase
+35. Convert string to lowercase
+36. String to integer
+37. Integer to string
+5. Array Programs
+1. Read and print array
+2. Find largest element
+3. Find smallest element
+4. Find second largest
+5. Find second smallest
+6. Find sum of array
+7. Find average
+8. Count even elements
+9. Count odd elements
+10. Count positive/negative elements
+11. Reverse array
+12. Copy array
+13. Compare two arrays
+14. Merge two arrays
+15. Find duplicate elements
+16. Remove duplicates
+17. Find frequency of elements
+18. Find missing number
+19. Find repeating number
+20. Find common elements
+21. Find unique elements
+22. Find maximum difference
+23. Rotate array left
+24. Rotate array right
+25. Search element — linear search
+26. Search element — binary search
+27. Sort array — bubble sort
+28. Sort array — selection sort
+29. Sort array — insertion sort
+30. Find second highest without sorting
+Page 46. 2D / Matrix Programs
+1. Read and print matrix
+2. Matrix addition
+3. Matrix subtraction
+4. Matrix multiplication
+5. Matrix transpose
+6. Find diagonal elements
+7. Sum of main diagonal
+8. Sum of secondary diagonal
+9. Find largest element in matrix
+10. Find smallest element in matrix
+11. Check identity matrix
+12. Check symmetric matrix
+13. Check diagonal matrix
+14. Print upper triangular matrix
+15. Print lower triangular matrix
+16. Find row-wise sum
+17. Find column-wise sum
+18. Rotate matrix
+19. Search element in matrix
+20. Find duplicate elements in matrix
+7. Pointer Programs
+1. Basic pointer
+2. Pointer and variable
+3. Modify variable using pointer
+4. Pointer arithmetic
+5. Pointer with array
+6. Pointer with string
+7. Pointer to pointer
+8. Triple pointer
+9. Array of pointers
+10. Pointer to array
+11. Function pointer
+12. Array of function pointers
+13. Function returning pointer
+14. Passing pointer to function
+15. Passing array to function
+16. Passing string to function
+17. Passing 2D array to function
+Page 518. Swap using pointers
+19. Find largest using pointers
+20. Find smallest using pointers
+21. Reverse array using pointers
+22. Reverse string using pointers
+23. Count string length using pointer
+24. Copy string using pointer
+25. Compare strings using pointer
+26. Pointer to structure
+27. Structure pointer using ->
+28. Pointer with dynamic memory
+29. malloc() example
+30. calloc() example
+31. realloc() example
+32. free() example
+33. Dangling pointer demonstration
+34. Wild pointer concept
+35. NULL pointer
+36. Void pointer
+37. Const pointer
+38. Pointer to const
+39. Function pointer callback
+8. Structure & Union Programs
+1. Create a structure
+2. Initialize structure
+3. Array of structures
+4. Structure inside structure
+5. Pointer to structure
+6. Structure using ->
+7. Pass structure to function
+8. Return structure from function
+9. Pass structure pointer to function
+10. Find employee with highest salary
+11. Find student with highest marks
+12. Sort employees by salary
+13. Search employee by ID
+14. Student database
+15. Employee database
+16. Bank account structure
+Page 617. Bank transaction structure
+18. Nested structure
+19. Structure with function pointer
+20. Structure vs union program
+21. Union memory demonstration
+22. Structure padding demonstration
+23. Structure size calculation
+9. File Handling Programs
+1. Create a file
+2. Write data to file
+3. Read data from file
+4. Append data
+5. Copy one file to another
+6. Count characters in file
+7. Count words in file
+8. Count lines in file
+9. Search word in file
+10. Search character in file
+11. Employee records using file
+12. Student records using file
+13. Bank statement using file
+14. Add transaction
+15. Display transactions
+16. Calculate total deposits
+17. Calculate total withdrawals
+18. Calculate balance
+10. Bit Manipulation Programs
+1. Set a bit
+2. Clear a bit
+3. Toggle a bit
+4. Read/check a bit
+5. Set multiple bits
+6. Clear multiple bits
+7. Toggle multiple bits
+8. Extract bits
+9. Insert bits
+10. Create bit mask
+11. Check even/odd using bit
+Page 712. Check power of 2
+13. Count set bits
+14. Count clear bits
+15. Find position of set bit
+16. Find only set bit
+17. Find only clear bit
+18. Reverse bits
+19. Swap two numbers using XOR
+20. Find missing number using XOR
+21. Find duplicate using XOR
+22. Check whether number is power of 2
+23. Clear lowest set bit
+24. Get lowest set bit
+25. Check nth bit
+26. Set nth bit
+27. Clear nth bit
+28. Toggle nth bit
+29. Extract 4 bits
+30. Extract byte from 32-bit number
+11. Endianness / Byte Programs
+1. Check Little Endian / Big Endian
+2. Convert Big Endian to Little Endian
+3. Reverse bytes of 16-bit number
+4. Reverse bytes of 32-bit number
+5. Extract MSB
+6. Extract LSB
+7. Swap MSB and LSB
+8. Swap nibbles
+9. Extract high nibble
+10. Extract low nibble
+11. Swap two nibbles
+12. Reverse bits in a byte
+13. Convert integer into byte array
+14. Convert byte array into integer
+15. Pack multiple bytes into 32-bit value
+16. Unpack 32-bit value into bytes
+12. Embedded-Oriented Bit/Register Programs
+1. GPIO register simulation
+Page 82. Set GPIO pin
+3. Clear GPIO pin
+4. Toggle GPIO pin
+5. Read GPIO pin
+6. Configure multiple GPIO pins
+7. Simulate register using bit masks
+8. Extract register field
+9. Modify register field
+10. Create status register
+11. Create control register
+12. Simulate UART status register
+13. Simulate ADC register
+14. Simulate interrupt enable register
+13. Singly Linked List
+1. Create node
+2. Create first node
+3. Insert at beginning
+4. Insert at end
+5. Insert at position
+6. Delete first node
+7. Delete last node
+8. Delete at position
+9. Display list
+10. Count nodes
+11. Search element
+12. Find maximum
+13. Find minimum
+14. Find sum
+15. Find average
+16. Reverse linked list
+17. Find middle element
+18. Find nth node
+19. Find nth node from end
+20. Find duplicate nodes
+21. Remove duplicate nodes
+22. Sort linked list
+23. Merge two linked lists
+24. Compare two linked lists
+25. Copy linked list
+Page 926. Detect loop
+27. Find loop starting point
+28. Count nodes in loop
+29. Remove loop
+30. Check palindrome linked list
+14. Doubly Linked List
+1. Create node
+2. Insert at beginning
+3. Insert at end
+4. Insert at position
+5. Delete beginning
+6. Delete end
+7. Delete at position
+8. Forward traversal
+9. Backward traversal
+10. Count nodes
+11. Search element
+12. Find maximum
+13. Find minimum
+14. Reverse doubly linked list
+15. Find middle element
+16. Find nth node
+17. Remove duplicates
+18. Sort doubly linked list
+19. Merge two doubly linked lists
+20. Check palindrome
+15. Circular Linked List
+1. Create circular linked list
+2. Display circular list
+3. Insert beginning
+4. Insert end
+5. Insert at position
+6. Delete beginning
+7. Delete end
+8. Delete at position
+9. Search element
+10. Count nodes
+11. Find middle
+Page 1012. Reverse circular list
+13. Split circular list
+14. Detect circular structure
+16. Linked List Interview Problems
+1. Find middle element using slow/fast pointer
+2. Detect loop using Floyd's algorithm
+3. Find loop starting node
+4. Find length of loop
+5. Remove loop
+6. Reverse linked list iteratively
+7. Reverse linked list recursively
+8. Find nth node from end
+9. Delete nth node from end
+10. Check palindrome
+11. Merge two sorted lists
+12. Sort linked list
+13. Remove duplicates
+14. Find intersection of two linked lists
+15. Find intersection point
+16. Split list into two halves
+17. Move last node to first
+18. Swap nodes
+19. Reverse nodes in groups
+20. Detect cycle
+17. Recursion Programs
+1. Factorial
+2. Fibonacci
+3. Sum of digits
+4. Reverse number
+5. String reverse
+6. Array reverse
+7. GCD
+8. Power
+9. Binary search
+10. Tower of Hanoi
+11. Linked-list traversal
+12. Linked-list reverse
+Page 1118. Embedded-Oriented C Programs
+1. LED ON/OFF simulation
+2. GPIO register simulation
+3. Set/clear/toggle GPIO bit
+4. Button status simulation
+5. Debouncing simulation
+6. UART receive buffer
+7. UART circular buffer
+8. Find packet start/end
+9. Parse UART packet
+10. Calculate checksum
+11. CRC basics
+12. ADC-to-voltage conversion
+13. Temperature calculation
+14. Sensor threshold detection
+15. PWM duty-cycle calculation
+16. Timer overflow calculation
+17. Ring buffer
+18. FIFO implementation
+19. Bit-field register simulation
+20. State machine
+21. Command parser using function pointers
+22. Function-pointer command table
+23. Callback mechanism
+24. Sensor driver structure
+25. Device driver-style interface
+Page 12HIGH-PRIORITY REVISION CHECKLIST
+Level 1 — Must Know
+■ Reverse string
+■ Reverse words
+■ Palindrome
+■ Fibonacci
+■ Factorial
+■ Prime
+■ Armstrong
+■ Biggest/smallest
+■ Vowels/consonants
+■ Array reverse
+■ Largest/second largest
+■ Duplicate elements
+■ Sorting
+■ Searching
+■ String operations
+■ Pointer basics
+■ Pointer arithmetic
+■ Double pointer
+■ Array of pointers
+■ Pointer to array
+■ Function pointer
+■ Function returning pointer
+■ Passing array to function
+■ Passing 2D array to function
+Level 2 — Embedded Must Know
+■ Set bit
+■ Clear bit
+■ Toggle bit
+■ Read bit
+■ Masking
+■ Nibble extraction
+■ Byte extraction
+■ Bit reversal
+■ Endianness
+■ Byte swapping
+■ Register manipulation
+■ volatile
+Page 13■ Structure pointer
+■ Structure padding
+■ Function pointer callbacks
+■ Circular buffer
+■ FIFO
+Level 3 — Data Structures
+■ Singly linked list
+■ Insert/delete
+■ Reverse list
+■ Find middle
+■ Nth node from end
+■ Detect loop
+■ Find loop start
+■ Remove loop
+■ Doubly linked list
+■ Circular linked list
+■ Merge lists
+■ Sort list
+■ Palindrome list
+■ Intersection of lists
+Important Embedded C Patterns
+• Bit operations: set, clear, toggle, read, masking, extraction, insertion.
+• Memory: stack, heap, data/BSS, static storage, pointers, dynamic allocation, lifetime.
+• Function pointers: callbacks, command tables, driver interfaces, state machines.
+• Data structures: singly, doubly, and circular linked lists; loop/cycle problems.
+• Buffers: arrays, circular buffers, FIFO/ring buffers, UART packet parsing.
+• Hardware-style practice: GPIO/status/control registers, ADC, PWM, timers, UART.
