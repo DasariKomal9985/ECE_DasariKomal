@@ -1,0 +1,400 @@
+1. Flash / ROM
+What is it?
+Flash is non-volatile memory that stores the program code. It keeps its contents even when the power is turned OFF.
+Why do we need it?
+- To store the firmware.
+- To store constant data.
+- To keep the program when power is removed.
+Example: Your STM32 microcontroller stores its firmware in Flash memory.
+
+
+
+
+
+
+
+
+
+2. SRAM
+What is it?
+SRAM (Static Random-Access Memory) is volatile memory used to store data while the program is running.
+Why do we need it?
+- To store variables.
+- To store the stack and heap.
+- To hold temporary data during program execution.
+Example:
+int count = 10;
+
+
+When this variable is a normal local or global variable, its storage location depends on how it is declared and used. In a typical embedded program, writable data is stored in SRAM while the program runs.
+
+
+
+
+
+
+
+
+
+
+
+3. Stack
+What is it?
+The stack is a memory area used to manage function calls, local variables, return addresses, and other temporary information.
+Why do we need it?
+- To remember where a function should return.
+- To store local variables when the compiler places them on the stack.
+- To manage nested function calls.
+Example:
+void test(void)
+{
+    int x = 10;
+}
+
+
+In a typical embedded program, x may be stored on the stack. Its exact location depends on the compiler and optimization.
+
+
+
+
+
+
+
+
+
+
+4. Heap
+What is it?
+The heap is a memory area used for dynamic memory allocation while a program is running.
+Why do we need it?
+When memory must be requested at runtime instead of being allocated as a fixed-size object in advance.
+Example:
+#include <stdlib.h>
+
+int main(void)
+{
+    int *ptr = malloc(sizeof(int));
+
+    if (ptr != NULL)
+    {
+        *ptr = 25;
+        free(ptr);
+    }
+
+    return 0;
+}
+
+
+Here, malloc() requests memory from the heap, and free() releases it.
+Note: Some embedded systems avoid heap allocation because memory is limited or predictable timing is important.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5. Registers
+What are they?
+Registers are small, fast storage locations inside the CPU that hold data, addresses, or control information.
+Why do we need them?
+- To perform arithmetic operations.
+- To hold addresses and intermediate results.
+- To control CPU execution.
+Example:
+int a = 10;
+int b = 20;
+int c = a + b;
+
+
+The compiler may use CPU registers to perform the addition.
+
+
+
+
+
+
+
+
+
+
+6. Memory-Mapped I/O
+What is it?
+Memory-mapped I/O is a method in which hardware peripheral registers are assigned specific memory addresses.
+Why do we need it?
+To control and read hardware such as GPIO, UART, timers, and ADC peripherals through memory accesses.
+Example:
+#define GPIO_REG (*(volatile unsigned int *)0x40020014U)
+
+
+This defines access to a register at an example address. The real address must come from the microcontroller reference manual.
+
+For example, writing to a GPIO output register can turn an LED ON or OFF.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7. Code / Text Segment
+What is it?
+The text segment is the memory region that contains the compiled machine instructions of a program.
+Why do we need it?
+The CPU fetches instructions from this region to execute the program.
+Example:
+int add(int a, int b)
+{
+    return a + b;
+}
+
+
+The compiled instructions for add() are typically placed in the text segment, usually in Flash on a microcontroller.
+
+
+
+
+
+
+
+
+
+8. .data Segment
+What is it?
+The .data segment stores initialized global and static variables that can be modified.
+Example:
+int count = 10;
+
+void test(void)
+{
+    static int value = 20;
+}
+
+
+Both count and value typically occupy .data storage.
+Important: On many microcontrollers, their initial values are stored in Flash, then copied into SRAM during startup.
+
+
+
+
+
+
+
+
+
+
+
+
+9. .bss Segment
+What is it?
+The .bss segment stores global and static variables that are uninitialized or explicitly initialized to zero.
+Example:
+int count;
+static int total;
+int number = 0;
+
+
+These variables typically occupy .bss storage.
+Important: Startup code normally clears the .bss region to zero before calling main().
+
+
+
+
+
+
+
+
+
+
+10. Read-Only Data
+What is it?
+Read-only data contains values that the program should not modify.
+Example:
+const char message[] = "Hello";
+
+
+The compiler may place this array in a read-only section.
+Why do we need it?
+- To store constant values.
+- To protect data from accidental modification.
+- To keep lookup tables and fixed messages.
+On many embedded systems, read-only data is stored in Flash, but the exact placement depends on the compiler and linker configuration.
+
+
+
+
+
+
+
+
+
+
+11. Stack vs Heap
+Stack	Heap
+Used for function calls and temporary data.	Used for dynamic memory allocation.
+Usually managed automatically by function execution.	Allocated and released through functions such as malloc() and free().
+Often has predictable allocation behavior.	Allocation behavior depends on the allocator.
+Can overflow if too much stack space is used.	Can run out of memory or become fragmented.
+Often used for local variables.	Often used for dynamically sized data.
+Remember: Both may use SRAM in a microcontroller.
+
+
+
+
+
+
+
+
+
+
+12. Function Call / Stack Frame
+What is a stack frame?
+A stack frame is the memory used by a function call to hold information such as local variables, saved registers, and other data required for that call.
+Example:
+int add(int a, int b)
+{
+    int result = a + b;
+    return result;
+}
+
+int main(void)
+{
+    int answer = add(10, 20);
+    return 0;
+}
+
+
+What happens?
+1. main() calls add().
+2. The CPU or compiler arranges the arguments according to the calling convention.
+3. The function performs the addition.
+4. The result is returned to main().
+5. The function's stack frame, if one was created, is no longer needed.
+Note: Not every function has a separate stack frame. The compiler may keep values in registers or optimize the function.
+
+
+
+
+
+
+
+
+
+
+13. Linker Script Basics
+What is a linker script?
+A linker script tells the linker where different parts of a program should be placed in memory.
+Why do we need it?
+A microcontroller has specific Flash and SRAM addresses. The linker script arranges program sections to fit those memory regions.
+Example:
+MEMORY
+{
+    FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = 512K
+    RAM   (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
+}
+
+
+Here:
+- FLASH defines a memory region for program code and read-only data.
+- RAM defines a memory region for writable data.
+- ORIGIN specifies the starting address.
+- LENGTH specifies the region's size.
+These addresses and sizes are only examples. Use the values specified for your actual MCU.
+
+
+
+
+
+
+
+
+
+
+14. Startup Code
+What is startup code?
+Startup code runs after reset and prepares the system before the main() function starts.
+What does it do?
+1. Initializes the stack pointer.
+2. Copies initialized .data values into RAM.
+3. Clears the .bss region.
+4. Performs required system initialization.
+5. Calls main().
+Basic flow:
+Microcontroller Reset
+Reset Handler / Startup Code
+Initialize Stack and Memory
+Call main()
+
+
+
+
+
+15. Reset Vector
+What is it?
+The reset vector identifies the code or initial execution location the processor uses after a reset.
+On ARM Cortex-M microcontrollers, the vector table's first word contains the initial stack pointer value, and the second word contains the reset handler address.
+Why do we need it?
+It tells the processor where to begin initialization after reset.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+16. Vector Table
+What is it?
+A vector table is a list of addresses that identify the handlers for reset, exceptions, and interrupts.
+Why do we need it?
+When an interrupt or exception occurs, the processor uses the vector table to find the corresponding handler.
+Example handlers:
+- Reset handler
+- NMI handler
+- HardFault handler
+- SysTick handler
+- UART interrupt handler
+On ARM Cortex-M, the vector table normally begins with the initial stack pointer entry, followed by the reset handler and other exception or interrupt entries.
+
+Final revision: How everything connects 🔗
+Flash
+Stores the firmware, initial values for .data, and often read-only data.
+
+
+SRAM
+Holds writable runtime data, the stack, and possibly the heap.
+
+
+CPU registers
+Hold values and addresses while instructions execute.
+
+
+Linker script and startup code
+Arrange the program in memory and initialize it before main().
+
+
+Reset vector and vector table
+Tell the processor where to start and where to find interrupt handlers.

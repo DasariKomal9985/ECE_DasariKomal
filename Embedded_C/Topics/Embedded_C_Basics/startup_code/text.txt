@@ -1,0 +1,131 @@
+1. What is Startup Code? ⚡
+Startup code is the code that runs immediately after a microcontroller resets, before the main() function starts.
+It prepares the microcontroller so that the C program can run correctly.
+
+
+
+2. Why do we need Startup Code?
+1. To initialize the stack pointer.
+2. To copy initialized global and static variables into RAM.
+3. To initialize uninitialized global and static variables to zero.
+4. To prepare the system before calling main().
+
+
+
+3. How does Startup Code work?
+1. Microcontroller Reset
+
+2. Startup Code Runs
+
+3. Initialize Stack and RAM Variables
+
+4. Call main()
+
+
+
+4. Example Startup Code
+A simplified C example to understand the idea:
+int global_var = 10;
+int uninitialized_var;
+
+void startup(void)
+{
+    uninitialized_var = 0;
+
+    main();
+}
+
+int main(void)
+{
+    while (1)
+    {
+        // Main program
+    }
+}
+
+
+What is happening?
+- startup() runs first in this simplified example.
+- It initializes uninitialized_var to zero.
+- It calls main().
+- main() starts executing the application.
+
+
+In a real microcontroller, startup code is usually written in assembly or supplied by the compiler or development tools. It initializes memory sections and the stack according to the processor and linker configuration.
+
+
+
+5. Final Definition 🎯
+Startup code is the code that executes after a microcontroller reset to initialize the processor environment and memory before transferring control to the main() function.
+
+
+
+
+
+
+What Does the Startup Code Actually Do?
+
+When a microcontroller powers up, it doesn't know where its variables are or how to call a function. The startup code performs several crucial sequential steps to fix this:
+
+1. Initializes the Stack Pointer (SP)
+
+Functions in C require a stack to store local variables and return addresses. The startup code points the Stack Pointer register to the very top of your chip's RAM allocation.
+
+2. Copies Initialized Variables to RAM (The .data Section)
+
+When you write int x = 5; as a global variable, that value 5 must be stored permanently in non-volatile Flash memory (ROM). At boot time, the startup code copies these values from Flash into RAM so your program can read and change them.
+
+3. Clears Uninitialized Variables (The .bss Section)
+
+Global or static variables that you don't explicitly initialize (e.g., int y;) are legally required by the C standard to start at 0. The startup code loops through this block of RAM (the .bss section) and clears it by filling it with zeroes.
+
+4. Configures Low-Level System Clocks (Optional but Common)
+
+Some architectures configure basic system clocks or external oscillator settings right away to speed up the boot process.
+
+5. Sets up the Vector Table
+
+The vector table is a map of memory addresses that tells the CPU exactly where to jump when a hardware interrupt (like a timer or pin change) occurs. The startup code defines this table.
+
+6. Jumps to main()
+
+Once the stack is ready, memory is initialized, and the hardware is stabilized, the startup code executes a branch or jump instruction directly to the entry point of your application: main().
+
+
+
+
+
+
+What Does it Look Like?
+
+Because it performs low-level hardware configuration, startup code is highly chip-specific. It is usually found in a file provided by your chip manufacturer, ending in .s (Assembly) or .c, with names like:
+• startup_stm32f407xx.s (for STMicroelectronics ARM chips)
+• crt0.s (stands for "C Runtime 0", a universal generic name)
+Here is a simplified, conceptual view of what a startup routine is doing under the hood in pseudo-code:
+c
+// Conceptual look at what a startup file does before main()
+void Reset_Handler(void) {
+    // 1. Initialize Stack Pointer (usually handled by hardware on ARM, or done first thing)
+    
+    // 2. Copy initialized data from Flash to RAM
+    uint32_t *src = &_sidata; // Start of data in Flash
+    uint32_t *dst = &_sdata;  // Start of data in RAM
+    while (dst < &_edata) {
+        *dst++ = *src++;
+    }
+
+    // 3. Zero-fill the bss segment in RAM
+    dst = &_sbss;
+    while (dst < &_ebss) {
+        *dst++ = 0;
+    }
+
+    // 4. Low-level clock setup
+    SystemInit();
+
+    // 5. Call your application entry point
+    main();
+
+    // 6. Trap the CPU if main ever returns (safety net)
+    while(1);
+}

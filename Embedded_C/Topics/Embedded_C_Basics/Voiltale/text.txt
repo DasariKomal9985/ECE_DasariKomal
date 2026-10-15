@@ -1,0 +1,73 @@
+Definition: 
+
+
+
+
+volatile is a keyword in C that tells the compiler not to optimize away or reuse accesses to a variable because its value can change at any time due to external factors, such as hardware or interrupts.
+
+
+2. Code without volatile
+int flag = 0;
+
+while (flag == 0)
+{
+    // Wait
+}
+
+
+What is happening?
+1. Initially, flag = 0.
+2. The while loop checks whether flag is 0.
+3. The loop keeps running.
+4. Suppose an interrupt changes flag to 1. The compiler might optimize the loop and keep using the old value instead of reading flag again.
+5. As a result, the loop might never stop.
+
+
+
+
+
+
+
+
+
+
+3. Code with volatile
+volatile int flag = 0;
+
+while (flag == 0)
+{
+    // Wait
+}
+
+
+What is happening?
+1. Initially, flag = 0.
+2. The while loop reads flag.
+3. Suppose an interrupt changes flag to 1.
+4. Because flag is volatile, the compiler must read its value again when the loop checks it.
+5. The loop sees flag = 1 and stops.
+
+
+
+
+
+
+Why does optimization happen?
+1. The compiler sees that flag = 0.
+2. Inside the while loop, the program does not change flag.
+3. The compiler assumes that flag will remain 0 because it cannot see any normal C statement changing it.
+4. To make the program faster, the compiler may read flag once and reuse the value instead of reading it repeatedly.
+5. If an interrupt changes flag to 1, the optimized loop might not notice the change.
+Why does the compiler do this?
+Because the compiler tries to make programs run faster by reducing unnecessary memory reads. From the code it can see, repeatedly reading flag appears unnecessary.
+What changes with volatile?
+volatile int flag = 0;
+
+while (flag == 0)
+{
+    // Wait
+}
+
+
+Now, the compiler knows that each access to flag matters. It must perform the required volatile read each time the loop condition is evaluated, rather than reusing an old value.
+Remember: The compiler does not automatically know what an interrupt will do. volatile tells it that the variable must be accessed according to volatile rules.

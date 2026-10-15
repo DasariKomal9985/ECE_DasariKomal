@@ -1,0 +1,54 @@
+1. Primary Target
+Standard C:
+Desktops, laptops, and servers.
+Embedded C:
+Microcontrollers and microprocessors (e.g., in TVs, cars, medical devices).
+
+
+2. Hardware Dependency
+Standard C:
+Hardware-independent. You write software without needing to know your computer's RAM layout or CPU registers.
+Embedded C:
+Highly hardware-dependent. You must understand the specific architecture, memory maps, and register locations of the chip.
+
+
+3. Operating System
+Standard C:
+Usually requires an OS (Windows, Linux, macOS) to handle memory and hardware requests.
+Embedded C:
+Often runs on "bare-metal" (no OS) or uses a lightweight Real-Time Operating System (RTOS).
+
+
+4. Hardware Interfacing
+Standard C:
+Indirect. Handled via OS system calls and APIs.
+Embedded C:
+Direct. Code manipulates physical hardware pins, ports, and registers directly (e.g., PORTA = 0xFF;).
+
+
+5. Resource Availability
+Standard C:
+Virtually unlimited RAM, storage, and processing power.
+Embedded C:
+Highly restricted RAM (often measured in kilobytes) and strict power constraints.
+
+
+6. Memory Allocation
+Standard C:
+Relies heavily on dynamic allocation (malloc, free).
+Embedded C:
+Favors static memory allocation to prevent fragmentation and guarantee real-time predictability.
+
+
+7. Libraries & Headers
+Standard C:
+Uses standard, universal libraries like <stdio.h> or <stdlib.h>.
+Embedded C:
+Uses architecture-specific headers to map hardware registers (e.g., <reg51.h> or <avr/io.h>).
+
+
+8. Compilers & Output
+Standard C:
+Native compilers like GCC or Clang output native executables (e.g., .exe).
+Embedded C:
+Cross-compilers (e.g., Keil, MPLAB, IAR) run on a PC but output machine-specific code (e.g., .hex or .bin) to flash onto the chip.
