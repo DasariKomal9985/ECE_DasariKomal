@@ -1,0 +1,431 @@
+21. Reset & Boot Process ⚡
+In an embedded system, the reset and boot process is the sequence of operations a microcontroller performs after power is applied or a reset occurs, before executing the application code in main().
+For example, when you power ON an STM32F401RBT6, the processor does not immediately start executing your main() function. First, it reads the reset information, executes startup code, initializes memory, and prepares the system to run your application.
+Let's understand every topic step by step. 👇
+
+
+
+
+
+
+
+
+
+
+1. What is Reset?
+A reset puts a microcontroller into a defined starting state so that it can begin executing code from its reset entry point.
+A reset may occur when:
+- 🔌 Power is switched ON.
+- 🔋 Supply voltage drops too low.
+- 🐕 A watchdog timer expires.
+- 🔄 Software requests a reset.
+- 🛠️ An external reset pin is activated.
+After reset, the processor starts from a defined entry point according to its architecture.
+
+
+
+
+
+
+
+
+2. Power-On Reset (POR) 🔌
+Power-on reset occurs when power is first applied to the microcontroller.
+Why is it required?
+When power is switched ON, the supply voltage does not instantly reach its operating value. The processor needs to remain in reset until the hardware can start reliably.
+How does it work?
+1. Power is applied.
+2. The supply voltage begins rising.
+3. Reset circuitry detects the appropriate power condition.
+4. The processor is released from reset when the required conditions are met.
+5. The processor begins its reset sequence.
+Example: You connect a power supply to an STM32 development board. The power-on reset circuitry ensures that the MCU starts in a defined state.
+
+
+
+
+
+
+
+
+3. Brown-Out Reset (BOR) 🔋
+Brown-out reset occurs when the supply voltage falls below a configured or specified threshold.
+Why is it required?
+A microcontroller may behave unpredictably if its supply voltage is too low. It might execute instructions incorrectly, access memory unreliably, or produce incorrect peripheral outputs.
+How does it work?
+Suppose an MCU normally operates at 3.3 V. If the supply voltage drops below the relevant brown-out threshold, reset circuitry can hold the MCU in reset until the voltage recovers.
+The exact threshold depends on the MCU and its configuration.
+Example: A faulty power supply causes the voltage to fall during motor startup. Brown-out protection can prevent the MCU from continuing execution under an unsafe supply condition.
+POR vs BOR: POR is associated with initial power-up; BOR protects against supply voltage dropping too low during operation or startup.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4. System Reset 🔄
+A system reset resets the processor and the parts of the MCU included in the device's system-reset domain.
+Common causes include:
+- Software-requested reset.
+- External reset pin activation.
+- Certain hardware reset events.
+On STM32 devices, software can request a system reset using the Cortex-M System Control Block's AIRCR register through CMSIS.
+Example:
+#include "stm32f4xx.h"
+
+void system_reset(void)
+{
+    NVIC_SystemReset();
+}
+
+
+When NVIC_SystemReset() is called, the MCU initiates a system reset. Execution does not continue normally after the reset request.
+Important: A system reset does not necessarily reset every peripheral or backup domain in exactly the same way. The precise behavior depends on the MCU.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5. Watchdog Reset 🐕
+A watchdog is a timer used to detect when software stops operating correctly.
+Why is it required?
+An embedded application may become stuck because of:
+- An infinite loop.
+- A deadlock.
+- A software fault.
+- A task that stops responding.
+The watchdog can reset the MCU if the application fails to refresh it within the required time.
+How does it work?
+1. The watchdog timer starts.
+2. The application runs.
+3. Healthy software refreshes the watchdog periodically.
+4. If the application stops refreshing it, the timer expires.
+5. The watchdog generates a reset, if configured for reset operation.
+Example:
+while (1)
+{
+    read_sensor();
+    process_data();
+
+    // Refresh the watchdog only after
+    // confirming that the application is healthy.
+    HAL_IWDG_Refresh(&hiwdg);
+}
+
+
+Here, hiwdg is assumed to be an initialized STM32 HAL watchdog handle.
+Refreshing the watchdog unconditionally in a loop that can continue even when the application is faulty may defeat its purpose.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6. What is a Vector Table? 📋
+The vector table is a table in memory containing information that tells the processor where to begin execution after reset and where to find exception and interrupt handlers.
+On a typical Cortex-M microcontroller, the vector table begins with these entries:
+Entry	Purpose
+Initial Main Stack Pointer	Initial value for MSP
+Reset vector	Address of Reset_Handler
+NMI vector	Address of the NMI handler
+HardFault vector	Address of the HardFault handler
+Other exception vectors	Addresses of exception handlers
+IRQ vectors	Addresses of peripheral interrupt handlers
+For example, if a timer interrupt occurs, the processor uses the corresponding interrupt vector to locate the timer's interrupt handler.
+The vector table is normally placed in a designated memory region, commonly Flash for a simple STM32 application. Some systems relocate it to another suitable memory location.
+
+
+
+
+
+
+
+
+
+
+
+7. What is the Reset Vector?
+The reset vector is the vector-table entry that identifies the reset entry point.
+For a Cortex-M processor, the first two vector-table entries have special meanings:
+- First entry: Initial Main Stack Pointer (MSP) value.
+- Second entry: Reset handler address.
+After reset, the processor loads the initial stack pointer and obtains the reset handler address from the vector table, then starts executing the reset handler.
+Example: If the reset vector points to Reset_Handler, execution begins at that handler rather than directly at main().
+
+
+
+
+
+
+
+
+
+
+
+
+
+8. What is Reset_Handler? 🚀
+Reset_Handler is the startup function that runs after the processor's reset sequence.
+It prepares the system so the C application can execute correctly.
+Typical responsibilities include:
+1. Initializing memory sections.
+2. Setting up required processor or runtime state.
+3. Configuring the system clock, depending on the startup implementation.
+4. Calling C runtime initialization.
+5. Calling main().
+The exact sequence depends on the compiler, startup file, MCU family, and project configuration.
+A simplified example:
+void Reset_Handler(void)
+{
+    initialize_data_section();
+    initialize_bss_section();
+    SystemInit();
+
+    main();
+
+    while (1)
+    {
+        // Normally reached only if main() returns.
+    }
+}
+
+
+This is illustrative pseudocode, not a complete STM32 startup implementation. Real startup code often uses linker-defined memory addresses and assembly instructions.
+
+
+
+
+
+
+
+
+
+
+9. What is Startup Code?
+Startup code is the code that runs before the application begins normal execution in main().
+It connects the processor's reset mechanism with the C program.
+Startup code may be written in assembly language, C, or a combination of both.
+Why is startup code needed?
+Consider this global variable:
+int sensor_count = 10;
+
+
+The variable must contain its expected initial value before the application uses it.
+Similarly:
+int error_count;
+
+
+This uninitialized global variable must start at zero in a normal C program.
+Startup code helps ensure these memory requirements are satisfied.
+In STM32CubeIDE projects, startup files commonly have names such as startup_stm32f401xx.s, depending on the device and toolchain.
+
+
+
+
+
+
+
+
+
+
+10. C Runtime Initialization
+The C runtime is the environment needed for a C program to begin execution correctly.
+Before main() starts, the runtime initialization process prepares items such as global and static variables.
+Typical work includes:
+- Copying initialized global and static variables into RAM.
+- Clearing uninitialized global and static variables.
+- Performing any required runtime setup.
+- Calling constructors in environments that use C++.
+For a simple C-based STM32 application, memory-section initialization is one of the most important parts of this process.
+
+
+
+
+
+
+
+
+
+
+
+11. .data Initialization
+The .data section contains initialized global and static variables that need to reside in RAM during program execution.
+Example:
+int sensor_value = 25;
+static int device_status = 1;
+
+
+Assuming these variables have static storage duration and are placed in .data, their initial values are typically stored in the program image in Flash.
+At startup, the runtime copies those initial values from Flash into RAM.
+Why is this required?
+RAM is used for variables that the program needs to modify during execution, but the initial values must be preserved somewhere before RAM is prepared.
+Conceptually:
+- Flash: holds the initial data values.
+- RAM: holds the working variables.
+For example, sensor_value starts at 25, and the application can later update it to another value.
+
+
+
+
+
+
+
+
+12. .bss Initialization
+The .bss section contains uninitialized or zero-initialized global and static variables.
+Example:
+int error_count;
+static int retry_count = 0;
+
+
+These variables typically occupy the .bss section.
+Before main() executes, startup code clears this section so the variables begin at zero.
+Why is this required?
+C requires objects with static storage duration that are not explicitly initialized to be initialized to zero.
+For example:
+int error_count;
+
+int main(void)
+{
+    // error_count begins at zero.
+    error_count++;
+
+    while (1)
+    {
+    }
+}
+
+
+The initialization is normally performed by the startup/runtime code, not by a statement written in main().
+.data vs .bss
+Feature	.data	.bss
+Variable examples	int count = 5;	int count;
+Initial value	A specified nonzero or other initialized value	Zero
+Typical startup action	Copy initial values to RAM	Clear RAM to zero
+Flash image	Stores initial data values	Usually does not need to store all the zero bytes
+Runtime location	RAM	RAM
+The actual placement depends on the linker script and toolchain, but this is the usual arrangement for an STM32 application.
+
+
+
+
+
+
+
+
+
+13. System Clock Initialization ⏰
+Before the application performs timing-sensitive tasks, it often configures the system clock.
+On an STM32, the clock system may use:
+- HSI: internal high-speed oscillator.
+- HSE: external high-speed oscillator.
+- PLL: phase-locked loop used to derive other clock frequencies.
+- Clock prescalers: divide clock frequencies for different buses.
+A startup function such as SystemInit() may configure some clock-related settings, while the generated SystemClock_Config() function often configures the application's intended clock tree.
+In many STM32CubeIDE projects, SystemClock_Config() is called from main(), after the C runtime has prepared memory.
+So, clock initialization does not always happen entirely inside Reset_Handler. Follow the startup file and main.c for your specific project.
+
+
+
+
+
+
+
+
+
+
+14. main() — Application Entry Point 💻
+main() is where the application's normal C execution begins.
+Example:
+#include "stm32f4xx_hal.h"
+
+int main(void)
+{
+    HAL_Init();
+
+    SystemClock_Config();
+
+    MX_GPIO_Init();
+
+    while (1)
+    {
+        // Main application runs here.
+    }
+}
+
+
+This example assumes the clock and GPIO configuration functions are generated or defined elsewhere in the project.
+Typical tasks performed in main() include:
+- Initializing the HAL.
+- Configuring clocks and GPIO.
+- Initializing UART, SPI, I²C, ADC, and timers.
+- Starting an RTOS scheduler, if used.
+- Running the main application loop.
+Notice that the startup/runtime code has already prepared the C memory environment before this main() function starts.
+
+
+
+
+
+
+
+
+
+15. Complete Reset and Boot Flow 🔁
+1. Power ON or Reset Event
+POR, BOR, external reset, watchdog or software reset
+
+2. Processor Reset Sequence
+Processor enters its defined reset state
+
+3. Read Vector Table
+Load initial MSP and obtain Reset_Handler address
+
+4. Execute Reset_Handler
+Run startup code
+
+5. Initialize C Memory
+Copy .data values and clear .bss
+
+6. Initialize Runtime and Clocks
+Exact clock setup depends on the startup implementation and project
+
+7. Execute main()
+Initialize peripherals and run the embedded application
+
+
+How to observe this in STM32CubeIDE
+For your STM32F401 project, look at these files:
+- startup_stm32f401xx.s — vector table and reset handler.
+- system_stm32f4xx.c — system-level initialization support.
+- stm32f4xx_it.c — interrupt and exception handlers.
+- main.c — application initialization and main().
+- The linker script (.ld) — memory regions and section placement.
+Set a breakpoint at Reset_Handler, then step through the startup code in the debugger. You can observe the transition from reset handling and memory initialization to main().

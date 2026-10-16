@@ -1,0 +1,441 @@
+15. ADC — Analog-to-Digital Converter 🔌
+ADC is an important topic in Embedded C because many real-world sensors produce analog voltage, while a microcontroller processes digital values.
+For example, when you connect a temperature sensor, potentiometer, light sensor, or battery-voltage measurement circuit to an STM32, the ADC can convert the input voltage into a numerical value that your C program can read.
+Let's understand each topic step by step, with practical STM32 examples.
+
+
+
+
+
+
+1. Analog vs Digital
+
+
+Analog signal
+Can vary continuously within a range. Examples include sensor voltages and microphone signals.
+
+
+Digital signal
+Uses discrete values. Digital circuits commonly represent logic LOW and HIGH using voltage ranges.
+
+
+What is the difference?
+Suppose a potentiometer produces a voltage between 0 V and 3.3 V.
+Its output might be 0.5 V, 1.2 V, 2.65 V, or many other values within that range.
+A microcontroller's ADC converts the voltage into a digital number.
+Why do we need ADC?
+Because the CPU cannot directly perform ordinary digital calculations on a continuously varying analog voltage. The ADC gives the program a numerical representation of that voltage.
+Example applications:
+- Reading temperature and humidity sensors with analog outputs.
+- Measuring battery voltage.
+- Reading a potentiometer to control motor speed.
+- Measuring light intensity using an analog sensor.
+
+
+
+
+
+
+
+
+
+2. ADC Resolution
+What is resolution?
+ADC resolution tells you how many discrete digital levels the ADC can represent.
+Resolution is usually specified in bits.
+The number of possible output codes is:
+\[
+\text{Levels}=2^N
+\]
+
+Here, \(N\) is the ADC resolution in bits.
+ADC resolution	Number of output codes	Code range
+8-bit	256	0–255
+10-bit	1,024	0–1,023
+12-bit	4,096	0–4,095
+16-bit	65,536	0–65,535
+Example: 12-bit ADC
+Suppose your STM32 ADC is configured for 12-bit conversion with a 3.3 V reference.
+- Minimum ideal input: 0 V
+- Maximum ideal input: 3.3 V
+- Minimum output code: 0
+- Maximum output code: 4095
+The approximate voltage represented by each code step is:
+\[
+\text{LSB size}=\frac{3.3}{4096}
+\approx 0.806\text{ mV}
+\]
+
+The ADC output is not a voltage directly; it is a number representing the sampled voltage.
+Remember: More bits provide finer digital steps, but do not automatically guarantee better accuracy. Noise, reference quality, and ADC hardware also matter.
+
+
+
+
+
+
+
+
+
+3. Reference Voltage (VREF)
+What is reference voltage?
+Reference voltage is the voltage range against which the ADC measures its input.
+For example, if the ADC uses a reference of 3.3 V, it maps an input near 0 V to the lowest code and an input near 3.3 V to the highest code, assuming the ADC's configured input range and reference support those values.
+Example
+For a 12-bit ADC with a 3.3 V reference:
+Input voltage	Approximate ADC code
+0 V	0
+0.825 V	1024
+1.65 V	2048
+2.475 V	3071
+3.3 V	4095
+These values are idealized examples; actual readings can differ slightly.
+Why is it important?
+If the reference voltage changes, the same input voltage may produce a different ADC code.
+Important: Never apply a voltage above the MCU's permitted ADC input range. The ADC reference voltage is not necessarily the same as the MCU supply voltage, and the exact limits depend on the device datasheet.
+
+
+
+
+
+
+
+
+
+
+
+4. Sampling
+What is sampling?
+Sampling means measuring an analog input voltage at a particular instant.
+Imagine a temperature sensor whose voltage changes over time. The ADC takes readings at intervals and converts those readings into digital values.
+
+
+
+
+
+
+
+circuitcrush.com
+
+
+Example
+Suppose the ADC samples a sensor 1,000 times per second.
+\[
+f_s=1000\text{ Hz}
+\]
+
+The time between samples is:
+\[
+T_s=\frac{1}{f_s}=1\text{ ms}
+\]
+
+So the ADC takes one sample every millisecond.
+What is sample time?
+Inside many microcontroller ADCs, a sample-and-hold circuit captures the input voltage before conversion.
+The sample time is the interval during which the ADC samples the input. Some STM32 ADCs let you configure this time.
+- A short sample time allows faster operation.
+- A longer sample time may be needed for sensors with high output impedance.
+The sampling rate and sample time are related, but they are not the same thing.
+
+
+
+
+
+
+
+
+
+
+5. Quantization
+What is quantization?
+Quantization is the process of mapping a sampled analog voltage to one of a finite number of digital codes.
+Even though an input voltage can take many possible values, a 12-bit ADC has only 4,096 output codes.
+Example
+Suppose two input voltages are 1.500 V and 1.501 V. Depending on the ADC resolution and the boundaries between codes, both may produce the same output code.
+This difference between a continuous voltage and its discrete digital representation is called quantization.
+For an ideal ADC, quantization error is generally within approximately half an LSB when rounding to the nearest code, excluding other errors.
+Sampling captures the voltage; quantization represents it with a digital code.
+
+
+
+
+
+
+
+
+
+6. Conversion Time
+What is conversion time?
+Conversion time is the time required for the ADC to convert a sampled voltage into a digital result.
+The total time for a reading can include:
+- ADC sampling time.
+- ADC conversion time.
+- Additional hardware or software overhead.
+For example, if sampling takes 15 ADC clock cycles and conversion takes 12.5 cycles, the total is 27.5 ADC clock cycles for that conversion.
+If the ADC clock is 10 MHz:
+\[
+T=\frac{27.5}{10\,000\,000}=2.75\ \mu s
+\]
+
+This is an illustrative calculation; actual timing depends on the ADC architecture, resolution, and MCU configuration.
+Why does it matter?
+It helps determine how quickly you can collect measurements and whether the ADC can keep up with a changing signal.
+
+
+
+
+
+
+
+7. ADC Channels
+What is an ADC channel?
+An ADC channel is an input that the ADC can measure.
+A microcontroller may provide multiple ADC-capable pins, allowing you to measure several analog signals.
+Example
+Imagine an STM32 system that reads:
+- Channel 0: Potentiometer.
+- Channel 1: Temperature sensor.
+- Channel 2: Battery-voltage measurement.
+- Channel 3: Light sensor.
+The ADC can select these channels and convert them one by one, or use scan mode to process a configured sequence.
+Important: Not every GPIO pin supports ADC. Check your exact MCU datasheet and pinout.
+
+
+
+
+
+
+
+
+
+
+8. ADC Registers
+What are ADC registers?
+ADC registers are special hardware registers used to configure and control the ADC peripheral.
+Embedded C programs can access these registers through the MCU's register definitions or through a hardware abstraction library such as STM32 HAL.
+The names and exact bit fields differ between STM32 families.
+Common register functions include:
+Register or register group	Purpose
+Status register	Reports ADC events and flags
+Control register	Enables the ADC and configures operating behavior
+Configuration register	Sets options such as conversion mode and triggering
+Sample-time register	Configures sampling time for channels
+Sequence registers	Selects channel conversion order on ADCs that support sequences
+Data register	Holds the conversion result
+Interrupt-enable register or fields	Enables selected ADC interrupt events
+How does register-based operation work?
+1. Configure the ADC clock and GPIO pin.
+2. Set the ADC resolution and sampling time.
+3. Select the desired input channel.
+4. Start a conversion.
+5. Wait for completion or handle an interrupt.
+6. Read the conversion result from the data register.
+You can perform these steps through HAL functions or by configuring registers directly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+9. Single Conversion Mode
+What is single conversion mode?
+Single conversion mode performs one conversion for the selected channel or configured sequence, depending on the ADC implementation and configuration.
+For a basic single-channel example, the program starts a conversion, waits for completion, and reads the result.
+STM32 HAL example
+uint32_t adc_value;
+
+HAL_ADC_Start(&hadc1);
+
+if (HAL_ADC_PollForConversion(&hadc1, 100) == HAL_OK)
+{
+    adc_value = HAL_ADC_GetValue(&hadc1);
+}
+
+HAL_ADC_Stop(&hadc1);
+
+
+Here:
+- hadc1 is the ADC handle configured in STM32CubeIDE.
+- HAL_ADC_Start() starts conversion.
+- HAL_ADC_PollForConversion() waits for completion.
+- HAL_ADC_GetValue() reads the result.
+- HAL_ADC_Stop() stops the ADC operation.
+The ADC initialization and channel configuration must already be completed.
+Where is it useful? When you need an occasional measurement, such as checking a battery voltage every few seconds.
+
+
+
+
+
+
+
+
+
+
+
+10. Continuous Conversion Mode
+What is continuous conversion mode?
+In continuous mode, the ADC automatically starts another conversion after finishing the previous one, according to its configuration.
+How does it work?
+1. The program starts the ADC.
+2. The ADC converts the selected input.
+3. It stores the result.
+4. It starts the next conversion automatically.
+5. This continues until the operation is stopped or otherwise controlled.
+Where is it useful?
+- Continuously monitoring a sensor.
+- Collecting repeated measurements.
+- Sampling signals for further processing.
+Important: If you only read the data register occasionally, newer results may overwrite older ones. Interrupts or DMA can help manage a continuous stream of readings.
+
+
+
+
+
+
+
+
+
+
+
+11. Scan Mode
+What is scan mode?
+Scan mode allows an ADC to convert multiple configured channels in sequence.
+For example, you might configure the sequence:
+1. Channel 0 — potentiometer.
+2. Channel 1 — temperature sensor.
+3. Channel 2 — battery measurement.
+The ADC performs conversions according to the configured sequence and stores the results as supported by the peripheral.
+Single channel vs scan mode
+Feature	Single channel	Scan mode
+Input channels	One configured channel	Multiple configured channels
+Typical purpose	One sensor	Multiple sensors
+Conversion sequence	One channel	Configured channel sequence
+Data handling	Read one result	Track each channel's result
+Scan mode is especially useful when multiple sensors need to be sampled repeatedly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+12. ADC Interrupt
+What is an ADC interrupt?
+An ADC interrupt allows the processor to run an interrupt handler when a configured ADC event occurs, such as conversion completion.
+Instead of repeatedly checking the ADC status in a polling loop, the CPU can perform other work until the interrupt occurs.
+Basic flow
+Start ADC conversion
+ADC completes conversion
+ADC interrupt is raised
+Interrupt handler or HAL callback reads the result
+
+STM32 HAL example
+volatile uint32_t adc_value;
+
+void start_adc(void)
+{
+    HAL_ADC_Start_IT(&hadc1);
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    if (hadc->Instance == ADC1)
+    {
+        adc_value = HAL_ADC_GetValue(hadc);
+    }
+}
+
+
+The ADC interrupt must also be enabled and configured correctly in the MCU's interrupt controller and HAL setup.
+Important: Keep interrupt handlers short. Avoid long delays or lengthy processing inside the callback.
+
+
+
+
+
+
+
+
+
+
+
+13. ADC + DMA
+What is DMA?
+DMA stands for Direct Memory Access. It transfers data between peripherals and memory without requiring the CPU to copy every individual result.
+When ADC and DMA are used together, ADC conversion results can be transferred automatically into an array in memory.
+Why use ADC + DMA?
+Imagine reading three sensors 1,000 times per second. Handling every sample with CPU polling or an interrupt can create unnecessary overhead.
+DMA lets the ADC transfer results into a buffer while the CPU performs other tasks.
+Basic flow
+ADC converts input channels
+
+DMA transfers results
+
+Memory buffer
+adc_buffer[0], adc_buffer[1], adc_buffer[2] ...
+
+CPU processes collected samples
+
+
+STM32 HAL example
+uint16_t adc_buffer[3];
+
+HAL_ADC_Start_DMA(
+    &hadc1,
+    (uint32_t *)adc_buffer,
+    3
+);
+
+
+This example assumes your ADC has been configured for a sequence of three conversions and DMA is configured appropriately. The number 3 specifies the number of data elements to transfer.
+The buffer is filled according to the configured channel sequence. You can process the data in the DMA completion callback or half-completion callback when using circular DMA.
+Polling vs Interrupt vs DMA
+Method	How it works	Best suited for
+Polling	CPU waits or checks for conversion completion	Simple, occasional readings
+Interrupt	CPU is notified when a conversion event occurs	Event-driven readings
+DMA	Hardware transfers results into memory	Repeated sampling and multiple readings
+
+
+
+
+
+
+
+
+
+
+
+14. Converting an ADC Code into Voltage
+For an ideal 12-bit ADC with a 3.3 V reference, a commonly used voltage estimate is:
+\[
+V_{\text{in}}\approx\frac{\text{ADC code}}{4095}\times 3.3
+\]
+
+Example: if the ADC returns 2048:
+\[
+V_{\text{in}}\approx\frac{2048}{4095}\times3.3
+\approx1.65\text{ V}
+\]
+
+Embedded C example:
+uint32_t adc_value = 2048;
+float voltage;
+
+voltage = (adc_value * 3.3f) / 4095.0f;
+
+
+This formula assumes a 12-bit ADC and a 3.3 V reference. For accurate measurements, use the actual reference and account for calibration, input scaling, and ADC error. The denominator convention may also depend on whether you're estimating the code's nominal voltage or the quantization-bin center.

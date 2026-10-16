@@ -1,0 +1,410 @@
+18. DMA — Direct Memory Access 🔧
+DMA is an important concept in Embedded C, especially when working with STM32, UART, ADC, SPI, I2C, and other peripherals.
+DMA allows data to be transferred between memory and peripherals with much less CPU involvement. Instead of making the CPU handle every individual data item, a DMA controller performs the configured transfer.
+For example, when receiving 1,000 bytes over UART, DMA can transfer the incoming data into an SRAM buffer while the CPU performs other tasks.
+
+
+
+
+
+1. Why DMA?
+What is DMA?
+DMA stands for Direct Memory Access. It is a hardware mechanism that transfers data between supported sources and destinations without requiring the CPU to copy every individual item.
+Why do we use it?
+Without DMA, the CPU may need to read each peripheral data register and copy the result into memory, or write each item from memory to a peripheral.
+With DMA, the CPU configures the transfer, starts it, and can often continue executing other code while the hardware handles the data movement.
+Example without DMA
+Suppose a UART receives 500 bytes.
+The CPU might repeatedly:
+1. Check whether a byte has arrived.
+2. Read the UART data register.
+3. Copy the byte into an array.
+4. Repeat for the next byte.
+Example with DMA
+1. Configure UART and DMA.
+2. Provide a destination buffer.
+3. Start reception.
+4. DMA transfers received bytes into the buffer.
+5. The CPU processes the received data when a suitable event occurs.
+Where is DMA used?
+- UART communication.
+- ADC sampling.
+- SPI and I2C transfers on supported peripherals.
+- Audio and waveform processing.
+- Memory copying on systems that support memory-to-memory DMA.
+
+
+
+
+
+2. CPU vs DMA
+Feature	CPU-based transfer	DMA-based transfer
+Who moves the data?	CPU instructions	DMA hardware
+CPU workload	Can be high for many data items	Usually lower
+Configuration	Often simpler for small transfers	Requires DMA configuration
+Large repeated transfers	Can consume significant CPU time	Often more efficient
+Completion handling	Polling or interrupts	Polling, interrupts, or peripheral events
+Best use	Simple, occasional data transfers	Repeated or high-volume data transfers
+Important point
+DMA does not eliminate CPU involvement entirely. The CPU usually configures the transfer, handles errors or completion events, and processes the resulting data.
+DMA also uses memory and bus resources, so its transfers can still affect overall system performance.
+
+
+
+
+
+
+
+
+3. DMA Controller
+What is a DMA controller?
+A DMA controller is the hardware that manages data transfers according to configured settings.
+Depending on the MCU, it may contain multiple streams, channels, or request-routing mechanisms to support different peripherals.
+How does it work?
+1. The CPU configures the DMA transfer.
+2. A peripheral request, software request, or other supported trigger initiates the transfer.
+3. The DMA controller reads data from the source.
+4. It writes the data to the destination.
+5. It updates the transfer count.
+6. It may generate an interrupt when the transfer completes or an error occurs.
+STM32 example
+On STM32 devices, DMA configuration often includes:
+- Peripheral request or channel selection.
+- Source and destination addresses.
+- Transfer direction.
+- Data width.
+- Transfer count.
+- Address increment settings.
+- Normal or circular mode.
+- Interrupt settings.
+Note: DMA architecture differs between STM32 families. Some use streams and channels; others use channels or different request-selection mechanisms.
+
+
+
+
+
+
+4. Source Address
+What is a source address?
+The source address is the location from which DMA reads data.
+Examples:
+- UART receive data register.
+- ADC data register.
+- An array in SRAM when sending data to UART.
+- A memory buffer when copying data.
+For example, when transmitting a message using UART DMA, the source address points to the message buffer in memory.
+uint8_t message[] = "Hello STM32";
+
+
+The DMA reads bytes from message and sends them toward the UART peripheral.
+The source address may remain fixed or increment, depending on the transfer configuration.
+
+
+
+
+
+
+
+5. Destination Address
+What is a destination address?
+The destination address is where DMA writes the transferred data.
+Examples:
+- SRAM buffer for UART reception.
+- SRAM array for ADC readings.
+- UART transmit data register when sending data.
+- A memory location during a memory-to-memory transfer.
+For example:
+uint8_t rx_buffer[100];
+
+
+During UART reception, the destination address points to rx_buffer.
+As bytes arrive, DMA writes them into the buffer according to its address-increment and transfer-count settings.
+
+
+
+
+
+
+
+6. Transfer Size
+What is transfer size?
+Transfer size specifies how much data DMA should transfer.
+Depending on the DMA peripheral, this may be configured as a number of data items rather than a number of bytes.
+Common transfer widths include:
+- 8-bit items (1 byte).
+- 16-bit items (2 bytes).
+- 32-bit items (4 bytes).
+Example
+Suppose you configure DMA to transfer 100 items with an 8-bit width.
+The transfer represents 100 bytes.
+If the width is 16 bits and the transfer count is 100 items, it represents 200 bytes.
+Important: Transfer count, data width, and address increment must match the peripheral and buffer format. Incorrect settings can corrupt data or cause unexpected results.
+
+
+
+
+
+
+7. Peripheral → Memory
+What does peripheral-to-memory mean?
+In this direction, DMA reads data from a peripheral and writes it into memory.
+Flow:
+Peripheral → DMA → SRAM
+Examples
+- UART receives bytes and DMA stores them in a buffer.
+- ADC converts an analog signal and DMA stores the digital samples.
+- SPI receives data from an external device.
+Example
+Imagine an ADC produces 100 readings. DMA can store the readings in an array:
+uint16_t adc_buffer[100];
+
+
+The CPU can process the samples after a transfer event or while using a carefully managed circular buffer.
+
+
+
+
+
+
+
+8. Memory → Peripheral
+What does memory-to-peripheral mean?
+In this direction, DMA reads data from memory and writes it to a peripheral.
+Flow:
+SRAM → DMA → Peripheral
+Examples
+- UART sends a message.
+- SPI transmits a data block.
+- DAC receives waveform samples.
+Example: UART transmission
+uint8_t message[] = "Hello STM32\r\n";
+
+HAL_UART_Transmit_DMA(
+    &huart2,
+    message,
+    sizeof(message) - 1
+);
+
+
+Here, the CPU starts the transfer. DMA reads the message bytes from memory and feeds them to UART according to the configured transfer.
+The function normally returns before the entire message has finished transmitting.
+Important: Keep the source buffer valid and unchanged until the transfer is complete. The completion callback or another appropriate event can be used to determine when the transfer has finished.
+
+
+
+
+
+
+
+9. Memory → Memory
+What does memory-to-memory mean?
+Memory-to-memory DMA transfers data from one memory location to another, without the CPU copying each individual item.
+Flow:
+Source memory → DMA → Destination memory
+Example
+Suppose you have two arrays:
+uint8_t source[100];
+uint8_t destination[100];
+
+
+A supported DMA controller may copy the contents of source into destination.
+Where is it useful?
+- Copying large buffers.
+- Moving blocks of data.
+- Reducing CPU workload in supported memory operations.
+Important: Not every STM32 DMA controller supports memory-to-memory transfers in the same way. Check the reference manual for your exact MCU.
+
+
+
+
+
+
+
+
+
+10. Normal Mode
+What is normal mode?
+In normal DMA mode, the controller transfers the configured number of data items and then stops the transfer.
+Example
+You configure DMA to receive 100 UART bytes.
+1. DMA receives and stores the bytes.
+2. The configured transfer count reaches completion.
+3. DMA signals transfer completion if enabled.
+4. The application processes the buffer.
+5. The application starts another transfer when required.
+Where is it useful?
+- Sending a fixed-length message.
+- Receiving a known-size data packet.
+- Collecting a fixed batch of ADC samples.
+- Performing a one-time memory transfer.
+
+
+
+
+
+
+
+
+
+11. Circular Mode
+What is circular mode?
+In circular DMA mode, the transfer automatically wraps around and reuses the configured buffer or transfer sequence.
+After the configured number of items has been transferred, the DMA can return to the start and continue, depending on the peripheral and configuration.
+Example
+Suppose you have an ADC buffer:
+uint16_t adc_buffer[100];
+
+
+With circular DMA, the ADC can repeatedly fill this buffer with new samples.
+Once the buffer is full, DMA returns to the beginning and starts overwriting earlier samples.
+Why is it useful?
+- Continuous ADC sampling.
+- Repeated waveform generation using DAC.
+- Continuous UART reception with supported circular-DMA configurations.
+- Streaming sensor data.
+Normal vs circular mode
+Feature	Normal mode	Circular mode
+Transfer	Finishes after the configured count	Repeats automatically
+Buffer use	Usually one batch	Reused repeatedly
+Typical application	Fixed-size transfer	Continuous data stream
+Restart required	Usually yes for another batch	Usually no while running continuously
+Important: In circular mode, the CPU must process the data fast enough to avoid losing samples when DMA overwrites the buffer. Half-transfer and transfer-complete interrupts are commonly used to coordinate buffer processing.
+
+
+
+
+
+
+
+
+12. DMA Interrupt
+What is a DMA interrupt?
+A DMA interrupt notifies the CPU when a configured DMA event occurs.
+Common events include:
+- Transfer complete.
+- Half transfer.
+- Transfer error.
+Why is it useful?
+Without a DMA interrupt, the CPU might repeatedly check the DMA status register to determine whether the transfer has finished.
+With interrupts, the CPU can perform other work and respond when the event occurs.
+STM32 HAL example
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART2)
+    {
+        // UART DMA transmission has completed.
+    }
+}
+
+
+This is the HAL UART transmission-completion callback. It is called when the configured UART transmission completes through the HAL's interrupt/DMA handling.
+The DMA interrupt, UART interrupt where required, NVIC configuration, and HAL initialization must be set up correctly.
+Important: A DMA transfer-complete event and completion of the physical UART transmission are not always identical. For UART, the HAL transmission-complete callback normally accounts for completion of the UART transfer, not just movement of the last byte into the peripheral.
+
+
+
+
+
+
+
+
+
+13. Important Combination: UART + DMA
+UART + DMA is one of the most useful combinations in embedded development.
+What does UART + DMA mean?
+UART handles serial communication, while DMA moves the transmitted or received bytes between UART and memory.
+Together, they allow data blocks to be transmitted or received with less CPU intervention.
+A. UART transmission using DMA
+Suppose the STM32 must send 500 bytes to a PC.
+Flow:
+Memory buffer → DMA → UART → PC
+The CPU starts the transfer. DMA supplies bytes to the UART peripheral, and the UART transmits them serially.
+Example:
+uint8_t tx_buffer[] = "Hello from STM32\r\n";
+
+HAL_UART_Transmit_DMA(
+    &huart2,
+    tx_buffer,
+    sizeof(tx_buffer) - 1
+);
+
+
+B. UART reception using DMA
+Suppose an STM32 receives commands from a PC.
+Flow:
+PC → UART → DMA → SRAM buffer
+Example using a fixed-size receive buffer:
+uint8_t rx_buffer[100];
+
+HAL_UART_Receive_DMA(
+    &huart2,
+    rx_buffer,
+    sizeof(rx_buffer)
+);
+
+
+In this basic normal-mode example, the transfer completes when the configured number of bytes is received. If you need to receive variable-length messages continuously, consider circular DMA with UART IDLE-line detection or another appropriate packet-framing strategy.
+Why is UART + DMA useful?
+- Reduces CPU work for large data transfers.
+- Supports efficient serial communication.
+- Makes it easier to handle repeated data reception.
+- Allows the CPU to work on other tasks during transfers.
+
+
+
+
+
+
+
+
+14. Important Combination: ADC + DMA
+What does ADC + DMA mean?
+The ADC converts an analog voltage into a digital code, and DMA transfers the result from the ADC data register into memory.
+Flow:
+Analog sensor → ADC → DMA → SRAM buffer
+Why is it useful?
+Imagine you want to collect 1,000 sensor samples.
+Without DMA, the CPU may need to read each result individually.
+With DMA, the ADC results can be transferred into a buffer automatically, while the CPU handles other tasks.
+Example
+uint16_t adc_buffer[100];
+
+HAL_ADC_Start_DMA(
+    &hadc1,
+    (uint32_t *)adc_buffer,
+    100
+);
+
+
+This example assumes that:
+- The ADC is configured correctly.
+- The ADC channel or scan sequence is configured.
+- DMA is enabled and linked to the ADC.
+- The ADC supports the configured transfer mode.
+- The data format and buffer are appropriate for the MCU.
+In normal mode, DMA transfers the configured batch and completes. In circular mode, the buffer is repeatedly filled with new samples.
+Where is ADC + DMA used?
+- Temperature measurement.
+- Battery monitoring.
+- Reading multiple analog sensors.
+- Data acquisition systems.
+- Audio sampling on suitable hardware.
+
+
+
+
+
+
+
+
+15. How DMA Works in a Real Embedded System
+Consider a system that receives sensor data through UART and reads an analog sensor using ADC.
+UART + DMA
+Serial bytes are transferred into an SRAM receive buffer.
+
+ADC + DMA
+Analog measurements are converted and transferred into an SRAM sample buffer.
+
+
+CPU processes the buffers
+The CPU interprets commands, calculates sensor values, and makes application decisions.

@@ -1,0 +1,524 @@
+7. Timers ⏱️ — Embedded C
+Timers are very important in Embedded C, especially when working with STM32 microcontrollers, STM32CubeIDE, and hardware peripherals.
+A timer is a hardware peripheral inside a microcontroller that counts clock pulses to measure time, generate delays, trigger interrupts, measure external signals, and control devices.
+For example, timers can blink an LED every second, measure the duration of an ultrasonic sensor's echo, generate PWM signals, and control motor speed.
+
+
+
+
+
+1. Timer Basics ⏱️
+What is it?
+A timer is a hardware peripheral that counts clock pulses at a configured rate. Depending on its configuration, it can measure elapsed time, generate periodic events, capture signal timing, or produce output waveforms.
+Why is it used?
+Timers allow the microcontroller to perform accurate timing operations without continuously checking the time in a software loop.
+How does it work?
+A timer receives a clock signal. Its counter changes according to the selected counting mode. When the counter reaches a configured value or another timer event occurs, the timer can generate an interrupt or change an output pin.
+Where is it used?
+- Generating delays.
+- Blinking LEDs.
+- Measuring pulse widths.
+- Generating PWM signals.
+- Controlling motors and servos.
+Example: An STM32 timer can be configured to generate an interrupt every 1 millisecond.
+
+
+
+
+
+
+2. Prescaler (PSC) ➗
+What is it?
+A prescaler is a timer setting that divides the timer's input clock frequency to produce a slower counter clock.
+Why is it used?
+The timer may receive a clock that is too fast for the required timing interval. The prescaler slows down the rate at which the counter increments or decrements.
+How does it work?
+For a common STM32 timer configuration:
+\[
+f_{\text{counter}}=\frac{f_{\text{timer}}}{PSC+1}
+\]
+
+Here, PSC is the prescaler register value.
+For example, if the timer clock is 72 MHz and PSC = 71:
+\[
+f_{\text{counter}}=\frac{72\,MHz}{71+1}=1\,MHz
+\]
+
+The counter now advances once every microsecond.
+Where is it used?
+- Generating microsecond timing.
+- Generating millisecond timing.
+- Configuring PWM frequency.
+- Measuring external signals.
+Remember: On STM32 timers, the prescaler register value is commonly one less than the division factor.
+
+
+
+
+
+
+3. Counter (CNT) 🔢
+What is it?
+The counter is the timer register that stores the current count value. On STM32 timers, this is commonly called the CNT register.
+Why is it used?
+The counter tracks the timer's progress through a timing interval or counts events, depending on the timer configuration.
+How does it work?
+In up-counting mode, the counter increases with each timer clock tick. In down-counting mode, it decreases. When it reaches a configured limit, the timer may generate an update event and reload or reverse its count, depending on the mode.
+Example: If the counter clock is 1 MHz, each count represents 1 microsecond. A counter value of 500 therefore represents 500 microseconds after the counter started, assuming it began at zero and no other events affected it.
+Where is it used?
+- Measuring elapsed time.
+- Counting external events.
+- Generating periodic interrupts.
+- Measuring pulse duration.
+
+
+
+
+
+
+4. Auto-Reload Register (ARR) 🔄
+What is it?
+The Auto-Reload Register, commonly called ARR, defines the counter's reload or counting limit in many STM32 timer modes.
+Why is it used?
+It determines how many counter steps occur before the timer reaches its configured limit and generates an update event.
+How does it work?
+In a typical up-counting configuration, the counter counts from zero through the ARR value. After reaching that limit, the counter wraps around and begins again, according to the timer configuration.
+For the usual edge-aligned up-counting case:
+\[
+T=\frac{(PSC+1)(ARR+1)}{f_{\text{timer}}}
+\]
+
+Example: If the counter clock is 1 MHz and ARR = 999, the timer counts 1,000 ticks. The interval is 1 millisecond.
+Where is it used?
+- Setting interrupt intervals.
+- Configuring PWM periods.
+- Generating repeating timing events.
+- Creating periodic control operations.
+Remember: ARR is the maximum count value for this common up-counting configuration, not the number of counts itself.
+
+
+
+
+
+
+5. Period 📏
+What is it?
+The period is the time taken for one complete cycle of a repeating signal or timer event.
+Why is it used?
+It tells us how often a timer event repeats or how long one complete waveform cycle lasts.
+How does it work?
+For a periodic signal, the period is the inverse of its frequency:
+\[
+T=\frac{1}{f}
+\]
+
+For a typical STM32 edge-aligned up-counting timer:
+\[
+T=\frac{(PSC+1)(ARR+1)}{f_{\text{timer}}}
+\]
+
+Example: If a timer generates an update event every 10 milliseconds, its period is 10 ms and its event frequency is 100 Hz.
+Where is it used?
+- LED blinking intervals.
+- PWM signal generation.
+- Periodic sensor sampling.
+- Scheduling repeated timer interrupts.
+
+
+
+
+
+
+6. Overflow 🚨
+What is it?
+Timer overflow occurs when the counter reaches its upper limit and wraps around to its starting value in an up-counting configuration.
+In a common STM32 up-counting timer, this is associated with reaching the ARR limit and producing an update event.
+Why is it used?
+Overflow or update events allow the timer to signal that a counting interval has completed.
+How does it work?
+Suppose ARR = 4. The counter sequence can be:
+0 → 1 → 2 → 3 → 4 → 0 → 1 ...
+When the counter wraps around, the timer can set an update flag and, if enabled, generate a timer interrupt.
+Where is it used?
+- Periodic interrupts.
+- Timekeeping.
+- Repeated LED toggling.
+- Periodic task scheduling.
+Important: Overflow and underflow behavior depends on the counting mode and timer configuration.
+
+
+
+
+
+
+7. Up/Down Counting ↕️
+What is it?
+Up/down counting describes the direction in which a timer counter changes.
+- Up-counting: The counter increases from its starting value toward its limit.
+- Down-counting: The counter decreases toward its lower limit.
+- Center-aligned counting: The counter counts upward and downward between limits.
+Why is it used?
+Different counting modes support different timing and waveform-generation requirements.
+How does it work?
+In up-counting mode, the counter increments on each timer tick. In down-counting mode, it decrements. In center-aligned mode, the direction reverses at the configured limits.
+Where is it used?
+- Basic time measurement.
+- PWM generation.
+- Motor control.
+- Applications requiring center-aligned waveforms.
+Example: Center-aligned PWM is commonly used in motor-control applications because it can produce a waveform centered around the timer's counting cycle.
+
+
+
+
+
+
+8. Timer Interrupt ⚡
+What is it?
+A timer interrupt is an interrupt request generated by a timer event, such as an update event, compare match, or input capture event.
+Why is it used?
+It allows the CPU to respond to timer events without continuously polling the timer counter.
+How does it work?
+1. Configure the timer.
+2. Enable the required timer event and interrupt.
+3. Enable the corresponding interrupt in the interrupt controller.
+4. When the event occurs, the CPU executes the appropriate interrupt handler.
+5. The handler performs a short operation, such as setting a flag or updating a counter.
+Where is it used?
+- Periodic software tasks.
+- LED blinking.
+- Sensor sampling.
+- Timing control in embedded applications.
+Example: A timer interrupt occurs every 1 ms. The interrupt handler increments a tick counter, which the main program can use to track elapsed time.
+Important: Keep interrupt handlers short. Avoid long delays or lengthy processing inside an interrupt handler.
+
+
+
+
+
+9. Input Capture 📥
+What is it?
+Input capture is a timer feature that records the counter value when a configured event occurs on an input pin.
+Why is it used?
+It allows the microcontroller to measure the timing of external signals accurately.
+How does it work?
+1. Configure a timer channel as input capture.
+2. Select the input edge, such as rising or falling.
+3. When the selected edge occurs, the timer stores its current counter value in a capture register.
+4. The program compares captured values to calculate time differences.
+Example: To measure an ultrasonic sensor's echo pulse, capture the timer count at the rising edge and falling edge. The difference gives the pulse duration.
+Where is it used?
+- Measuring pulse width.
+- Measuring frequency.
+- Reading tachometer signals.
+- Measuring ultrasonic sensor echoes.
+
+
+
+
+
+
+10. Output Compare 📤
+What is it?
+Output compare is a timer feature that compares the counter value with a programmed compare value.
+Why is it used?
+It allows the microcontroller to trigger an event or change an output at a specific timer count.
+How does it work?
+The timer continuously compares its counter value with a configured compare register. When the values match, it can set a flag, generate an interrupt, or change an output pin according to the selected configuration.
+Example: If the counter runs at 1 MHz and the compare value is 500, the match occurs 500 microseconds after counting starts from zero, assuming no counter reset or other event intervenes.
+Where is it used?
+- Generating timed output transitions.
+- Triggering events at specific times.
+- Producing periodic waveforms.
+- Implementing timing control without constantly checking the counter in software.
+
+
+
+
+
+11. PWM (Pulse Width Modulation) 🌊
+What is it?
+PWM is a technique that controls the average power delivered to a load by rapidly switching a signal between HIGH and LOW.
+Why is it used?
+Many devices can be controlled by changing the proportion of time a signal stays HIGH during each cycle.
+How does it work?
+A timer repeatedly counts through a configured period. A compare register determines when the output changes state, thereby controlling the duty cycle.
+For example, a 50% duty cycle means the signal is HIGH for half of each period and LOW for the other half.
+Where is it used?
+- LED brightness control.
+- DC motor speed control.
+- Servo control signals.
+- Power regulation.
+Example: An STM32 timer can generate a 1 kHz PWM signal with a 25% duty cycle.
+Important: PWM controls the switching signal; actual motor speed, LED brightness, and power depend on the load, circuit, and driver.
+
+
+
+
+
+12. One-Shot Timer 🎯
+What is it?
+A one-shot timer is configured to produce a single timed event or pulse after being triggered, rather than continuously repeating.
+Why is it used?
+It is useful when an operation must happen once after a specific time interval.
+How does it work?
+The timer starts counting after a trigger or software command. When the configured interval ends, it generates the required event and stops or disables further counting until restarted, depending on the implementation.
+Where is it used?
+- Generating a pulse of a specified duration.
+- Triggering an action after a delay.
+- Timing a one-time operation.
+- Generating timeout events.
+Example: A timer can be configured to trigger an output event 100 ms after a software command.
+Remember: Exact one-shot capabilities and configuration vary between timer peripherals and microcontroller families.
+
+
+
+
+
+13. Delay Generation ⏳
+What is it?
+Delay generation means using a timer to wait for a specified time interval before performing an operation.
+Why is it used?
+Hardware timers provide a more predictable timing mechanism than arbitrary software loops, whose duration can vary with compiler settings, CPU frequency, and instruction execution.
+How does it work?
+The timer is configured with a clock frequency and count limit. The program waits for the timer to reach the required value or uses a timer interrupt to signal that the delay has elapsed.
+Example: A timer can generate a 10 ms delay before a program reads a sensor.
+Where is it used?
+- Sensor timing.
+- Peripheral initialization.
+- Button processing.
+- Periodic control tasks.
+Important: A blocking timer delay still keeps the CPU waiting. Using an interrupt or non-blocking timer approach can let other work continue.
+
+
+
+
+
+14. Microsecond Delay (µs) ⏱️
+What is it?
+A microsecond delay is a time interval measured in microseconds.
+One microsecond is:
+\[
+1\,\mu s = 0.000001\,s
+\]
+
+Why is it used?
+Some sensors and communication interfaces require very short timing intervals.
+How does it work?
+A timer is configured to count at a suitable rate. If the counter frequency is 1 MHz, each counter tick represents 1 µs. The program can then wait for a specified number of ticks or use timer events.
+Example: The HC-SR04 ultrasonic sensor requires a trigger pulse of approximately 10 µs.
+Where is it used?
+- Ultrasonic sensor trigger pulses.
+- Precise pulse-width measurement.
+- Short hardware timing intervals.
+- Protocol timing requirements.
+
+
+
+
+
+15. Millisecond Delay (ms) 🕰️
+What is it?
+A millisecond delay is a time interval measured in milliseconds.
+One millisecond is:
+\[
+1\,ms = 0.001\,s
+\]
+
+Why is it used?
+Many embedded operations require delays that are longer than a few microseconds, such as periodic sampling or waiting between control operations.
+How does it work?
+A timer counts clock ticks until the desired number of milliseconds has elapsed. The program can wait for the timer or receive a notification through an interrupt.
+Example: A timer can toggle an LED every 500 ms to produce a visible blink.
+Where is it used?
+- LED blinking.
+- Periodic sensor readings.
+- Button debouncing.
+- Application timeouts.
+Remember: A millisecond equals 1,000 microseconds.
+
+
+
+
+
+16. Duty Cycle 📊
+What is it?
+Duty cycle is the percentage of one PWM period during which the output signal remains active, usually HIGH in a common active-HIGH PWM configuration.
+Why is it used?
+Changing the duty cycle changes the average voltage or power delivered to many loads.
+How does it work?
+Duty cycle is calculated using:
+\[
+D=\frac{T_{\text{ON}}}{T_{\text{period}}}\times100\%
+\]
+
+For example, if a signal is HIGH for 2 ms during a 10 ms period:
+\[
+D=\frac{2}{10}\times100\%=20\%
+\]
+
+Where is it used?
+- Adjusting LED brightness.
+- Controlling DC motor speed.
+- Generating servo control pulses.
+- Controlling power through switching circuits.
+Remember: A higher duty cycle often means more average power, but the actual effect depends on the circuit and device.
+
+
+
+
+
+17. Frequency 🔁
+What is it?
+Frequency is the number of complete cycles or repeated events that occur in one second. It is measured in hertz (Hz).
+Why is it used?
+Frequency tells us how quickly a timer event or signal repeats.
+How does it work?
+Frequency and period are inversely related:
+\[
+f=\frac{1}{T}
+\]
+
+Examples:
+- A 1 Hz signal completes one cycle per second.
+- A 100 Hz signal completes 100 cycles per second.
+- A 1 kHz signal completes 1,000 cycles per second.
+Where is it used?
+- PWM configuration.
+- Timer interrupt configuration.
+- Measuring sensor signals.
+- Motor-control signals.
+Remember: A shorter period means a higher frequency.
+
+
+
+
+
+18. Period (Timer/PWM) 📏
+You listed period twice, so here is the important timer-specific point.
+What is it?
+The timer period is the time required for the counter to complete one configured counting cycle.
+Why is it used?
+The period determines how often a timer repeats an event or how long one complete PWM cycle lasts.
+How does it work?
+For a typical STM32 edge-aligned, up-counting timer:
+\[
+T_{\text{period}}=
+\frac{(PSC+1)(ARR+1)}{f_{\text{timer}}}
+\]
+
+Example: With a 1 MHz counter clock and ARR = 999, one timer cycle lasts 1 ms. If the timer is generating PWM, the PWM frequency is 1 kHz.
+Important: Center-aligned counting and special timer modes can have different period calculations.
+
+
+
+
+
+19. Compare Register (CCR) 🎚️
+What is it?
+A compare register stores the value that the timer counter is compared against. On many STM32 timers, these registers are called CCR registers, such as CCR1 or CCR2.
+Why is it used?
+The compare value determines when a compare event occurs. In PWM mode, it commonly controls the point in the cycle at which the output changes state, thereby setting the duty cycle.
+How does it work?
+The timer compares CNT with the programmed compare value. When they match, the timer performs the action configured for that channel.
+In a common PWM configuration, changing the CCR value changes the duty cycle while ARR controls the period.
+Example: If ARR = 999 and CCR1 = 250, the nominal duty cycle is approximately 25% in a common PWM mode, assuming the usual active-HIGH configuration and valid compare range.
+Where is it used?
+- PWM duty-cycle control.
+- Output compare events.
+- Generating timed output transitions.
+- Controlling LEDs and motors.
+
+
+
+
+
+20. LED Brightness 💡
+What is it?
+LED brightness control is the process of changing how bright an LED appears by adjusting the electrical power delivered to it. A common digital method is PWM.
+Why is it used?
+A microcontroller's GPIO usually provides only digital HIGH and LOW states. PWM allows the average power supplied to an LED to be varied.
+How does it work?
+The timer generates a PWM waveform. By changing the duty cycle, the program changes the proportion of time the LED receives current.
+- Lower duty cycle: usually dimmer.
+- Higher duty cycle: usually brighter.
+- 100% duty cycle: continuously active in a common active-HIGH arrangement.
+Example: An STM32 timer can control an LED with a PWM duty cycle of 10%, 50%, or 90%.
+Important: Use an appropriate current-limiting resistor or LED driver. The relationship between duty cycle and perceived brightness is not perfectly linear.
+
+
+
+
+
+21. Motor Control ⚙️
+What is it?
+Motor control is the process of regulating a motor's operation, such as speed, direction, or torque, using electrical control signals.
+Why are timers used?
+Timers can generate accurate PWM signals to control motor drivers. They can also capture feedback from encoders and generate timed events for control algorithms.
+How does it work?
+1. A timer generates a PWM signal.
+2. The PWM signal goes to a suitable motor driver.
+3. The driver controls the power delivered to the motor.
+4. Changing the PWM duty cycle can change the motor's average supplied voltage and affect its speed.
+5. Additional timers can measure encoder pulses for speed or position feedback.
+Where is it used?
+- DC motor speed control.
+- Fan speed control.
+- Robotics.
+- Industrial automation.
+- Encoder-based position measurement.
+Important: A microcontroller GPIO should not drive a motor directly. Use an appropriate motor driver, and observe the motor's current, voltage, and protection requirements.
+
+
+
+
+
+22. Servo Control 🎛️
+What is it?
+Servo control uses a timed control signal to command the position of a servo motor. A common hobby servo interprets the width of repeated control pulses as a position command.
+Why is it used?
+It allows a microcontroller to control angular position in applications such as robotics, steering mechanisms, and small automation systems.
+How does it work?
+A timer generates repeated pulses. For many hobby servos, the signal repeats approximately every 20 ms, and pulse widths around 1–2 ms commonly cover much of the position range. Exact values depend on the servo.
+For example, a servo may interpret a pulse near 1.5 ms as a middle position, but its actual calibration varies.
+Where is it used?
+- Robot arms.
+- RC vehicles.
+- Steering mechanisms.
+- Positioning systems.
+Example: An STM32 timer can generate a 50 Hz signal and adjust the compare register to change the pulse width sent to a hobby servo.
+Important: Servo control is not the same as ordinary motor-speed PWM. A hobby servo interprets pulse width as a position command, whereas a DC motor driver commonly uses PWM duty cycle to regulate motor power.
+
+Quick Revision Table 📚
+Topic	Main purpose
+Timer	Counts clock pulses to manage timing
+Prescaler (PSC)	Divides the timer clock
+Counter (CNT)	Stores the current count
+Auto-reload (ARR)	Sets the counting limit
+Period	Time for one complete cycle
+Overflow	Counter wraps at its upper limit
+Up/down counting	Selects counter direction
+Timer interrupt	Notifies the CPU of a timer event
+Input capture	Records the counter at an input event
+Output compare	Triggers an event at a specified count
+PWM	Controls output duty cycle
+One-shot timer	Produces a single timed event
+Delay generation	Waits for a configured interval
+Microsecond delay	Times very short intervals
+Millisecond delay	Times intervals in milliseconds
+Duty cycle	Percentage of active time
+Frequency	Number of cycles per second
+Compare register	Stores the timer compare value
+LED brightness	Adjusts LED power using PWM
+Motor control	Uses timer signals for motor operation
+Servo control	Uses timed pulses to command position
+Practical STM32 example ⚡
+Suppose you want to blink an LED using a timer:
+1. Select a timer peripheral, such as TIM2.
+2. Enable its clock.
+3. Configure the prescaler to obtain a convenient counter frequency.
+4. Configure ARR to set the required interval.
+5. Enable the timer update interrupt if you want interrupt-based timing.
+6. Toggle the LED in the timer callback.
+7. Start the timer.
+For example, if the timer counter runs at 1 MHz and ARR = 999, the update interval is 1 ms in a typical up-counting configuration. If you toggle the LED on every update event, it toggles every millisecond, producing a full ON-OFF cycle every 2 ms.

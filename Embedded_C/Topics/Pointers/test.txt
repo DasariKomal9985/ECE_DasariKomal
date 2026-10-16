@@ -1,0 +1,23 @@
+1. Basic Pointers: A pointer is a variable that stores the memory address of another variable.
+
+2. Pointer Arithmetic: Pointer arithmetic allows us to move a pointer between memory locations, usually between elements of an array.
+
+3. Pointer to Pointer: A pointer to pointer is a variable that stores the address of another pointer.
+
+4. Array Pointers: Array pointers are pointers used to access array elements through their memory addresses.
+
+5. Function Pointers: Function pointers are pointers that store the address of a function and allow us to call it through the pointer.
+
+6. Pointer to Function: A pointer to function is another name for a function pointer.
+
+7. Structure Pointers: Structure pointers store the address of a structure and allow us to access its members using the -> operator.
+
+8. const with Pointers: const with pointers controls whether the pointed-to data, the pointer itself, or both can be modified.
+
+9. volatile Pointers: volatile can qualify the data pointed to, the pointer itself, or both, telling the compiler to respect volatile accesses to the qualified object.
+
+10. Register Access Using Pointers: Pointers can be used to access memory-mapped hardware registers to control and read peripherals.
+
+11. Function Pointer Tables: Function pointer tables are arrays that store addresses of multiple functions, allowing us to select and call a function using an index.
+
+12. Callback Functions: A callback is a function passed to another function through a function pointer so it can be called when needed.

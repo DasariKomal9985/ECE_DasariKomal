@@ -1,0 +1,361 @@
+17. Watchdog Timer — Embedded C 🔧
+A watchdog timer is an important feature in microcontrollers such as STM32. It helps a system recover automatically when the program gets stuck, stops executing correctly, or fails to perform an expected operation.
+For example, imagine an STM32 controlling an industrial machine. If the software hangs due to an unexpected error, the machine may stop responding. A watchdog can detect that the program has failed to service it and reset the microcontroller.
+
+
+
+
+
+
+
+
+
+
+1. Watchdog Concept
+What is a watchdog timer?
+A watchdog timer (WDT) is a hardware timer that monitors whether software is operating as expected.
+The program must periodically refresh or service the watchdog. If it fails to do so within the required time, the watchdog triggers a reset or another configured response.
+Why do we use it?
+- Recover from software hangs.
+- Improve system reliability.
+- Restart a microcontroller after certain failures.
+- Reduce the need for manual intervention in unattended systems.
+How does it work?
+1. The program starts the watchdog.
+2. The watchdog begins counting.
+3. The program periodically refreshes it.
+4. Each valid refresh restarts or updates the watchdog countdown.
+5. If the program hangs and fails to refresh it, the watchdog times out.
+6. The watchdog resets the MCU, if configured for that behavior.
+Example
+Imagine your program contains an infinite loop:
+while (1)
+{
+    // Normal application work
+
+    // Refresh watchdog when appropriate
+}
+
+
+If the program becomes stuck somewhere and no longer reaches the watchdog-refresh operation, the watchdog can eventually time out.
+Important: Refreshing the watchdog unconditionally from a timer interrupt can hide a hung application. A safer design refreshes it only after checking that critical tasks are making progress.
+
+
+
+
+
+
+
+
+
+
+
+
+2. Independent Watchdog — IWDG
+What is IWDG?
+IWDG stands for Independent Watchdog. On STM32 families that provide it, the IWDG is a watchdog peripheral typically clocked from an independent low-speed clock source, often the LSI oscillator.
+Because its clock source is independent of the main CPU clock, it can continue counting even if the main clock configuration fails.
+Why is it useful?
+- It can detect software failures even when the main application stops running.
+- Its independent clock source can improve resilience to certain clock failures.
+- It is useful in systems that need automatic recovery.
+How does it work?
+The IWDG uses a counter that counts down from a reload value. When the counter reaches its timeout condition, a watchdog reset is generated.
+The application periodically reloads the counter to prevent that reset.
+Example
+Suppose you configure an IWDG timeout of approximately one second.
+- The program runs normally and refreshes the watchdog every 200 ms.
+- The watchdog keeps counting down between refreshes.
+- If the application hangs and stops refreshing it, the counter eventually expires.
+- The MCU resets.
+The exact timeout depends on the MCU, watchdog clock, prescaler, and reload value.
+Remember: IWDG is designed to provide an independent timeout mechanism; it is not a general-purpose timer for application delays.
+
+
+
+
+
+
+
+
+
+
+
+
+3. Timeout
+What is timeout?
+A watchdog timeout is the maximum permitted interval before the watchdog expires without a valid refresh.
+For example, if the timeout is 2 seconds, the program must refresh the watchdog within the permitted interval.
+Why is it important?
+The timeout determines how quickly the system can detect a failure.
+- Too short: Normal operations might take longer than expected, causing unwanted resets.
+- Too long: A genuine software failure may take longer to recover from.
+How do you choose the timeout?
+Consider:
+- The longest legitimate operation performed by the application.
+- Interrupt latency and task scheduling delays.
+- Flash operations or other lengthy operations.
+- The maximum acceptable recovery time.
+- Variations in the watchdog clock.
+For an RTOS application, ensure that all required tasks can make progress and report their health before the watchdog is refreshed.
+
+
+
+
+
+
+
+
+
+
+
+4. Prescaler
+What is a prescaler?
+A prescaler divides the watchdog's input clock to produce a slower counting rate.
+For example, if the watchdog clock is 32,000 Hz and the prescaler divides it by 32, the counter receives:
+\[
+f_{\text{counter}}=\frac{32000}{32}=1000\text{ Hz}
+\]
+
+That means the counter receives 1,000 clock ticks per second.
+Why is it used?
+A slower counter allows a watchdog to measure longer time intervals using a finite-width counter.
+How does it affect timeout?
+For a typical down-counter watchdog, a simplified timeout relationship is:
+\[
+T\approx\frac{(R+1)\times P}{f_{\text{watchdog}}}
+\]
+
+Where:
+- \(T\) = approximate timeout.
+- \(R\) = reload count, with the exact count convention depending on the peripheral.
+- \(P\) = prescaler division factor.
+- \(f_{\text{watchdog}}\) = watchdog clock frequency.
+This is a simplified relationship, not a substitute for the exact formula in your MCU reference manual.
+Important: IWDG and WWDG use different clocking and counting mechanisms, so their configuration formulas are not interchangeable.
+
+
+
+
+
+
+
+
+
+
+
+5. Reload
+What is reload?
+The reload value is the counter value from which the watchdog begins or resumes counting after a valid refresh.
+For the IWDG, the reload register determines the countdown interval together with the prescaler and watchdog clock.
+Why is it used?
+It allows the timeout duration to be configured.
+A larger reload value generally gives a longer timeout when the other settings remain unchanged.
+Example
+Suppose the watchdog is configured to count down from a chosen reload value. When the program refreshes it, the counter is reloaded and begins counting down again.
+If the application fails to refresh it, the counter eventually reaches its expiration condition and resets the MCU.
+Remember: Reload determines the countdown starting value; prescaler determines the rate at which the counter advances or decreases.
+
+
+
+
+
+
+
+
+
+
+6. Refresh / Kick
+What is refresh?
+Refreshing, or kicking, the watchdog means performing the required operation to tell the watchdog that the program is still operating.
+For the STM32 IWDG, this is done by writing the required reload key to the watchdog key register, usually through a HAL function.
+STM32 HAL example
+#include "main.h"
+
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_IWDG_Init();
+
+    while (1)
+    {
+        // Perform application work
+
+        HAL_IWDG_Refresh(&hiwdg);
+    }
+}
+
+
+Here, hiwdg is the IWDG handle generated or configured by STM32CubeMX/CubeIDE.
+This is a basic illustration. In a real application, refresh the watchdog only after verifying that important work is progressing.
+Why not refresh continuously?
+Consider this code:
+while (1)
+{
+    HAL_IWDG_Refresh(&hiwdg);
+}
+
+
+This loop may keep the watchdog satisfied even if the actual application functionality has failed. The watchdog only knows that it was refreshed; it does not know whether the application is healthy.
+A better design checks application progress, task health, or required status flags before refreshing.
+
+
+
+
+
+
+
+
+
+
+
+7. Window Watchdog — WWDG
+What is WWDG?
+WWDG stands for Window Watchdog. Unlike a simple independent watchdog, a window watchdog expects the program to refresh it during a specific permitted time window.
+On STM32 devices that support WWDG, it commonly uses a clock derived from the peripheral clock and includes a down-counter and a configurable refresh window.
+Why do we use it?
+A window watchdog can detect two types of incorrect behavior:
+- The program refreshes too early.
+- The program refreshes too late.
+This is useful when the application must follow a reasonably predictable execution schedule.
+How does it work?
+1. Configure the watchdog counter and permitted refresh window.
+2. Start the WWDG.
+3. The counter begins counting down.
+4. The program waits until the counter enters the permitted window.
+5. It refreshes the watchdog before the counter passes the allowed limit.
+6. Refreshing outside the permitted window causes a watchdog reset or other specified behavior.
+Remember: IWDG primarily checks that refresh happens before its timeout. WWDG checks that refresh happens within a permitted window.
+
+
+
+
+
+
+
+
+
+
+8. Window Concept
+What is a watchdog window?
+A watchdog window is the range of counter values or time during which a refresh is permitted.
+The WWDG does not accept a refresh at just any time. The program must refresh at the right point in the countdown.
+Conceptually, the permitted window has two boundaries:
+- Too early: The program refreshes before the window opens.
+- Too late: The counter passes the permitted refresh boundary before the program refreshes.
+The exact boundaries depend on the WWDG counter and window configuration.
+Why is this useful?
+It helps detect unexpected timing behavior.
+For example, suppose a task is expected to take a minimum amount of time to complete. A refresh that occurs much earlier than expected may indicate that the program skipped some work or followed an incorrect execution path.
+The WWDG can detect the early refresh, provided the window is configured appropriately.
+
+
+
+
+
+
+
+
+
+
+
+9. Early Refresh
+What is early refresh?
+Early refresh occurs when the program tries to refresh the WWDG before the permitted refresh window has opened.
+Example
+Imagine that the WWDG allows refresh only after a particular point in its countdown.
+If the application refreshes immediately after starting the watchdog, before the counter enters the permitted window, the refresh is too early.
+What happens?
+On typical STM32 WWDG implementations, an early refresh causes a watchdog reset.
+Why does it matter?
+Early refresh detection helps identify unexpected execution timing or an application that is not following the intended sequence.
+Important: This behavior is specific to the WWDG window rules. Do not assume that an early IWDG refresh causes a reset.
+
+
+
+
+
+
+
+
+
+
+
+
+10. Late Refresh
+What is late refresh?
+Late refresh occurs when the application fails to refresh the WWDG before the permitted refresh boundary is passed.
+Example
+Suppose the application is performing a lengthy operation and the watchdog counter continues counting down.
+If the application takes too long and the counter expires before a valid refresh, the watchdog triggers a reset.
+Why does it matter?
+Late refresh detection helps identify:
+- A task that is stuck.
+- An unexpected delay.
+- Excessive interrupt blocking.
+- A timing problem that prevents the application from servicing the watchdog.
+For WWDG, the permitted window and timeout must be configured so that normal execution can refresh safely.
+
+
+
+
+
+
+
+
+
+
+
+
+
+11. Software Hangs → Watchdog Timeout → MCU Reset
+This is the most important watchdog concept to remember. 🔄
+Normal operation
+1. The MCU starts the watchdog.
+2. The application executes its normal work.
+3. The application verifies that required work is progressing.
+4. The watchdog is refreshed at the appropriate time.
+5. The application continues running without a watchdog reset.
+When software hangs
+1. The program becomes stuck in an infinite loop, deadlock, or unexpected state.
+2. Required application progress stops.
+3. The watchdog is no longer refreshed.
+4. The counter reaches its expiration condition.
+5. The watchdog resets the MCU, if configured to do so.
+6. Startup code executes again and the application restarts.
+Normal application operation
+
+Software hangs
+Application stops making progress
+
+Watchdog timeout
+No valid refresh before expiration
+
+MCU reset
+Startup code runs again
+
+
+Important real-world considerations
+- Watchdog reset does not fix the original software bug; it helps the system recover.
+- Record the reset reason early during startup, if the MCU supports it.
+- Ensure that startup code and initialization can recover safely after a reset.
+- Avoid refreshing the watchdog from a separate interrupt regardless of application health.
+- Some STM32 IWDG configurations persist across certain resets, so check the MCU reference manual before assuming the watchdog stops after every reset.
+
+
+
+
+IWDG vs WWDG
+Feature	IWDG	WWDG
+Full form	Independent Watchdog	Window Watchdog
+Typical clock source	Independent low-speed clock	Peripheral-clock-derived source
+Refresh rule	Before timeout	Within permitted window
+Early refresh	Generally accepted	Can cause reset
+Late refresh	Timeout causes reset	Expiration causes reset
+Typical purpose	Recover from hangs and clock-related failures	Detect timing violations as well as late service
+
+
+
+One-line definition: A watchdog timer monitors whether software services it within the required time; if not, it can reset the microcontroller to help recover from a software failure.

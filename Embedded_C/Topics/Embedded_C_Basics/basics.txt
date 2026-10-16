@@ -1,0 +1,19 @@
+1. volatile uint32_t status; — Declares a 32-bit unsigned integer variable named status whose value may change unexpectedly.
+
+2. Why volatile is required for hardware registers — It prevents the compiler from optimizing away or reusing required accesses to hardware registers.
+
+3. Interrupt-modified variables — Variables that are changed by an interrupt service routine (ISR) and accessed by the main program.
+
+4. DMA (Direct Memory Access) — A hardware mechanism that transfers data between memory and peripherals without requiring the CPU to handle every data transfer.
+
+5. Shared variables — Variables accessed by multiple execution contexts, such as the main program and an interrupt handler.
+
+6. const — A keyword that prevents modification of an object through a const-qualified expression or pointer.
+
+7. static — A keyword that gives a variable static storage duration or limits a file-scope name's visibility to its source file, depending on where it is used.
+
+8. extern — A keyword commonly used to declare a variable or function that is defined elsewhere.
+
+9. Static local vs global variable — A static local variable retains its value between function calls, while a global variable is declared outside functions and can be accessed according to its scope and linkage.
+
+10. const volatile — Qualifies an object as both constant through that access and volatile, often used for hardware registers that software should read but not modify.

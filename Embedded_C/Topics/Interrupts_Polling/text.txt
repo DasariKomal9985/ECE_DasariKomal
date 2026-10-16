@@ -1,0 +1,592 @@
+8. Interrupts ⚡ — Embedded C
+Interrupts are one of the most important concepts in Embedded C. They allow a microcontroller to respond to events from hardware or software without continuously checking whether those events have occurred.
+For example, when a button is pressed, a timer expires, or UART receives data, the microcontroller can respond using an interrupt.
+
+
+
+
+
+1. Interrupt vs. Polling 🔄
+What is an interrupt?
+An interrupt is a signal or event that requests the CPU's attention so it can handle something that needs a response.
+Why is it used?
+The CPU does not need to continuously check every peripheral. It can perform other work and respond when an interrupt occurs.
+How does it work?
+1. A peripheral or external device generates an interrupt request.
+2. The interrupt controller determines whether it can be serviced.
+3. The CPU pauses its current execution at an appropriate point.
+4. The CPU runs the corresponding Interrupt Service Routine (ISR).
+5. After handling the event, the CPU returns to the interrupted program.
+Example: A timer generates an interrupt every 1 millisecond. The CPU executes the timer ISR to update a tick counter, then returns to its previous work.
+Polling is different: the CPU repeatedly checks a peripheral's status to determine whether an event has occurred. We will compare both methods in Section 9.
+
+
+
+
+
+2. Interrupt Source 📍
+What is it?
+An interrupt source is the device, peripheral, or event that generates an interrupt request.
+Why is it used?
+Identifying the source helps the program determine what happened and which handler should respond.
+Common interrupt sources:
+- External button or GPIO event.
+- Timer overflow or compare event.
+- UART data received.
+- ADC conversion completed.
+- DMA transfer completed.
+- Software-generated interrupt.
+Example: When a UART receives a byte and its receive interrupt is enabled, the UART peripheral can request CPU attention.
+
+
+
+
+
+3. Interrupt Vector 🧭
+What is it?
+An interrupt vector is the information associated with an interrupt that tells the processor where or how to begin handling that interrupt. On Cortex-M systems, the vector table contains handler addresses for exceptions and interrupts.
+Why is it used?
+The processor needs to identify the correct handler for the event rather than executing the wrong interrupt routine.
+How does it work?
+When an interrupt is accepted, the processor uses the relevant vector-table entry to locate the handler function.
+Example: A timer interrupt uses its corresponding vector-table entry to reach the timer's interrupt handler.
+Remember: An interrupt vector is not the same as the ISR. The vector identifies the handler entry; the ISR is the code that handles the event.
+
+
+
+
+
+4. ISR (Interrupt Service Routine) 🛠️
+What is it?
+An ISR is a function executed by the CPU to handle a specific interrupt event. It is also commonly called an interrupt handler.
+Why is it used?
+It lets the microcontroller respond to events quickly without waiting for the main program to check the peripheral.
+How does it work?
+When the processor accepts an interrupt, it executes the associated ISR. The ISR usually checks or handles the event, clears the appropriate interrupt condition when required, and may store data or set a flag for the main program.
+Example in Embedded C:
+volatile int timer_flag = 0;
+
+void TIM2_IRQHandler(void)
+{
+    // Clear the timer interrupt flag
+    // using the device-specific method.
+
+    timer_flag = 1;
+}
+
+
+This is a conceptual example. On STM32, the correct interrupt flag must be cleared according to the timer peripheral's documentation; otherwise, the interrupt may occur repeatedly.
+Important ISR rules:
+- Keep the ISR short.
+- Avoid long blocking delays.
+- Avoid lengthy calculations.
+- Use appropriate synchronization when sharing data with the main program.
+- Clear or acknowledge the interrupt condition as required by the hardware.
+
+
+
+
+
+5. Interrupt Enable/Disable 🔘
+What is it?
+Interrupt enable and disable controls determine whether a particular interrupt can request CPU service, or whether interrupts are masked at a broader processor level.
+Why is it used?
+Some events should trigger immediate handling, while others may need to be temporarily masked during configuration or a short critical operation.
+How does it work?
+Interrupt control can exist at different levels:
+- Peripheral level: Enables a specific event, such as UART receive-not-empty.
+- Interrupt-controller level: Enables or disables the interrupt line in the NVIC.
+- CPU level: Processor interrupt masks can prevent certain interrupts from being accepted.
+Enabling one level does not necessarily enable all the others. The peripheral event, NVIC line, and CPU interrupt state must be configured appropriately.
+Example: To receive UART data using interrupts, configure the UART receive interrupt and enable the corresponding NVIC interrupt.
+Important: Disabling an interrupt does not always stop the peripheral event itself. A request may remain pending and be handled later, depending on the hardware and how it is cleared.
+
+
+
+
+
+6. Interrupt Priority 🥇
+What is it?
+Interrupt priority determines the relative urgency of interrupt requests when multiple interrupts need attention.
+Why is it used?
+Some events need a faster response than others. For example, a critical control event may need priority over a non-urgent communication event.
+How does it work?
+On Cortex-M processors, the NVIC uses programmed priority values to determine which eligible interrupt can run first and which interrupts can preempt others.
+Example: A high-priority timer interrupt may be allowed to interrupt a lower-priority UART handler, if the priorities and masking settings permit it.
+Important: On Cortex-M NVIC, a numerically smaller priority value generally means higher priority. The number of implemented priority bits varies by processor.
+
+
+
+
+
+7. Nested Interrupts 🔁
+What is it?
+Nested interrupts occur when one interrupt handler is interrupted by another interrupt that is allowed to preempt it.
+Why is it used?
+It allows more urgent events to be handled before a less urgent ISR has finished.
+How does it work?
+Suppose a low-priority UART ISR is running. If a higher-priority timer interrupt arrives and is eligible to preempt it, the CPU suspends the UART handler, runs the timer handler, and then resumes the UART handler.
+Example: A time-critical control interrupt preempts a lower-priority communication interrupt.
+Important: Nested interrupts increase complexity. Shared data, execution time, stack usage, and priority configuration must be handled carefully.
+
+
+
+
+
+8. Interrupt Latency ⏳
+What is it?
+Interrupt latency is the time between an interrupt event or request and the start of execution of its interrupt handler.
+Why is it important?
+Time-sensitive embedded systems must respond quickly enough to meet their requirements.
+What affects it?
+- Whether interrupts are masked.
+- Whether a higher-priority ISR is running.
+- Processor architecture and interrupt entry overhead.
+- Memory and bus delays.
+- Compiler-generated code and handler setup.
+Example: If a timer interrupt request occurs and the ISR begins 2 microseconds later, the request-to-handler-start latency is approximately 2 microseconds under that measurement definition.
+Remember: Interrupt latency is not the same as ISR execution time. Latency is the delay before the handler starts; execution time is how long the handler takes to run.
+
+
+
+
+
+9. Interrupt Flags 🚩
+What is it?
+An interrupt flag is a status bit in a peripheral or interrupt controller that indicates an event has occurred or an interrupt condition needs attention.
+Why is it used?
+The CPU or ISR can use the flag to identify which event happened and determine whether it has been handled.
+How does it work?
+For example, when a timer reaches its configured limit, the timer may set an update flag. If the corresponding interrupt is enabled, the timer can request an interrupt.
+The flag may need to be cleared by software or by a specific hardware operation, depending on the peripheral.
+Where is it used?
+- Timer overflow events.
+- UART transmission or reception.
+- ADC conversion completion.
+- GPIO external interrupts.
+Important: An interrupt flag and an interrupt enable bit serve different purposes. The flag indicates an event or condition; the enable bit controls whether that event can generate an interrupt request.
+
+
+
+
+
+10. Pending Interrupts 📬
+What is it?
+A pending interrupt is an interrupt request that has been recorded but has not yet been serviced.
+Why is it used?
+The processor may not be able to handle an interrupt immediately because another handler is running or interrupts are temporarily masked. Pending status allows an eligible request to be serviced later.
+How does it work?
+Suppose an interrupt occurs while the CPU is handling another interrupt. If the request is recorded as pending and later becomes eligible, the CPU can execute its handler after the blocking condition is removed.
+Example: A lower-priority interrupt becomes pending while a higher-priority ISR is running. The lower-priority handler can run when the higher-priority ISR finishes, if the request remains pending and is enabled.
+Important: Pending behavior varies by interrupt source. Some peripherals have their own status flags, and repeated events may not be counted individually.
+
+
+
+
+
+11. Edge-Triggered Interrupts 📈
+What is it?
+An edge-triggered interrupt occurs when a signal changes state, such as from LOW to HIGH or from HIGH to LOW.
+Types:
+- Rising edge: LOW → HIGH.
+- Falling edge: HIGH → LOW.
+- Both edges: Detects either transition, if supported.
+Why is it used?
+It allows the microcontroller to respond to a change in a signal rather than continuously checking its current level.
+How does it work?
+The GPIO or peripheral detects the configured transition and generates an interrupt request.
+Example: Configure a GPIO pin to generate an interrupt on the falling edge of a button signal. When the signal changes from HIGH to LOW, the interrupt is requested.
+Where is it used?
+- Button presses.
+- Encoder signals.
+- Pulse detection.
+- External event counting.
+
+
+
+
+
+12. Level-Triggered Interrupts 📊
+What is it?
+A level-triggered interrupt is requested while a signal or interrupt condition remains at a specified logic level, such as HIGH or LOW.
+Why is it used?
+It is useful when a device needs attention for as long as a condition remains active.
+How does it work?
+When the configured level is active, the interrupt request remains asserted. If the condition is not cleared or the source is not handled properly, the CPU may enter the handler repeatedly after returning from it.
+Example: Some hardware devices assert an interrupt line HIGH until software reads a status register and clears the underlying condition.
+Important: Edge-triggered interrupts respond to a transition; level-triggered interrupts respond to an active level. The supported modes depend on the GPIO or interrupt hardware.
+
+
+
+
+13. External Interrupts 🌐
+What is it?
+An external interrupt is an interrupt generated by an external signal entering the microcontroller, often through a GPIO pin.
+Why is it used?
+It lets the microcontroller respond immediately to external events without repeatedly checking the input.
+How does it work?
+1. Configure the GPIO pin.
+2. Select the trigger condition, such as rising or falling edge.
+3. Enable the external interrupt line and its NVIC interrupt.
+4. When the signal meets the trigger condition, the CPU can run the corresponding handler.
+Example: Pressing a button connected to an STM32 GPIO can generate an external interrupt that sets a flag for the main program.
+Where is it used?
+- Push buttons.
+- Sensor event outputs.
+- Encoder signals.
+- External fault or alarm signals.
+
+
+
+
+
+14. Peripheral Interrupts 🔧
+What is it?
+A peripheral interrupt is an interrupt request generated by an internal hardware peripheral, such as UART, SPI, I²C, ADC, DMA, or a timer.
+Why is it used?
+It allows software to respond to peripheral events without continuously polling the peripheral's status.
+How does it work?
+A peripheral detects an event, such as data reception or conversion completion. If its relevant interrupt is enabled, it requests CPU service through the interrupt controller.
+Example: An ADC can generate an interrupt when an analog-to-digital conversion completes, allowing software to process the result.
+Where is it used?
+- Communication.
+- Sensor acquisition.
+- Timer-based operations.
+- DMA transfer completion.
+
+
+
+
+
+15. Timer Interrupts ⏱️
+What is it?
+A timer interrupt is generated when a configured timer event occurs, such as an update event, compare match, or capture event.
+Why is it used?
+It allows the microcontroller to perform an action at a specified time or at regular intervals.
+How does it work?
+The timer counts clock ticks. When the configured event occurs, it sets the relevant status flag and can request an interrupt if the event interrupt is enabled.
+Example: A timer generates an interrupt every 1 ms. The ISR increments a counter, and the main program uses that counter to track elapsed time.
+Where is it used?
+- Periodic tasks.
+- LED blinking.
+- Sampling sensors.
+- Time measurement.
+- Motor-control timing.
+
+
+
+
+16. UART Interrupts 📡
+What is it?
+A UART interrupt is an interrupt generated by a UART peripheral when a configured communication event occurs.
+Why is it used?
+It allows a microcontroller to receive or transmit serial data without continuously checking the UART status registers.
+Common UART interrupt events:
+- Receive data available.
+- Transmit data register ready.
+- Transmission complete.
+- Error conditions, such as overrun or framing errors.
+How does it work?
+When a configured UART event occurs, the peripheral requests an interrupt. The ISR or driver handles the event, for example by reading received data or updating the transmit process.
+Example: A UART receives a byte from a computer. The receive interrupt lets the microcontroller read the byte and store it in a buffer.
+Where is it used?
+- Serial communication with a PC.
+- GPS modules.
+- GSM modules.
+- Debugging output.
+- Embedded device communication.
+Important: For larger transfers, interrupt-driven buffers or DMA can be more efficient than handling every byte with lengthy ISR processing.
+
+
+
+
+
+17. Cortex-M 🧠
+What is it?
+ARM Cortex-M is a family of processor cores designed primarily for microcontrollers and embedded applications.
+Examples include Cortex-M0, Cortex-M3, Cortex-M4, and Cortex-M7.
+Why is it important for interrupts?
+Cortex-M processors include architectural features designed to handle interrupts efficiently, including exception entry and return mechanisms and, on supported cores, the Nested Vectored Interrupt Controller.
+How does it work?
+When an eligible interrupt is accepted, the processor saves the required execution state, obtains the handler address from the vector table, and begins executing the handler. It restores the interrupted execution state when returning.
+Example: The STM32F401RBT6 uses an ARM Cortex-M4 core. Its interrupts use Cortex-M exception handling and NVIC functionality.
+Remember: Exact interrupt features and priority configuration depend on the Cortex-M core and the specific microcontroller.
+
+
+
+
+
+18. NVIC (Nested Vectored Interrupt Controller) 🎛️
+What is it?
+The NVIC is the interrupt controller built into Cortex-M processor designs that support it. It manages external interrupt requests, including enabling, disabling, prioritizing, and tracking pending status.
+Why is it used?
+It helps the processor manage multiple interrupt sources and allows higher-priority interrupts to preempt lower-priority handlers when permitted.
+How does it work?
+Software configures the NVIC for the required interrupt lines and priorities. When an enabled interrupt request becomes eligible, the NVIC helps the processor select and service it.
+Common NVIC operations:
+- Enable or disable an interrupt line.
+- Set interrupt priority.
+- Check or manage pending status.
+- Clear pending status where supported and appropriate.
+Example: On an STM32, software can configure the TIM2 interrupt priority and enable the TIM2 interrupt in the NVIC.
+Important: Enabling an interrupt in the NVIC is not always sufficient by itself. The peripheral's own interrupt source must also be configured correctly.
+
+
+
+
+
+19. IRQ (Interrupt Request) ⚡
+What is it?
+IRQ stands for Interrupt Request. It refers to a request for the processor to handle an interrupt event.
+Why is it used?
+An IRQ mechanism lets peripherals signal that they need CPU attention.
+How does it work?
+A peripheral generates an interrupt request when a configured event occurs. The interrupt controller and processor determine whether and when the request can be serviced.
+Example: A UART generates an interrupt request when receive data is available and its receive interrupt is enabled.
+Remember: IRQ refers to the request or interrupt line, whereas the ISR is the code that handles it.
+
+
+
+
+
+20. ISR — Cortex-M Handler 🛠️
+You listed ISR twice, so here is the Cortex-M-specific detail.
+What is it?
+On Cortex-M, an ISR is usually a C function associated with a particular exception or interrupt vector. In STM32 projects, handlers often have names such as TIM2_IRQHandler() or USART1_IRQHandler().
+How does it work?
+The startup code provides the vector table, and the project or device library provides the appropriate handler. When the relevant interrupt is accepted, the processor transfers execution to that handler.
+Example:
+void TIM2_IRQHandler(void)
+{
+    // Check and handle the timer event.
+    // Clear the relevant hardware flag as required.
+}
+
+
+The actual handler must match the interrupt name and conventions used by the startup code and device library.
+Important: STM32 HAL applications commonly use a low-level IRQ handler to call a HAL handler, which then invokes a user callback. The exact flow depends on the project.
+
+
+
+
+
+21. Vector Table 📋
+What is it?
+The vector table is a table of addresses used by the processor to locate exception and interrupt handlers.
+Why is it used?
+The processor needs to know which function to execute when a particular interrupt or exception occurs.
+How does it work?
+On Cortex-M, the vector table begins with the initial stack pointer value, followed by the reset handler address and entries for exceptions and external interrupts. The table is usually provided by startup code and placed at the appropriate memory location.
+Example: When a timer interrupt is accepted, the processor uses the corresponding vector-table entry to find the timer IRQ handler.
+Where is it used?
+- MCU startup.
+- Exception handling.
+- Peripheral interrupt handling.
+- Bootloader and application startup configurations.
+Remember: The vector table contains handler addresses; it does not contain the full ISR code.
+
+
+
+
+
+22. Priority — Preemption and Subpriority 🥇
+You listed priority twice, so here is the additional Cortex-M detail.
+What is it?
+Interrupt priority determines the relative urgency of interrupts. On Cortex-M systems that implement priority grouping, priority bits may be divided into preemption priority and subpriority.
+- Preemption priority: Determines whether one interrupt can interrupt another.
+- Subpriority: Helps determine which pending interrupt is selected first when preemption priority is the same and both are eligible.
+Why is it used?
+It allows time-critical events to receive attention ahead of less urgent events.
+Example: A high-urgency control interrupt may preempt a lower-urgency UART handler. Two pending interrupts with the same preemption priority generally cannot preempt each other based on subpriority alone.
+Important: The number of priority bits and grouping behavior depend on the Cortex-M implementation and configuration.
+
+
+
+
+23. Nested Interrupts — Cortex-M Behavior 🔁
+You listed nested interrupts twice, so here is the processor-specific behavior.
+What is it?
+Nested interrupts occur when a higher-priority, eligible interrupt preempts a handler that is already running.
+How does it work on Cortex-M?
+The processor saves the required execution state when entering an interrupt. If a higher-priority interrupt is accepted, it enters that handler. After the higher-priority handler finishes, the processor can return to the previously interrupted handler.
+Example:
+1. The CPU enters a low-priority UART ISR.
+2. A higher-priority timer interrupt arrives.
+3. The timer ISR preempts the UART ISR.
+4. The timer ISR finishes.
+5. The CPU resumes the UART ISR.
+Important: Interrupt masking, priority configuration, and the currently active exception determine whether preemption can occur. Excessive nesting can also increase stack usage.
+
+
+
+
+
+
+
+
+
+
+9. Polling vs. Interrupt 🔄
+Polling and interrupts are two different methods used by a microcontroller to detect and respond to events.
+
+
+
+
+
+1. Polling 📋
+What is it?
+Polling is a method in which the CPU repeatedly checks a peripheral's status register or flag to determine whether an event has occurred or data is available.
+Why is it used?
+Polling is straightforward to implement and can be useful when events are infrequent, the program is simple, or the CPU can afford to check the status regularly.
+How does it work?
+1. The CPU checks a peripheral status flag.
+2. If the event has not occurred, the CPU checks again.
+3. When the flag indicates that the event has occurred, the program handles it.
+4. The CPU continues with its next operation.
+Example: A program repeatedly checks whether a UART has received a byte.
+while (1)
+{
+    if (UART_Data_Ready())
+    {
+        Read_UART_Data();
+    }
+}
+
+
+This is conceptual code; the actual functions depend on the microcontroller and driver.
+Main disadvantage: The CPU may spend time checking repeatedly even when nothing has happened.
+
+
+
+
+2. Interrupt ⚡
+What is it?
+An interrupt-based approach allows the CPU to perform other work while a peripheral signals the processor when an event needs attention.
+Why is it used?
+It reduces the need for continuous status checking and is useful when an event should be handled promptly.
+How does it work?
+1. Configure the peripheral and enable its interrupt.
+2. The CPU performs its normal work.
+3. When the event occurs, the peripheral requests an interrupt.
+4. The CPU executes the corresponding ISR.
+5. The CPU returns to its previous work.
+Example: UART receive interrupts can notify the CPU when data arrives.
+volatile int data_received = 0;
+
+void UART_IRQHandler(void)
+{
+    // Read received data and handle
+    // the hardware-specific interrupt condition.
+
+    data_received = 1;
+}
+
+int main(void)
+{
+    while (1)
+    {
+        if (data_received)
+        {
+            data_received = 0;
+            // Process received data.
+        }
+    }
+}
+
+
+This is a conceptual example. Real UART code must read the received data and handle the hardware flags correctly. Shared data may also require additional synchronization when more than a simple flag is involved.
+
+
+
+
+3. CPU Utilization 🧠
+What is it?
+CPU utilization describes how much of the CPU's available processing time is spent performing work.
+Polling: The CPU repeatedly checks the peripheral, potentially wasting processing time when no event occurs.
+Interrupt: The CPU can perform other work between events, although entering and executing an ISR also consumes CPU time.
+Example: If a sensor produces data only once per second, continuously checking it thousands of times per second may be unnecessary.
+Remember: Interrupts can improve CPU efficiency, but they are not automatically more efficient for every application. Very frequent interrupts can create significant overhead.
+
+
+
+
+4. Response Time ⏱️
+What is it?
+Response time is the time taken for the system to react to an event.
+Polling: The response depends on how frequently the program checks the status. If the program checks only once every 10 ms, an event might wait almost 10 ms before being detected, ignoring other delays.
+Interrupt: The response depends on interrupt latency, priority, masking, and the time needed to execute the handler.
+Example: For a rapidly changing sensor signal, an interrupt may detect a transition sooner than a program that checks the input occasionally.
+Remember: Interrupts often provide faster event detection, but they do not guarantee an immediate response.
+
+
+
+
+5. Complexity 🛠️
+Polling: Generally simpler to understand and debug because the control flow stays within the main program.
+Interrupt: Requires additional configuration, handler functions, interrupt flags, priorities, and careful handling of shared data.
+Example: A simple LED status check may use polling, while a UART receiver handling incoming data during other processing may benefit from interrupts.
+
+
+
+
+6. Power Consumption 🔋
+Polling: Repeated checks can keep the CPU active, increasing power consumption.
+Interrupt: The CPU may be able to enter a low-power mode and wake when an interrupt occurs, if the microcontroller and selected low-power mode support it.
+Example: A battery-powered sensor can sleep between measurements and wake on a timer interrupt.
+Important: Interrupts alone do not guarantee lower power consumption. The peripheral, clock system, wake-up configuration, and sleep mode all affect the result.
+
+
+
+
+7. Complete Comparison Table 📊
+Feature	Polling	Interrupt
+Working method	CPU repeatedly checks status	Hardware or software requests CPU attention
+CPU utilization	Can waste time checking	Can perform other work between events
+Response time	Depends on polling interval	Depends on latency and priority
+Complexity	Usually simpler	Requires additional configuration
+Power consumption	Can keep CPU active	May support sleeping between events
+Best suited for	Simple or frequently checked conditions	Asynchronous or time-sensitive events
+Example	Repeatedly checking a button	Button generates an interrupt
+
+
+
+
+8. When should you use each method? 🎯
+Use polling when:
+- The program is simple.
+- The event can be checked frequently without wasting important resources.
+- The CPU is already waiting for the event.
+- The application does not require a fast asynchronous response.
+Use interrupts when:
+- Events can occur at unpredictable times.
+- The CPU has other work to perform.
+- The response needs to be prompt.
+- A peripheral supports useful interrupt events.
+In some systems, both approaches are used together. For example, an interrupt can collect UART data into a buffer, while the main program polls a flag or queue to determine when to process the data.
+
+Final revision: Interrupt flow on STM32 ⚡
+1. Event occurs
+Timer expires, UART receives data, or GPIO changes state.
+
+2. Interrupt request
+The peripheral requests interrupt service when appropriately configured.
+
+3. NVIC and CPU
+The request is evaluated according to enable, priority, and masking settings.
+
+4. Vector table → ISR
+The processor locates and executes the appropriate handler.
+
+5. Handle and return
+Handle the event, clear or acknowledge the condition as required, and return to the interrupted program.
+
+
+Key points to remember:
+- Interrupt: A request for the CPU to handle an event.
+- IRQ: The interrupt request or line.
+- NVIC: Manages interrupt enabling, priorities, and pending status on supported Cortex-M processors.
+- Vector table: Contains handler addresses.
+- ISR: The function that handles the interrupt.
+- Priority: Determines relative urgency and preemption.
+- Interrupt latency: Delay before the handler starts.
+- Polling: The CPU repeatedly checks for an event.

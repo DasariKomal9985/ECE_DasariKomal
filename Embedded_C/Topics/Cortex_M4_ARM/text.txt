@@ -1,0 +1,525 @@
+10. Cortex-M ARM Concepts — Embedded C 📘
+ARM Cortex-M concepts are very important for Embedded C, STM32 programming, interrupt handling, RTOS, and debugging. They help you understand how the processor executes code, handles interrupts, uses registers, and manages tasks.
+Let's learn each topic in simple English with practical examples.
+
+
+
+
+
+1. ARM Cortex-M Architecture
+What is ARM Cortex-M architecture?
+ARM Cortex-M is a family of processor cores designed mainly for microcontrollers and embedded systems.
+For example, your STM32F401RBT6 uses an ARM Cortex-M4 processor core.
+The processor core executes instructions, performs calculations, accesses memory, and responds to interrupts.
+
+
+
+
+
+
+
+tonyfu97.github.io
+
+
+Main components
+- CPU core: Executes instructions written in Embedded C after compilation.
+- Registers: Small, fast storage locations inside the processor.
+- Flash memory: Stores the program.
+- SRAM: Stores variables, stack, and runtime data.
+- NVIC: Manages and prioritizes interrupts and exceptions.
+- Bus system: Connects the CPU, memory, and peripherals.
+- Peripherals: GPIO, timers, UART, SPI, I2C, ADC, and others.
+How does it work?
+1. Your Embedded C code is compiled into machine instructions.
+2. The processor fetches instructions from memory.
+3. It executes the instructions using registers and the ALU.
+4. It reads or writes memory and peripherals as required.
+5. When an enabled interrupt or exception occurs, the processor can execute its handler.
+
+
+
+
+
+
+2. Cortex-M3, Cortex-M4, and Cortex-M7 Basics
+These are different Cortex-M processor core designs.
+Feature	Cortex-M3	Cortex-M4	Cortex-M7
+Main purpose	General embedded control	Control and signal processing	Higher-performance embedded processing
+DSP instructions	Basic support varies by instruction set; no M4-style DSP extension	Yes	Yes
+Floating-point unit	Not in the core design	Optional FPU	Optional FPU
+Performance	Good	Higher processing capability	Generally higher performance
+Typical applications	Control systems	Motor control, sensors, audio	Advanced control, audio, imaging
+Important: Actual features depend on the specific MCU implementation. For example, the STM32F401RBT6 uses a Cortex-M4 with a floating-point unit (FPU).
+
+
+
+
+
+3. R0–R15 Registers
+What are registers?
+Registers are small, fast storage locations inside the CPU. The processor uses them to hold values, addresses, and execution information.
+The ARM Cortex-M programmer-visible core registers are numbered R0 through R15.
+Registers	Purpose
+R0–R3	Commonly used for function arguments, return values, and temporary calculations
+R4–R11	Commonly used for local data that may need to be preserved across function calls
+R12	Intra-procedure scratch register
+R13	Stack Pointer (SP)
+R14	Link Register (LR)
+R15	Program Counter (PC)
+The compiler follows the ARM calling convention when using these registers.
+Example
+int add(int a, int b)
+{
+    return a + b;
+}
+
+
+When this function is called, the first two arguments are commonly passed in R0 and R1, and the return value is placed in R0.
+The compiler generates the actual machine instructions that perform the addition.
+
+
+
+
+
+4. PC — Program Counter
+What is PC?
+The Program Counter identifies the instruction address from which the processor fetches its next instruction.
+Why is it used?
+It allows the processor to execute instructions in sequence or branch to another location.
+Example:
+int a = 10;
+int b = 20;
+int c = a + b;
+
+
+The CPU executes the compiled instructions in order. A branch, function call, or interrupt can change the normal execution flow.
+Where is it useful?
+- Debugging program crashes.
+- Examining the current execution location.
+- Understanding function calls and branches.
+- Investigating HardFault exceptions.
+Note: The value of PC observed during debugging can reflect architectural pipeline and instruction-address details, so it isn't always simply the address of the source line you are viewing.
+
+
+
+
+
+
+5. LR — Link Register
+What is LR?
+The Link Register, R14, commonly stores the return address when a function is called using a branch-with-link instruction.
+Example:
+void display(void)
+{
+    // Display something
+}
+
+int main(void)
+{
+    display();
+
+    while (1)
+    {
+    }
+}
+
+
+When main() calls display(), the processor can save the return address in LR. When display() returns, execution resumes after the call.
+Important: Nested function calls may overwrite LR, so compiled code often saves it on the stack when necessary.
+LR is also important when handling exceptions because the processor places an EXC_RETURN value in LR to indicate how exception return should work.
+
+
+
+
+
+
+
+
+6. SP — Stack Pointer
+What is SP?
+The Stack Pointer identifies the current top of the stack, which is used to store temporary data.
+The stack commonly stores:
+- Local variables that the compiler places on the stack.
+- Saved registers.
+- Function return information when required.
+- Exception context during interrupt handling.
+Example:
+void calculate(void)
+{
+    int x = 10;
+    int y = 20;
+
+    int result = x + y;
+}
+
+
+Depending on compiler optimization, some variables may be held in registers rather than stored on the stack.
+Important: Cortex-M stacks commonly grow toward lower memory addresses. The SP changes as data is pushed onto or removed from the stack.
+
+
+
+
+
+
+
+
+
+7. xPSR — Program Status Register
+What is xPSR?
+xPSR is the combined view of three processor status registers:
+- APSR: Application Program Status Register.
+- IPSR: Interrupt Program Status Register.
+- EPSR: Execution Program Status Register.
+Why is it used?
+It holds information about arithmetic results, the current exception number, and execution state.
+For example, after an arithmetic operation, condition flags can indicate whether a result is zero, negative, or involved a carry.
+Important status flags include:
+Flag	Meaning
+N	Negative result
+Z	Zero result
+C	Carry or borrow-related status
+V	Signed overflow
+The exact interpretation of C depends on the operation.
+IPSR identifies the currently active exception number. In Thread Mode, its exception number is zero.
+
+
+
+
+
+
+
+
+
+
+8. MSP — Main Stack Pointer
+What is MSP?
+MSP stands for Main Stack Pointer. It is one of the two stack pointers available in Cortex-M processors.
+Why is it used?
+MSP is used by the processor after reset and is normally used for exception-handler execution.
+It is also the stack pointer commonly used by simple bare-metal programs that do not switch to PSP.
+Example:
+int main(void)
+{
+    while (1)
+    {
+        // Main application
+    }
+}
+
+
+The startup code initializes the stack using the initial MSP value stored in the vector table.
+Remember: Handler Mode uses MSP, including when the interrupted Thread Mode code was using PSP.
+
+
+
+
+
+
+
+
+
+9. PSP — Process Stack Pointer
+What is PSP?
+PSP stands for Process Stack Pointer. It is the second stack pointer available on Cortex-M processors.
+Why is it used?
+It allows application code or RTOS tasks to use a separate stack from the one reserved for exception handlers.
+For example, an RTOS may give each task its own stack and use PSP while running tasks in Thread Mode.
+MSP vs PSP
+Feature	MSP	PSP
+Full form	Main Stack Pointer	Process Stack Pointer
+After reset	Selected by default	Available but not selected by default
+Thread Mode	Can be used	Can be used
+Handler Mode	Used	Not used for handler execution
+Common application	Main or exception stack	Individual RTOS task stacks
+Important: MSP and PSP are two stack pointers, but the active stack depends on the processor mode and CONTROL register configuration.
+
+
+
+
+
+
+
+
+
+10. CONTROL Register
+What is CONTROL?
+The CONTROL register controls certain aspects of execution in Thread Mode.
+It includes these key fields:
+- nPRIV: Selects privileged or unprivileged Thread Mode.
+- SPSEL: Selects which stack pointer Thread Mode uses.
+- FPCA: Indicates floating-point context activity on cores with the relevant FPU support.
+Example
+An RTOS may configure a task to use PSP while running in Thread Mode. It can also run application code in unprivileged mode for additional separation from privileged kernel code.
+Remember: Handler Mode always uses MSP. CONTROL does not switch Handler Mode to PSP.
+
+
+
+
+
+
+
+
+
+
+
+11. PRIMASK
+What is PRIMASK?
+PRIMASK is a special register that can mask most configurable-priority exceptions.
+When PRIMASK is set, configurable-priority interrupts are generally prevented from being activated. NMI and HardFault are not masked by PRIMASK.
+Why is it used?
+It can protect a short critical section from ordinary interrupt interference.
+Conceptual CMSIS example:
+__disable_irq();
+
+/* Short critical section */
+
+__enable_irq();
+
+
+Important: This simplified example enables interrupts again unconditionally. In reusable code, preserve and restore the previous interrupt-mask state rather than accidentally enabling interrupts that were already disabled.
+Disabling interrupts for too long can increase latency and cause missed real-time deadlines.
+
+
+
+
+
+
+
+
+
+12. BASEPRI
+What is BASEPRI?
+BASEPRI masks configurable-priority exceptions at and below a specified priority threshold in terms of urgency.
+On Cortex-M, smaller numerical priority values represent higher urgency. BASEPRI does not mask NMI or HardFault.
+Why is it useful?
+An RTOS can use BASEPRI to prevent selected interrupts from interfering with a critical section while still allowing higher-urgency interrupts to run.
+The precise threshold behavior depends on the priority bits implemented by the MCU.
+Remember: PRIMASK blocks almost all configurable-priority interrupts; BASEPRI can selectively mask a range of priorities.
+
+
+
+
+
+
+13. FAULTMASK
+What is FAULTMASK?
+FAULTMASK is a special register that masks all exceptions except NMI when it is set.
+Unlike PRIMASK, it also masks HardFault.
+Why is it used?
+It is intended for specialized, low-level exception and fault-management situations.
+It is not normally something you need to manipulate in everyday application code.
+Important: Masking faults can make debugging and recovery more difficult. Use this register only when you understand the processor's fault-handling behavior.
+Quick comparison
+Register	Main purpose
+PRIMASK	Masks configurable-priority exceptions, except NMI and HardFault
+BASEPRI	Masks configurable-priority exceptions at a chosen threshold and below in urgency
+FAULTMASK	Masks all exceptions except NMI
+
+
+
+
+
+
+
+
+
+
+14. Processor Modes
+Cortex-M processors have two main execution modes.
+Thread Mode
+Thread Mode executes normal application code.
+Examples:
+- main()
+- Functions called by main()
+- RTOS task code
+Thread Mode can be privileged or unprivileged and can use MSP or PSP, depending on configuration.
+Handler Mode
+Handler Mode executes exception handlers.
+Examples:
+- Timer interrupt handler.
+- UART interrupt handler.
+- SysTick handler.
+- HardFault handler.
+Handler Mode is always privileged and uses MSP.
+Thread Mode vs Handler Mode
+Feature	Thread Mode	Handler Mode
+Purpose	Application execution	Exception handling
+Privilege	Privileged or unprivileged	Always privileged
+Stack	MSP or PSP	MSP
+Example	main() or RTOS task	SysTick_Handler()
+
+
+
+
+
+
+
+
+
+
+15. Privileged vs Unprivileged Execution
+Privileged
+Privileged code has access to system-control operations that unprivileged code cannot perform.
+It is commonly used by:
+- Startup code.
+- RTOS kernels.
+- Exception handlers.
+- Low-level system-management code.
+Unprivileged
+Unprivileged code has restricted access to certain system-control operations.
+An RTOS may run application tasks as unprivileged while keeping the kernel privileged.
+Why is privilege important?
+Privilege helps isolate application code from critical system operations and can prevent accidental or unauthorized changes to protected processor settings.
+Remember: Thread Mode can be privileged or unprivileged. Handler Mode is always privileged.
+
+
+
+
+
+
+
+
+
+
+
+16. Stack
+What is a stack?
+A stack is a memory region used for temporary storage during program execution. Cortex-M systems typically use SRAM for their runtime stacks.
+Why is it needed?
+The stack supports function calls, local data, saved registers, and exception context.
+Example:
+void first(void)
+{
+    int a = 10;
+    second();
+}
+
+void second(void)
+{
+    int b = 20;
+}
+
+
+The compiler may save some function state on the stack when first() calls second().
+What is stack overflow?
+Stack overflow occurs when the stack requires more memory than the allocated region provides.
+Possible causes include:
+- Deep or infinite recursion.
+- Large local arrays.
+- Excessive nested function calls.
+- Too-small RTOS task stacks.
+- Exception nesting that uses more stack than expected.
+It can lead to corrupted data, unexpected behavior, or a fault.
+
+
+
+
+
+
+
+
+
+
+
+
+17. Exceptions in Cortex-M
+What is an exception?
+An exception is an event that causes the processor to interrupt its normal execution flow and enter a special handler.
+Exceptions include reset, faults, system exceptions, and external interrupts.
+When an exception is accepted, the processor saves a defined context on the stack, enters Handler Mode, and executes the corresponding handler. On return, it can restore the previous execution context.
+Types of Cortex-M exceptions
+
+1. Reset
+Reset starts the processor's initialization sequence. The processor loads the initial stack pointer and reset-handler address from the vector table, then begins executing startup code.
+
+
+2. NMI — Non-Maskable Interrupt
+A high-priority exception that is not blocked by PRIMASK, BASEPRI, or FAULTMASK. It is used for critical events that must not be masked by normal interrupt-control settings.
+
+3. HardFault
+A fault exception used for serious errors or faults that cannot be handled by the configurable fault handlers. Debugging often involves examining the stacked PC, LR, xPSR, and fault-status registers.
+
+4. MemManage
+Indicates a memory-protection violation on cores that implement this exception, often involving the Memory Protection Unit (MPU).
+
+5. BusFault
+Indicates certain instruction or data access errors detected by the processor's bus system. Examples include some invalid or failed memory accesses.
+
+
+6. UsageFault
+Indicates certain invalid processor operations, such as an undefined instruction or an invalid execution-state condition, depending on the core and configuration.
+
+
+7. SVCall — Supervisor Call
+Triggered by the SVC instruction. It can allow unprivileged application code to request a service from privileged software, such as an RTOS kernel.
+
+8. PendSV — Pendable Service Call
+A system exception commonly used by RTOS kernels to perform context switching. It is often assigned a low priority so more urgent interrupts can execute first.
+
+9. SysTick — System Tick Timer
+A processor system timer that can generate periodic interrupts. An RTOS often uses these ticks for timekeeping, delays, and scheduling decisions.
+
+
+
+Hardware note: The exact fault exceptions available and their behavior depend on the Cortex-M core and its configuration. For example, Cortex-M0/M0+ implementations do not provide the same configurable MemManage, BusFault, and UsageFault set as Cortex-M3/M4/M7.
+
+
+
+
+
+
+
+
+
+
+
+
+18. How These Concepts Work Together
+Imagine an STM32 running FreeRTOS with a periodic timer interrupt.
+Thread Mode
+Application or RTOS task executes using PSP or MSP
+
+Timer interrupt occurs
+NVIC evaluates the pending interrupt and its priority
+
+Handler Mode
+Processor uses MSP and executes the interrupt handler
+
+Exception return
+Processor restores the interrupted context and resumes execution
+
+
+In an RTOS, the tick handler may request a context switch. PendSV can then save the outgoing task's context and restore the incoming task's context. The scheduler decides which task should run next.
+
+
+
+
+
+
+
+
+
+
+
+
+19. Quick Revision
+Concept	Remember this
+R0–R15	Core registers
+PC	Instruction execution address
+LR	Function return address; also used for exception return information
+SP	Active stack pointer
+xPSR	Execution status and flags
+MSP	Main stack pointer; used in Handler Mode
+PSP	Alternative stack pointer, often used by RTOS tasks
+CONTROL	Thread privilege and stack selection, plus FPU-related state
+PRIMASK	Masks configurable-priority exceptions
+BASEPRI	Selectively masks configurable-priority exceptions
+FAULTMASK	Masks all exceptions except NMI
+Thread Mode	Normal application execution
+Handler Mode	Exception-handler execution
+Privileged	Can perform restricted system operations
+Unprivileged	Restricted execution permissions
+HardFault	Serious or escalated fault
+SVCall	Software-requested exception
+PendSV	Commonly used for RTOS context switching
+SysTick	Periodic system timer
