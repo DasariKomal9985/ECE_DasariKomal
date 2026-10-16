@@ -1,0 +1,354 @@
+13. SPI (Serial Peripheral Interface) 🔌
+SPI is an important communication protocol in Embedded C. It is commonly used to connect microcontrollers such as the STM32F401RBT6 to sensors, memory chips, displays, ADCs, and communication controllers.
+
+
+
+
+
+
+
+
+
+
+1. What is SPI?
+SPI stands for Serial Peripheral Interface. It is a synchronous, serial communication protocol that uses a clock signal to synchronize data transfer between a master and one or more slaves.
+Unlike I²C, which uses two main signal lines, standard SPI typically uses four signal lines.
+Why do we use SPI? ⚙️
+- High-speed communication.
+- Simultaneous data transmission and reception.
+- Simple hardware interface.
+- Suitable for transferring large amounts of data.
+- Supports multiple slave devices using separate chip-select signals.
+Examples include communicating with an SPI flash memory, an LCD display, or an MCP2515 CAN controller.
+
+
+
+
+
+
+
+
+
+
+
+2. SCK — Serial Clock
+SCK stands for Serial Clock. It synchronizes data transmission and reception.
+- The master normally generates the clock.
+- Both master and slave use clock edges to determine when data changes and when it is sampled.
+- The clock frequency determines how quickly bits are transferred.
+For example, at a clock frequency of 1 MHz, one clock period is \(1\ \mu s\).
+
+
+
+
+
+
+
+
+3. MOSI — Master Out, Slave In
+MOSI carries data from the master to the slave.
+For example, when the STM32 sends a configuration command to an SPI sensor, the command travels through MOSI.
+Direction:
+Master → MOSI → Slave
+MOSI is also called COPI (Controller Out, Peripheral In) in newer terminology.
+
+
+
+
+
+
+
+
+
+4. MISO — Master In, Slave Out
+MISO carries data from the slave to the master.
+For example, when the STM32 reads sensor data, the sensor sends its response through MISO.
+Direction:
+Slave → MISO → Master
+MISO is also called CIPO (Controller In, Peripheral Out).
+
+
+
+
+
+
+
+
+
+5. CS/SS — Chip Select / Slave Select
+CS or SS selects the slave device that the master wants to communicate with.
+It is usually an active-low signal:
+- CS LOW: the slave is selected.
+- CS HIGH: the slave is not selected.
+Example: If the STM32 is connected to three SPI sensors, it can select one sensor by pulling that sensor's CS LOW while keeping the other CS lines HIGH.
+Some devices use different chip-select polarities, so always check the datasheet.
+
+
+
+
+
+
+
+
+
+
+6. Master
+The master is the device that controls the SPI communication.
+Its responsibilities typically include:
+- Generating SCK.
+- Selecting the slave using CS.
+- Sending commands and data through MOSI.
+- Receiving data through MISO.
+- Controlling the clock frequency and SPI mode.
+Example: STM32 acts as the master when communicating with an SPI flash memory.
+
+
+
+
+
+
+
+
+
+
+7. Slave
+The slave is the peripheral selected by the master.
+A slave typically:
+- Receives data through MOSI.
+- Sends data through MISO.
+- Uses SCK for timing.
+- Responds when its CS signal selects it.
+Example: An MCP2515 SPI CAN controller acts as a slave when the STM32 communicates with it.
+
+
+
+
+
+
+
+
+
+
+
+8. Full Duplex
+Full duplex means transmitting and receiving data simultaneously.
+SPI supports full-duplex communication because MOSI and MISO are separate lines.
+For example, during one clock pulse:
+- The master sends one bit to the slave through MOSI.
+- The slave sends one bit to the master through MISO.
+During an 8-clock transfer, both sides can exchange one byte simultaneously.
+Important: Even if the master only wants to read data, it usually must generate clock pulses. It may transmit dummy bytes to produce those clocks.
+
+
+
+
+
+
+
+
+
+9. CPOL — Clock Polarity
+CPOL determines the clock's idle level when no clock pulses are being generated for the transfer.
+CPOL	Clock idle state
+0	LOW
+1	HIGH
+- CPOL = 0: SCK idles LOW.
+- CPOL = 1: SCK idles HIGH.
+CPOL helps determine which clock edge is the leading edge and which is the trailing edge.
+
+
+
+
+
+
+
+
+
+
+10. CPHA — Clock Phase
+CPHA determines which clock edge is used to sample data.
+CPHA	Sampling edge
+0	Leading edge
+1	Trailing edge
+- Leading edge: the first clock transition away from the idle level.
+- Trailing edge: the second transition, returning toward the idle level.
+The master and slave must use compatible CPOL and CPHA settings. If they do not, the received data may be incorrect.
+
+
+
+
+
+
+
+
+
+
+
+11. SPI Modes 0–3
+SPI has four common modes, based on CPOL and CPHA.
+SPI mode	CPOL	CPHA	Clock idle	Data sampled on
+Mode 0	0	0	LOW	Rising edge
+Mode 1	0	1	LOW	Falling edge
+Mode 2	1	0	HIGH	Falling edge
+Mode 3	1	1	HIGH	Rising edge
+How to remember them
+- Mode 0: Idle LOW, sample on rising edge.
+- Mode 1: Idle LOW, sample on falling edge.
+- Mode 2: Idle HIGH, sample on falling edge.
+- Mode 3: Idle HIGH, sample on rising edge.
+⚠️ Always check the peripheral's datasheet for its required SPI mode. Do not assume every SPI device uses Mode 0.
+
+
+
+
+
+
+
+
+
+
+
+12. Clock Frequency
+The SPI clock frequency determines the rate at which bits are transferred.
+For example:
+- 100 kHz = 100,000 clock cycles per second.
+- 1 MHz = 1,000,000 clock cycles per second.
+- 10 MHz = 10,000,000 clock cycles per second.
+For a basic 8-bit transfer, ignoring setup time and software overhead:
+\[
+\text{Transfer time} \approx \frac{8}{f_{\text{SCK}}}
+\]
+
+At 1 MHz, transferring 8 bits takes approximately \(8\ \mu s\).
+The usable clock frequency depends on the slave's maximum rating, wiring, bus loading, and the microcontroller's configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+13. Chip Select
+Chip select determines which slave is active during a transaction.
+A typical transaction works like this:
+1. The master pulls the selected slave's CS LOW.
+2. The master generates clock pulses and transfers data.
+3. The master completes the required transfer.
+4. The master returns CS HIGH.
+Some devices require CS to remain LOW across multiple bytes or commands. Others have specific timing requirements between transactions.
+
+
+
+
+
+
+
+
+
+
+
+
+14. Multiple Slaves
+SPI can connect multiple slave devices to one master.
+The slaves can share the following lines:
+- SCK
+- MOSI
+- MISO, when the devices support the expected shared-bus behavior
+Each slave generally has its own CS signal.
+STM32 — Master
+
+SCK and MOSI shared across slaves
+MISO shared when supported
+
+Slave 1
+CS1
+
+
+Slave 2
+CS2
+
+
+Slave 3
+CS3
+
+
+
+
+For example, the STM32 could connect to an SPI display, an external memory chip, and an MCP2515 controller.
+Important: Only the selected slave should drive the shared MISO line. Unselected slaves normally place their MISO output in a high-impedance state. If a device does not support this behavior, additional hardware or a separate bus may be required.
+
+
+
+
+
+
+
+
+
+
+
+
+
+15. SPI Transmit and Receive
+In SPI, transmitting and receiving are normally performed together because every clock pulse shifts data in both directions.
+Transmit operation
+The master sends a command or data byte through MOSI while generating SCK.
+Example: Sending a register address to a sensor.
+Receive operation
+The master generates clock pulses and reads the incoming data through MISO.
+To receive a byte, the master generally sends a dummy byte or uses a hardware receive mechanism that generates the necessary clock pulses.
+STM32 HAL example
+The following example uses the STM32 HAL API. It assumes SPI has been initialized in STM32CubeIDE and hspi1 is configured for the target peripheral.
+#include "main.h"
+
+extern SPI_HandleTypeDef hspi1;
+
+uint8_t tx_data[2] = {0x9F, 0x00};
+uint8_t rx_data[2];
+
+HAL_StatusTypeDef status;
+
+status = HAL_SPI_TransmitReceive(
+    &hspi1,
+    tx_data,
+    rx_data,
+    2,
+    100
+);
+
+if (status == HAL_OK)
+{
+    /* Transfer completed.
+       Inspect rx_data according to
+       the peripheral's protocol. */
+}
+else
+{
+    /* Handle SPI communication error. */
+}
+
+
+Here:
+- hspi1 is the SPI peripheral handle.
+- tx_data contains the bytes sent by the master.
+- rx_data stores the bytes received at the same time.
+- 2 is the number of data units transferred.
+- 100 is the timeout in milliseconds.
+Important: This example does not control a GPIO chip-select pin. If the slave uses manual CS, pull CS LOW before calling the HAL function and return it HIGH after the transfer, following the peripheral's timing requirements. Also, 0x9F is commonly used as a JEDEC ID command by some SPI flash memories; the actual command and response depend on the device.
+
+SPI vs I²C
+Feature	SPI	I²C
+Main signal lines	Usually 4	2
+Clock	SCK	SCL
+Data lines	MOSI and MISO	SDA
+Device selection	Usually CS pin	Address
+Duplex	Full duplex supported	Shared data line, not full duplex
+Speed	Often higher	Often lower, depending on mode
+Acknowledgment	No standard ACK/NACK bit	ACK/NACK
+Multiple slaves	Usually separate CS per slave	Devices share the bus using addresses

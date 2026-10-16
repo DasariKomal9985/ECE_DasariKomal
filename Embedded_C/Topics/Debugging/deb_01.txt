@@ -1,0 +1,705 @@
+23. Error Handling & Debugging in Embedded Systems 🛠️
+In embedded systems, error handling means detecting, managing, and recovering from faults, while debugging means finding the cause of a problem and correcting it.
+For example, suppose your STM32F401RBT6 reads a temperature sensor using I²C. If the sensor stops responding, the firmware should detect the problem instead of waiting forever. You can then use UART logs or a debugger to find out why the communication failed.
+Let's understand each topic with simple examples and Embedded C code. 👇
+
+
+
+
+
+
+
+1. HardFault ⚠️
+A HardFault is a processor exception that occurs when a serious fault happens or when another fault cannot be handled by its specific exception handler.
+On ARM Cortex-M processors, HardFault is one of the most important exceptions to investigate when firmware crashes.
+Common causes
+- Invalid memory access that escalates to HardFault.
+- Executing an invalid instruction.
+- Corrupted stack or return address.
+- A fault occurring while another fault handler is executing.
+- An invalid function pointer.
+Example
+void (*func)(void) = (void (*)(void))0xFFFFFFFF;
+
+int main(void)
+{
+    func();  // Invalid execution address
+    while (1);
+}
+
+
+This can cause a fault, potentially a HardFault. The exact exception depends on the processor configuration and fault conditions.
+How to debug it
+1. Stop at HardFault_Handler() in the debugger.
+2. Inspect the call stack and CPU registers.
+3. Examine the stacked PC (program counter) to find the instruction that was executing.
+4. Inspect the fault-status registers to identify the underlying cause.
+On Cortex-M4, useful registers include CFSR, HFSR, MMFAR, and BFAR, where applicable.
+void HardFault_Handler(void)
+{
+    while (1)
+    {
+        // Halt here and inspect the fault in the debugger.
+    }
+}
+
+
+This handler makes the fault easier to inspect during debugging. It does not, by itself, recover the application.
+
+
+
+
+
+
+
+
+
+
+
+2. BusFault 🚧
+A BusFault occurs when the processor encounters certain errors while accessing memory or communicating over the system bus.
+Common causes
+- Accessing an invalid memory address.
+- Accessing a peripheral incorrectly.
+- Certain invalid or failed bus transactions.
+- Errors associated with instruction or data access.
+Example
+volatile unsigned int *ptr =
+    (volatile unsigned int *)0xFFFFFFFF;
+
+int main(void)
+{
+    unsigned int value = *ptr;
+
+    while (1);
+}
+
+
+This invalid read can cause a BusFault or escalate to a HardFault. The exact result depends on the memory map and processor fault configuration.
+How to debug it
+Check the following:
+- The address being accessed.
+- The faulting instruction and stacked PC.
+- CFSR for the BusFault status bits.
+- BFAR, if the BusFault Address Register is valid.
+Important: An invalid address does not always cause a BusFault. Some invalid accesses may behave differently depending on the memory system and MCU.
+
+
+
+
+
+
+
+
+3. UsageFault 🧩
+A UsageFault indicates certain incorrect processor operations or instruction usage on ARM Cortex-M.
+Common causes
+- Executing an undefined instruction.
+- Executing certain unsupported instructions.
+- An invalid exception return.
+- An invalid state or alignment condition in specific operations.
+- Division by zero when the relevant trap is enabled.
+Example
+int main(void)
+{
+    volatile int a = 10;
+    volatile int b = 0;
+    volatile int result = a / b;
+
+    while (1);
+}
+
+
+Integer division by zero in C has undefined behavior. On Cortex-M4, it can generate a UsageFault when the divide-by-zero trap is enabled, but you should never rely on that behavior.
+How to debug it
+Inspect:
+- CFSR for UsageFault status bits.
+- The stacked PC.
+- The instruction at the faulting address.
+- The values of relevant registers.
+For example, a divide-by-zero UsageFault can be indicated by the DIVBYZERO status bit when the trap is enabled.
+HardFault vs BusFault vs UsageFault
+Fault	Main meaning
+HardFault	Serious fault or another fault that escalated
+BusFault	Certain memory or bus access errors
+UsageFault	Invalid or unsupported processor operation
+On Cortex-M4, BusFault and UsageFault handlers may be disabled or not enabled in the system configuration. When a configurable fault is disabled, the corresponding fault may escalate to HardFault.
+
+
+
+
+
+
+
+
+
+
+
+4. Watchdog Reset 🐕
+A watchdog timer detects when software fails to refresh the timer within the allowed time. If configured to reset the MCU, it can restart the system when the watchdog expires.
+Example
+Suppose your firmware is expected to execute a control loop every 10 ms. A software bug causes the program to get stuck in an infinite loop. If the watchdog is no longer refreshed, the MCU can reset.
+A typical STM32 HAL refresh operation looks like this:
+HAL_IWDG_Refresh(&hiwdg);
+
+
+Here, hiwdg must be initialized correctly.
+Good practice
+Refresh the watchdog only after verifying that important tasks are healthy. Otherwise, a program may continue refreshing the watchdog even though the main application is no longer working correctly.
+When investigating an unexpected restart, check the reset-cause flags provided by the specific STM32 device and capture them early during startup, before they are cleared or changed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+5. Stack Overflow 📚
+The stack stores function-call information, local variables, return addresses, and other temporary data.
+A stack overflow occurs when a program uses more stack memory than has been allocated.
+Common causes
+- Deep or infinite recursion.
+- Large local arrays.
+- Excessive nested function calls.
+- Interrupt handlers using too much stack.
+- RTOS tasks with insufficient stack allocation.
+Example
+void function(void)
+{
+    int data[10000];
+
+    data[0] = 10;
+}
+
+
+If the stack cannot accommodate this local array, the program may corrupt memory or fault. The exact result depends on the available stack and memory layout.
+How to prevent it
+- Avoid large local arrays when possible.
+- Avoid uncontrolled recursion.
+- Allocate sufficient stack space.
+- Monitor stack usage during testing.
+- Use RTOS stack high-water-mark checks when available.
+For FreeRTOS, stack overflow checking can be enabled through configuration options such as configCHECK_FOR_STACK_OVERFLOW.
+
+
+
+
+
+
+
+
+
+
+6. Buffer Overflow 🧱
+A buffer overflow occurs when a program reads or writes beyond the allocated boundary of a buffer.
+Example
+int main(void)
+{
+    char buffer[5];
+
+    buffer[0] = 'H';
+    buffer[1] = 'E';
+    buffer[2] = 'L';
+    buffer[3] = 'L';
+    buffer[4] = 'O';
+
+    buffer[5] = '\0';  // Out of bounds!
+
+    while (1);
+}
+
+
+The valid indexes are 0 through 4. Writing to buffer[5] is an out-of-bounds write and causes undefined behavior.
+Correct approach
+char buffer[6];
+
+buffer[0] = 'H';
+buffer[1] = 'E';
+buffer[2] = 'L';
+buffer[3] = 'L';
+buffer[4] = 'O';
+buffer[5] = '\0';
+
+
+Now there is enough space for five characters and the terminating null character.
+Embedded example
+A UART receives sensor data into a fixed-size buffer. If the firmware stores more bytes than the buffer can hold, it may overwrite other variables, corrupt a pointer, or cause a fault.
+Always validate the received length before writing to a buffer.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7. Memory Corruption 🧠
+Memory corruption happens when a program unintentionally modifies memory that it should not modify, or when memory is used incorrectly.
+Buffer overflows and stack overflows can cause memory corruption, but they are not the only causes.
+Common causes
+- Writing outside array boundaries.
+- Using a pointer after the memory it points to is no longer valid.
+- Writing through an invalid pointer.
+- Incorrect DMA destination addresses.
+- Race conditions affecting shared memory.
+- Incorrect memory sizes or offsets.
+Example
+int main(void)
+{
+    int a = 10;
+    int *ptr = &a;
+
+    *ptr = 50;
+
+    while (1);
+}
+
+
+This is valid because ptr points to a.
+But if the pointer points to an invalid or expired object, dereferencing it may cause undefined behavior or memory corruption.
+How to detect it
+- Inspect variables before and after suspicious operations.
+- Set data watchpoints in the debugger.
+- Check array boundaries.
+- Verify DMA addresses and transfer lengths.
+- Use compiler warnings and static analysis.
+- Reproduce the issue with a smaller test case.
+Memory corruption can be difficult to debug because the program may fail far away from the original incorrect write.
+
+
+
+
+
+
+
+
+
+
+
+8. Race Conditions 🔀
+A race condition occurs when the result of an operation depends on the timing or ordering of multiple activities accessing shared data.
+In embedded systems, these activities may include:
+- The main loop.
+- An interrupt handler.
+- Multiple RTOS tasks.
+- DMA and the CPU accessing shared buffers.
+Example
+Suppose the main program and a UART interrupt handler both access a shared variable.
+volatile unsigned int received_count = 0;
+
+void UART_IRQHandler(void)
+{
+    received_count++;
+}
+
+
+The main loop also resets or modifies received_count. If both contexts update the variable without appropriate synchronization, updates can be lost.
+volatile makes the compiler treat accesses to the variable as observable operations, but it does not make compound operations atomic or provide synchronization by itself.
+How to prevent race conditions
+- Protect shared data with suitable critical sections.
+- Use atomic operations when supported and appropriate.
+- Use RTOS mutexes or other synchronization primitives where suitable.
+- Keep interrupt handlers short.
+- Avoid unsynchronized read-modify-write operations.
+For a simple single-core example, an interrupt-safe critical section may be appropriate, but its scope must be carefully controlled.
+
+
+
+
+
+
+
+
+
+
+
+
+
+9. Deadlock Basics 🔒
+A deadlock occurs when two or more tasks wait indefinitely for resources held by one another, so none can proceed.
+Example
+Imagine two tasks:
+- Task A locks Mutex 1 and waits for Mutex 2.
+- Task B locks Mutex 2 and waits for Mutex 1.
+Neither task can continue because each is waiting for a resource held by the other.
+How to prevent deadlock
+- Acquire multiple locks in a consistent order.
+- Avoid holding a lock while waiting for an unrelated operation.
+- Use timeouts when appropriate.
+- Keep critical sections short.
+- Carefully review lock ownership and release paths.
+In FreeRTOS, mutexes can help protect shared resources. However, using a mutex does not automatically prevent deadlocks.
+
+
+
+
+
+
+
+
+
+
+
+
+
+10. Peripheral Timeout ⏳
+A peripheral timeout occurs when a hardware operation does not complete within the expected period.
+Examples include:
+- An I²C sensor does not respond.
+- A UART transmission never completes.
+- An SPI peripheral fails to return data.
+- An ADC conversion does not finish as expected.
+Why is timeout handling important?
+Without a timeout, firmware might wait forever, preventing other operations from running.
+Example: waiting for a hardware flag
+#define TIMEOUT_COUNT 100000U
+
+int wait_for_flag(volatile unsigned int *reg,
+                  unsigned int mask)
+{
+    unsigned int count = 0;
+
+    while (((*reg) & mask) == 0U)
+    {
+        if (++count >= TIMEOUT_COUNT)
+        {
+            return -1;  // Timeout
+        }
+    }
+
+    return 0;  // Flag detected
+}
+
+
+This example demonstrates bounded polling, but TIMEOUT_COUNT is a loop limit, not a precise time measurement. Its duration depends on CPU speed, compiler settings, and the code being executed.
+In production firmware, prefer a hardware timer, system tick, or peripheral-driver timeout when you need a reliable time limit.
+Example using STM32 HAL
+HAL_StatusTypeDef status;
+
+status = HAL_I2C_Master_Transmit(
+    &hi2c1,
+    0x48 << 1,
+    data,
+    1,
+    100
+);
+
+if (status != HAL_OK)
+{
+    // Handle timeout or another I2C error.
+}
+
+
+The timeout is specified in milliseconds in typical STM32 HAL implementations. Check the exact API and device library version for your project.
+
+
+
+
+
+
+
+
+
+
+
+
+
+11. UART Debugging 📡
+UART debugging means sending diagnostic information from the microcontroller to a serial terminal.
+You can print:
+- Sensor values.
+- Peripheral status.
+- Error codes.
+- State-machine transitions.
+- Reset-cause information.
+- Timing measurements.
+Example
+char message[] = "System started\r\n";
+
+HAL_UART_Transmit(
+    &huart2,
+    (uint8_t *)message,
+    sizeof(message) - 1,
+    100
+);
+
+
+Here, huart2 must be initialized, and the UART pins must be configured correctly.
+Typical setup
+1. Configure the STM32 UART peripheral.
+2. Connect TX to the USB-to-UART adapter's RX.
+3. Connect GND between the boards.
+4. Open a serial terminal such as Tera Term.
+5. Set the same baud rate and serial settings on both ends.
+For example, use 115200 baud, 8-N-1 if the firmware is configured that way.
+Important: If you are connecting to a computer's RS232 interface rather than a logic-level USB-to-UART adapter, you need a suitable RS232 transceiver.
+
+
+
+
+
+
+
+
+
+
+
+
+12. printf() Debugging 📝
+printf() formats values into text, which can make debugging easier.
+Example
+#include <stdio.h>
+
+int temperature = 28;
+
+int main(void)
+{
+    printf("Temperature = %d\r\n", temperature);
+
+    while (1);
+}
+
+
+This does not automatically send text over UART on every embedded toolchain. In many STM32 projects, you must redirect the C library's output to a UART or another output channel.
+For example, with a toolchain that supports _write() retargeting, the implementation may look like this:
+int _write(int file, char *ptr, int len)
+{
+    (void)file;
+
+    if (HAL_UART_Transmit(
+            &huart2,
+            (uint8_t *)ptr,
+            (uint16_t)len,
+            100) != HAL_OK)
+    {
+        return -1;
+    }
+
+    return len;
+}
+
+
+This is a simplified retargeting example; the required function and signature depend on the C library and project configuration.
+Printing variable values
+int count = 10;
+float voltage = 3.3f;
+
+printf("Count = %d\r\n", count);
+printf("Voltage = %.2f V\r\n", (double)voltage);
+
+
+Check the format specifiers carefully. Also, floating-point printf() support may require extra linker configuration and increase firmware size.
+Limitations of printf() in embedded systems
+- It can consume substantial Flash and RAM.
+- Formatting takes CPU time.
+- Blocking UART output can delay time-sensitive work.
+- Printing from interrupt handlers can cause timing problems or deadlocks in some implementations.
+For high-speed or real-time systems, use a buffered logging mechanism or a dedicated debug interface when appropriate.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13. Debugger 🐞
+A debugger allows you to control program execution and inspect the processor while the application runs or is stopped.
+For STM32, common debugging tools include:
+- STM32CubeIDE debugger.
+- ST-LINK.
+- GDB-based debugging tools.
+What can you do with a debugger?
+- Stop execution at a particular instruction.
+- Step through code line by line.
+- Inspect variable values.
+- View CPU registers.
+- Examine memory addresses.
+- Investigate faults.
+- Observe the call stack.
+For example, if an I²C sensor read fails, you can stop after the HAL function returns and inspect the returned status, peripheral registers, and local variables.
+
+
+
+
+
+
+
+
+
+
+
+
+
+14. Breakpoints 🛑
+A breakpoint tells the debugger to halt execution at a specified location.
+Example
+int temperature = 25;
+
+int main(void)
+{
+    temperature = 30;  // Set breakpoint here
+
+    while (1);
+}
+
+
+When execution reaches the breakpoint, the debugger pauses the processor so you can inspect the program state.
+Types of breakpoints
+- Software breakpoint: Often implemented by replacing an instruction with a debug instruction.
+- Hardware breakpoint: Uses dedicated processor debug resources.
+- Conditional breakpoint: Stops only when a specified condition is met, if supported by the debugger.
+On microcontrollers, hardware breakpoint resources are limited. Too many breakpoints may not be available simultaneously.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+15. Watch Window 👀
+The Watch window allows you to monitor selected variables and expressions while debugging.
+Example variables:
+int counter = 0;
+int sensor_value = 0;
+int error_code = 0;
+
+
+Add these variables to the Watch window in STM32CubeIDE.
+You can then observe their values as you step through the program or pause execution.
+Why is it useful?
+Suppose sensor_value should be between 0 and 4095 for a 12-bit ADC result. If it remains zero or unexpectedly jumps, you can investigate the ADC configuration and data path.
+Note: Optimized builds can make some variables unavailable or cause displayed values to be confusing. Debug builds with suitable optimization settings are usually easier to inspect.
+
+
+
+
+
+
+
+
+
+
+
+
+
+16. Registers 🧮
+Registers are small storage locations used by the CPU or peripherals.
+There are two important categories.
+CPU registers
+On ARM Cortex-M4, common CPU registers include:
+Register	Purpose
+R0–R12	General-purpose registers
+R13 / SP	Stack Pointer
+R14 / LR	Link Register
+R15 / PC	Program Counter
+xPSR	Program status information
+When a fault occurs, examining the PC and LR can help identify the instruction and call path involved.
+Peripheral registers
+These control hardware peripherals.
+For example:
+- GPIO registers configure pins.
+- UART registers control serial communication.
+- RCC registers control clocks.
+- ADC registers control analog conversion.
+- I²C registers control the I²C peripheral.
+Example
+If UART transmission does not work, inspect the UART status and control registers. You may discover that the peripheral clock is disabled, the transmitter is not enabled, or the expected status flag is not set.
+Peripheral register names and bit meanings depend on the exact STM32 model.
+
+
+
+
+
+
+
+
+
+
+17. Memory Window 💾
+The Memory window allows you to inspect the contents of memory at a particular address.
+For example, you might inspect:
+- A global variable's RAM address.
+- The stack.
+- A buffer containing received UART data.
+- A peripheral register address.
+- A Flash address containing program data.
+Example
+volatile unsigned int sensor_value = 100;
+
+
+During debugging, inspect the address of sensor_value and open that address in the Memory window. You can see the stored bytes and confirm whether the value in memory matches the value shown in the variable view.
+Why is it useful?
+Suppose a UART receive buffer should contain:
+48 45 4C 4C 4F
+
+
+These hexadecimal bytes represent the ASCII characters HELLO.
+The Memory window lets you check whether those bytes were received correctly and whether adjacent memory has been overwritten.
+Be careful when editing memory manually: changing a memory location can modify program data or peripheral behavior.
+
+
+
+
+
+
+
+
+
+
+
+18. Practical debugging workflow for STM32 🛠️
+Imagine an STM32F401RBT6 application freezes while reading an I²C temperature sensor.
+Step 1: Reproduce the problem
+Determine when the freeze happens and whether it occurs every time.
+
+
+
+Step 2: Add UART logs
+Print the operation being performed and the HAL return status.
+
+
+
+Step 3: Add timeout handling
+Ensure the application does not wait indefinitely for the peripheral.
+
+
+
+Step 4: Use breakpoints and Watch
+Inspect the return status, I²C state, buffer contents, and relevant variables.
+
+
+
+Step 5: Inspect registers and memory
+Check peripheral configuration, fault registers if applicable, and buffer addresses.
+
+
+
+Step 6: Fix and retest
+Correct the root cause and test both normal operation and failure conditions.

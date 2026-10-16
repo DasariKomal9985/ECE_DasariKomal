@@ -1,0 +1,629 @@
+11. UART / USART in Embedded C 📡
+UART and USART are important communication peripherals in microcontrollers such as the STM32F401RBT6. They allow the microcontroller to exchange data with a PC, sensors, GPS modules, Bluetooth modules, and other embedded devices.
+For example, you can send a temperature value from your STM32 to a PC and display it in Tera Term using a USB-to-UART adapter.
+Let's learn each topic from the basics, including registers, polling, interrupts, DMA, errors, and a practical STM32-to-PC connection.
+
+
+
+
+
+
+
+
+
+1. UART basics
+UART stands for Universal Asynchronous Receiver/Transmitter.
+It is a hardware peripheral that converts parallel data inside the microcontroller into a serial bit stream for transmission and converts received serial bits back into data.
+Why do we use UART?
+A microcontroller processes data internally in registers and memory. To send that data to another device, it needs a communication interface.
+UART makes this possible with relatively simple wiring.
+Examples:
+- Sending debugging messages to a PC.
+- Receiving commands from a computer.
+- Reading GPS data.
+- Communicating with a Bluetooth module.
+- Transmitting sensor readings to another controller.
+UART vs USART
+- UART: Supports asynchronous serial communication.
+- USART: Supports asynchronous communication and, on peripherals that implement it, synchronous communication using a clock.
+The exact capabilities depend on the microcontroller. For typical STM32-to-PC serial communication, USART is commonly configured in asynchronous UART mode.
+
+
+
+
+
+
+
+
+
+
+
+2. TX and RX
+UART communication uses two main signal lines.
+TX
+Transmit data
+
+
+RX
+Receive data
+
+
+
+TX sends data out of a device; RX accepts data into a device.
+
+- TX (Transmit): Sends data.
+- RX (Receive): Receives data.
+- GND: Provides a common electrical reference for ordinary logic-level UART connections.
+For two-way communication, connect the devices like this:
+STM32	USB-to-UART adapter
+TX	RX
+RX	TX
+GND	GND
+TX connects to the other device's RX, not TX-to-TX.
+Voltage warning: The STM32F401 uses 3.3 V logic. Use a compatible adapter, and do not connect RS232 voltage levels directly to STM32 pins.
+
+
+
+
+
+
+
+
+
+3. Baud rate
+The baud rate describes the number of signaling symbols transmitted per second. In ordinary binary UART, one symbol represents one bit, so baud rate and bit rate are numerically equal.
+Common UART settings include:
+- 9600 baud
+- 19200 baud
+- 38400 baud
+- 57600 baud
+- 115200 baud
+Example: 9600 baud
+At 9600 baud, each bit lasts approximately:
+\[
+T_{\text{bit}}=\frac{1}{9600}
+\approx 104.17\ \mu s
+\]
+
+At 115200 baud, each bit lasts approximately:
+\[
+T_{\text{bit}}=\frac{1}{115200}
+\approx 8.68\ \mu s
+\]
+
+A higher baud rate transfers bits faster, but the transmitter and receiver must be configured compatibly, and the signal quality must be adequate.
+Important: Both devices should use matching UART settings. A baud-rate mismatch can produce corrupted characters or framing errors.
+
+
+
+
+
+
+
+
+
+
+4. Start bit, data bits, parity, and stop bit
+UART commonly sends each character in a frame.
+A typical format is 8-N-1:
+- 8 data bits
+- N = no parity
+- 1 stop bit
+Typical UART frame — 8-N-1
+Start
+0
+
+D0
+
+D1
+
+D2
+
+D3
+
+D4
+
+D5
+
+D6
+
+D7
+
+Stop
+1
+
+
+Conceptual frame; bits are transmitted over time, least-significant data bit first in standard UART framing.
+
+Start bit
+The start bit tells the receiver that a frame is beginning.
+In conventional UART, the line is normally idle at logic high, and the start bit is logic low.
+Data bits
+The data bits carry the actual information.
+Common configurations use 7, 8, or 9 data bits, depending on the UART peripheral and application.
+For example, the ASCII character A has the 8-bit binary representation 01000001. Standard UART framing normally transmits the least-significant bit first.
+Parity bit
+Parity is an optional basic error-detection bit.
+- Even parity: The total number of 1s in the data and parity bit is even.
+- Odd parity: The total number of 1s in the data and parity bit is odd.
+- No parity: No parity bit is transmitted.
+Parity can detect some bit errors, but it cannot detect every possible error.
+Stop bit
+The stop bit indicates the end of a UART frame. It is represented by a logic-high interval.
+Depending on the configuration, a UART may use one or more stop-bit intervals.
+
+
+
+
+
+
+
+
+
+
+5. Full duplex and half duplex
+Full duplex ↔️
+Full duplex means a device can transmit and receive data simultaneously.
+With ordinary UART full-duplex communication, TX and RX are separate signal lines.
+Example: An STM32 sends a command to a PC while receiving a response at the same time.
+Half duplex ↔️
+Half duplex means data can travel in both directions, but not simultaneously on the same communication channel.
+Some UART peripherals support a half-duplex mode using a single data pin. Devices take turns transmitting and receiving.
+Example: A microcontroller communicates with a device over a shared, single-wire UART connection.
+
+
+
+
+
+
+
+
+
+
+
+6. UART registers
+Registers are small storage locations inside the microcontroller that control UART operation and hold transmission or reception data.
+For the STM32F401RBT6, the USART peripherals use registers such as these:
+Register	Purpose
+USART_SR	Status flags, such as transmit and receive status
+USART_DR	Data register used for transmitting and receiving
+USART_BRR	Configures the baud rate
+USART_CR1	Enables USART, transmitter, receiver, and other settings
+USART_CR2	Controls settings such as stop bits
+USART_CR3	Controls additional features, including DMA and error-related settings
+These are the legacy register names used by the STM32F4 USART peripheral. Newer STM32 families may use different register names and layouts.
+Important status flags
+- TXE — Transmit Data Register Empty: The data register can accept another byte.
+- TC — Transmission Complete: The complete transmission, including the final stop bit, has finished.
+- RXNE — Read Data Register Not Empty: Received data is available to read.
+- ORE — Overrun Error: New data arrived before previously received data was read.
+- FE — Framing Error: The receiver detected an invalid frame ending.
+- NE — Noise Error: Noise was detected during reception.
+- PE — Parity Error: A parity check failed.
+These flags help the firmware determine what is happening inside the UART peripheral.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7. UART transmission
+UART transmission means sending data from the microcontroller to another device.
+For example, the STM32 sends HELLO to a PC.
+The general process is:
+1. Configure the UART baud rate and frame format.
+2. Enable the UART transmitter.
+3. Write data to the transmit data register.
+4. Wait for the appropriate status flag if using polling.
+5. Continue until all bytes have been sent.
+STM32 HAL example
+#include "stm32f4xx_hal.h"
+#include <string.h>
+
+extern UART_HandleTypeDef huart2;
+
+void UART_SendMessage(void)
+{
+    char message[] = "Hello PC\r\n";
+
+    HAL_UART_Transmit(
+        &huart2,
+        (uint8_t *)message,
+        strlen(message),
+        100
+    );
+}
+
+
+Here, huart2 must be initialized, and the USART2 GPIO pins must be configured correctly.
+The timeout argument is in milliseconds in the standard STM32F4 HAL API.
+
+
+
+
+
+
+
+
+
+
+
+8. UART reception
+UART reception means receiving data from another device.
+For example, the PC sends the character A, and the STM32 receives it.
+STM32 HAL example
+#include "stm32f4xx_hal.h"
+
+extern UART_HandleTypeDef huart2;
+
+uint8_t receivedData;
+
+void UART_ReceiveByte(void)
+{
+    if (HAL_UART_Receive(
+            &huart2,
+            &receivedData,
+            1,
+            100) == HAL_OK)
+    {
+        // Process receivedData here.
+    }
+}
+
+
+This function waits for one byte for up to the specified timeout. If no byte arrives in time, the function returns a timeout status.
+Important: Do not call a blocking receive function with a long timeout in a time-critical application loop unless that blocking behavior is acceptable.
+
+
+
+
+
+
+
+
+
+
+
+9. Polling-based UART
+Polling means the CPU repeatedly checks a status flag to see whether the UART is ready.
+How it works
+1. The CPU checks the UART status.
+2. If the UART is not ready, the CPU checks again.
+3. When the required flag is set, the CPU performs the operation.
+Example
+while (__HAL_UART_GET_FLAG(
+           &huart2, UART_FLAG_TXE) == RESET)
+{
+    // Wait until transmit data register is empty.
+}
+
+HAL_UART_Transmit(
+    &huart2,
+    (uint8_t *)"A",
+    1,
+    100
+);
+
+
+This illustrates status polling followed by HAL transmission. In ordinary application code, calling HAL_UART_Transmit() directly is usually simpler because the HAL already handles the polling internally.
+Advantages
+- Simple to implement.
+- Easy to understand and debug.
+- Useful for small applications and basic testing.
+Disadvantages
+- The CPU wastes time waiting.
+- Long waits can delay other operations.
+- Poorly designed polling loops can make the application unresponsive.
+
+
+
+
+
+
+
+
+
+
+
+
+10. Interrupt-based UART ⚡
+Interrupt-based UART allows the CPU to perform other work while the UART peripheral signals when a transmission or reception event needs attention.
+How it works
+1. The firmware starts an interrupt-based transmission or reception.
+2. The CPU continues executing other code.
+3. The UART generates interrupts as needed.
+4. The interrupt handler processes the event.
+5. A callback can notify the application that the operation has completed.
+Example: receive one byte using an interrupt
+uint8_t rxByte;
+
+void UART_StartReceive(void)
+{
+    HAL_UART_Receive_IT(
+        &huart2,
+        &rxByte,
+        1
+    );
+}
+
+void HAL_UART_RxCpltCallback(
+    UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART2)
+    {
+        // Process rxByte.
+
+        // Re-arm reception for the next byte.
+        HAL_UART_Receive_IT(
+            &huart2,
+            &rxByte,
+            1
+        );
+    }
+}
+
+
+Call UART_StartReceive() after UART initialization. The receive callback runs when the requested byte has been received.
+In a larger application, it is often better to copy the received byte into a buffer or queue and let a task process it. Avoid lengthy processing inside the interrupt callback.
+Advantages
+- Less CPU time spent waiting.
+- Better responsiveness.
+- Useful when communication occurs asynchronously.
+Disadvantages
+- Requires careful interrupt and callback handling.
+- Shared data must be protected appropriately.
+- Interrupts introduce additional design complexity.
+
+
+
+
+
+
+
+
+
+
+
+
+
+11. DMA-based UART 🚀
+DMA stands for Direct Memory Access. It transfers data between memory and a peripheral with less CPU involvement.
+For UART, DMA is especially useful when transmitting or receiving large blocks of data.
+UART transmission using DMA
+uint8_t txBuffer[] = "Hello from STM32\r\n";
+
+void UART_StartTransmitDMA(void)
+{
+    HAL_UART_Transmit_DMA(
+        &huart2,
+        txBuffer,
+        sizeof(txBuffer) - 1
+    );
+}
+
+
+The DMA controller transfers bytes from txBuffer to the UART peripheral.
+The buffer must remain valid and unchanged until the transfer has finished.
+UART reception using DMA
+uint8_t rxBuffer[64];
+
+void UART_StartReceiveDMA(void)
+{
+    HAL_UART_Receive_DMA(
+        &huart2,
+        rxBuffer,
+        sizeof(rxBuffer)
+    );
+}
+
+
+This starts a reception for the specified number of bytes. The operation completes when the requested amount has been received, unless errors or other conditions interrupt it.
+For continuous streams of unknown length, circular DMA or receive-to-idle techniques may be more appropriate, depending on the STM32 HAL version and application requirements.
+Polling vs interrupt vs DMA
+Feature	Polling	Interrupt	DMA
+CPU involvement	High while waiting	Handles events	Low during bulk transfer
+Suitable for	Simple transfers	Small asynchronous transfers	Larger or continuous transfers
+Setup complexity	Low	Medium	Higher
+Buffer support	Yes	Yes	Yes
+Ideal example	Sending a short debug message	Receiving commands	Streaming sensor data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+12. UART errors
+UART communication can fail because of incorrect settings, electrical noise, timing issues, or firmware that does not read data quickly enough.
+The main errors are overrun, framing, parity, and noise.
+Overrun error (ORE)
+An overrun occurs when new data arrives before the previous received data has been read from the receive data register.
+Example: A UART receives bytes continuously, but the CPU does not read the register quickly enough. A new byte arrives and the earlier data may be lost.
+Prevention:
+- Read received data promptly.
+- Use interrupts or DMA where appropriate.
+- Avoid long blocking operations inside interrupt handlers.
+- Ensure buffers and processing can keep up with the incoming data rate.
+Framing error (FE)
+A framing error occurs when the receiver detects an invalid frame, often because the expected stop-bit condition was not observed.
+Possible causes:
+- Incorrect baud rate.
+- Different UART settings.
+- Noise or signal distortion.
+- Incorrect wiring or voltage levels.
+Parity error (PE)
+A parity error occurs when the received parity bit does not match the expected parity calculation.
+For example, the transmitter uses even parity, but a bit error causes the received parity to become incorrect.
+Both devices should use matching parity settings.
+Noise error (NE)
+A noise error indicates that the UART detected noise during reception.
+Possible causes:
+- Electrical interference.
+- Poor grounding.
+- Long or unsuitable wiring.
+- Signal integrity problems.
+Use appropriate grounding, wiring, and electrical interfaces for the environment.
+Practical error-handling example
+HAL_StatusTypeDef status;
+
+status = HAL_UART_Receive(
+    &huart2,
+    &receivedData,
+    1,
+    100
+);
+
+if (status == HAL_TIMEOUT)
+{
+    // No byte arrived within the timeout.
+}
+else if (status != HAL_OK)
+{
+    // Handle another reception error.
+}
+
+
+This checks the HAL return status. For detailed hardware error diagnosis, inspect the HAL error code and USART status flags. A timeout is not the same thing as a framing, parity, or overrun error.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13. Practical: STM32F401RBT6 ↔ PC 💻
+Let's send a message from your STM32 to your computer and receive a character back.
+STM32F401
+USART2
+
+USB-to-UART
+3.3 V logic
+
+
+
+PC — Tera Term
+115200 baud, 8-N-1
+
+
+Step 1: Hardware connections
+For the common STM32F401RE Nucleo board, USART2 is often routed through the onboard ST-LINK virtual COM port. Check your exact board's schematic and jumper configuration.
+If using an external USB-to-UART adapter, a common USART2 pin mapping is:
+STM32F401 pin	USART2 function
+PA2	USART2_TX
+PA3	USART2_RX
+GND	Common ground
+Connect:
+- STM32 TX → adapter RX.
+- STM32 RX → adapter TX.
+- STM32 GND → adapter GND.
+Use a 3.3 V-compatible UART adapter. Verify the pin mapping for your exact board.
+Step 2: Configure UART in STM32CubeIDE
+1. Open the .ioc configuration file.
+2. Enable USART2 in asynchronous mode.
+3. Configure the baud rate to 115200.
+4. Select 8-bit word length, no parity, and one stop bit.
+5. Enable the required GPIO pins.
+6. Generate the code.
+Step 3: Send and receive a character
+The following example assumes USART2 and the HAL initialization code have been generated.
+#include "main.h"
+#include <string.h>
+
+extern UART_HandleTypeDef huart2;
+
+uint8_t rxByte;
+
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_USART2_UART_Init();
+
+    char message[] = "STM32 UART Ready\r\n";
+
+    HAL_UART_Transmit(
+        &huart2,
+        (uint8_t *)message,
+        strlen(message),
+        100
+    );
+
+    while (1)
+    {
+        if (HAL_UART_Receive(
+                &huart2,
+                &rxByte,
+                1,
+                100) == HAL_OK)
+        {
+            HAL_UART_Transmit(
+                &huart2,
+                &rxByte,
+                1,
+                100
+            );
+        }
+    }
+}
+
+
+This example echoes each received byte back to the PC. The receive operation can wait for up to 100 ms per loop iteration, so it is suitable as a basic demonstration rather than a highly responsive multitasking design.
+Step 4: Configure Tera Term
+1. Connect the board or USB-to-UART adapter.
+2. Open Tera Term.
+3. Select the correct COM port.
+4. Set baud rate to 115200.
+5. Configure 8 data bits, no parity, and one stop bit.
+6. Open the serial connection.
+You should see:
+STM32 UART Ready
+
+
+Type a character in the terminal. The STM32 should receive it and echo it back.
+If nothing appears, check the COM port, baud rate, TX/RX wiring, common ground, GPIO alternate-function settings, and USART initialization.
+
+
+
+
+
+
+
+
+
+
+
+
+14. Understanding the complete UART data path
+When the STM32 sends a character, the process is:
+1. Your C code supplies a byte.
+2. The UART peripheral loads the byte for transmission.
+3. The UART converts it into start, data, optional parity, and stop bits.
+4. The TX pin outputs the serial signal.
+5. The USB-to-UART adapter converts the serial signal into USB data.
+6. The PC terminal displays the character.

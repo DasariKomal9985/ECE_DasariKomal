@@ -1,0 +1,355 @@
+12. I²C (Inter-Integrated Circuit) 🔌
+I²C is an important communication protocol in Embedded C. It is commonly used to connect a microcontroller such as the STM32F401RBT6 to sensors, RTC modules, EEPROMs, and other peripherals.
+
+
+
+
+
+
+
+
+
+
+
+1. What is I²C?
+I²C stands for Inter-Integrated Circuit. It is a synchronous, serial communication protocol that allows multiple devices to communicate using just two signal lines.
+For example, an STM32 microcontroller can communicate with an LM75 temperature sensor or a DS3231 RTC using I²C.
+Why do we use I²C?
+- 🔌 It requires only two communication lines.
+- 🔗 Multiple slave devices can share the same bus.
+- 🧭 Each slave has an address to identify it.
+- ⚙️ It supports communication between a microcontroller and peripheral devices.
+
+
+
+
+
+
+
+2. SDA — Serial Data Line
+SDA carries the data between the master and slave devices.
+- It transfers address bits, data bits, ACK, and NACK.
+- It is bidirectional, meaning data can travel in both directions.
+- Both master and slave can pull the line low when appropriate.
+Example: When the STM32 reads a temperature sensor, the temperature data travels to the STM32 through SDA.
+
+
+
+
+
+
+
+3. SCL — Serial Clock Line
+SCL carries the clock signal that synchronizes communication.
+- The master normally generates the clock.
+- Data is synchronized with clock pulses.
+- The receiver samples SDA according to the clock timing.
+- A slave can hold SCL low for clock stretching, if supported.
+For example, at 100 kHz, one clock period is \(10\ \mu s\).
+
+
+
+
+
+
+
+
+4. Master
+The master is the device that initiates and controls a communication transaction.
+Its responsibilities typically include:
+- Generating the clock.
+- Sending the START condition.
+- Sending the slave address.
+- Selecting read or write operation.
+- Generating the STOP condition or a repeated START.
+Example: An STM32 reads the temperature from an LM75 sensor. Here, the STM32 is the master.
+
+
+
+
+
+
+
+
+5. Slave
+The slave is the device addressed by the master.
+- It responds when its address matches.
+- It receives data during a write operation.
+- It transmits data during a read operation.
+- It may acknowledge received bytes.
+Example: The LM75 temperature sensor is the slave, and the STM32 is the master.
+One I²C bus can have multiple slaves, provided their addresses do not conflict and the electrical requirements are satisfied.
+
+
+
+
+
+
+
+
+6. START Condition
+A START condition tells the devices on the bus that a new communication transaction is beginning.
+It occurs when:
+- SDA changes from HIGH to LOW.
+- SCL remains HIGH during that transition.
+The master generates START before sending the slave address.
+
+
+
+
+
+
+
+7. STOP Condition
+A STOP condition indicates that the master is ending the current transaction.
+It occurs when:
+- SDA changes from LOW to HIGH.
+- SCL remains HIGH during that transition.
+After STOP, the bus is normally idle, with both SDA and SCL HIGH.
+
+
+
+
+
+
+
+
+
+8. ACK — Acknowledge
+ACK means that the receiver acknowledges a byte.
+After eight data bits, the transmitter releases SDA, and the receiver can pull SDA LOW during the ninth clock pulse to indicate ACK.
+For example, if the STM32 sends a slave address and the addressed sensor is present and responds, the sensor normally sends ACK.
+Remember: ACK = SDA LOW during the ninth clock pulse.
+
+
+
+
+
+
+
+9. NACK — Not Acknowledge
+NACK means that the receiver does not acknowledge a byte.
+During the ninth clock pulse, SDA remains HIGH.
+Possible reasons include:
+- No device responds to the address.
+- A device cannot accept the transmitted byte.
+- A receiver intentionally signals that it does not want to acknowledge another byte.
+During a typical read, the master often sends NACK after receiving the final byte to indicate that it does not want more data, then generates STOP or a repeated START.
+Remember: NACK = SDA HIGH during the ninth clock pulse.
+
+
+
+
+
+
+
+
+10. Address
+Every slave device on the I²C bus has an address used to identify it.
+For example:
+- LM75 temperature sensor: often 0x48, depending on its address-pin configuration.
+- DS3231 RTC: 0x68.
+The master sends the address so that the intended device can respond.
+If two devices use the same address on the same bus, communication may become ambiguous unless the system has some way to separate them.
+
+
+
+
+
+
+11. Read Operation
+In an I²C read operation, the master requests data from a slave.
+Typical sequence:
+1. Master generates START.
+2. Master sends the slave address with the Read bit set.
+3. Slave responds with ACK.
+4. Slave transmits data bytes.
+5. Master sends ACK for bytes it wants to continue receiving.
+6. Master sends NACK after the final byte.
+7. Master generates STOP, or may use a repeated START.
+Example: The STM32 reads temperature data from an LM75.
+
+
+
+
+
+
+
+
+
+
+12. Write Operation
+In an I²C write operation, the master sends data to a slave.
+Typical sequence:
+1. Master generates START.
+2. Master sends the slave address with the Write bit set.
+3. Slave responds with ACK.
+4. Master sends a data byte or register address.
+5. Slave acknowledges received bytes as appropriate.
+6. Master generates STOP when finished.
+Example: The STM32 writes a configuration value into a sensor register.
+A common sensor transaction first writes a register address and then reads the register's value.
+
+
+
+
+
+
+
+
+13. Repeated START
+A Repeated START begins another transaction without first releasing the bus with a STOP condition.
+It is useful when the master needs to write a register address and then immediately read its contents.
+Example sequence:
+START → Address + Write → Register Address → Repeated START → Address + Read → Data → NACK → STOP
+Why use it? It keeps the operation within one continuous bus transaction, which can be important when communicating with devices that expect this sequence.
+
+
+
+
+
+
+
+
+
+14. 7-bit Address
+Most common I²C devices use a 7-bit slave address.
+Seven bits provide:
+\[
+2^7 = 128
+\]
+
+possible address values, although some address ranges are reserved and not available for ordinary device assignment.
+For a 7-bit address such as 0x48, the master sends the address along with one additional bit indicating the operation:
+- 0 = Write
+- 1 = Read
+The transmitted address byte is therefore:
+\[
+(\text{7-bit address} \ll 1) \;|\; \text{R/W bit}
+\]
+
+For address 0x48:
+Operation	Address byte sent
+Write	0x90
+Read	0x91
+Important: 0x48 is the 7-bit address. 0x90 and 0x91 are the corresponding address-plus-R/W bytes, not different 7-bit addresses.
+Many STM32 HAL APIs expect the 7-bit address shifted left by one bit when passed to functions such as HAL_I2C_Master_Transmit(). Always check the API documentation for your STM32 HAL version.
+
+
+
+
+
+
+
+
+
+
+
+
+15. Pull-up Resistors
+I²C uses open-drain or open-collector signaling. Devices can pull SDA and SCL LOW, but they do not actively drive the lines HIGH in the normal signaling scheme.
+Pull-up resistors connect SDA and SCL to the bus's appropriate supply voltage.
+How the pull-up works
+VCC (appropriate logic voltage)
+
+↓ Pull-up resistor
+SDA or SCL bus line
+
+↓
+Devices pull the line LOW when required
+
+
+- When no device pulls the line LOW, the resistor brings it HIGH.
+- When a device pulls the line LOW, current flows through the resistor and the bus becomes LOW.
+- Without suitable pull-ups, the bus may not work reliably.
+Values such as 4.7 kΩ are common starting points, but the correct value depends on bus capacitance, voltage, and clock speed. Some development boards and modules already include pull-ups.
+⚠️ For STM32F401RBT6, ensure the bus pull-up voltage is compatible with the MCU's I/O pins. Do not pull the lines up to 5 V unless the specific pins and configuration safely support it.
+
+
+
+
+
+
+
+
+
+
+16. Clock Stretching
+Clock stretching is when a slave holds SCL LOW to delay the next clock pulse because it needs more time.
+For example:
+1. The master is communicating with a slave.
+2. The slave needs additional processing time.
+3. The slave holds SCL LOW.
+4. The master waits while SCL remains LOW.
+5. When the slave releases SCL, the clock can continue.
+Clock stretching is optional; not every slave uses it. The master and its hardware or software implementation must support the behavior appropriately.
+
+Example: STM32 communicating with an LM75 🌡️
+Suppose the STM32F401RBT6 needs to read a temperature register from an LM75 sensor at address 0x48.
+The communication may look like this:
+STM32
+Master
+
+SDA ↔
+SCL ↔
+
+LM75
+Slave (0x48)
+
+
+
+Typical register-read sequence
+START → Address + Write → ACK → Register pointer → ACK → Repeated START → Address + Read → ACK → Temperature data → NACK → STOP
+
+The exact register pointer and data interpretation depend on the sensor's datasheet.
+STM32 HAL example
+This example shows the basic structure of writing a register pointer and reading two bytes. It assumes hi2c1 has already been initialized, the sensor is wired correctly, and the selected register is appropriate for the device.
+
+
+
+
+
+
+
+
+#include "main.h"
+
+extern I2C_HandleTypeDef hi2c1;
+
+#define LM75_ADDR       (0x48U << 1)
+#define LM75_TEMP_REG   0x00U
+
+uint8_t reg = LM75_TEMP_REG;
+uint8_t data[2];
+
+HAL_StatusTypeDef status;
+
+status = HAL_I2C_Master_Transmit(
+    &hi2c1,
+    LM75_ADDR,
+    &reg,
+    1,
+    100
+);
+
+if (status == HAL_OK)
+{
+    status = HAL_I2C_Master_Receive(
+        &hi2c1,
+        LM75_ADDR,
+        data,
+        2,
+        100
+    );
+}
+
+if (status == HAL_OK)
+{
+    /* Data received successfully.
+       Interpret data[0] and data[1]
+       according to the exact sensor datasheet. */
+}
+else
+{
+    /* Handle I2C communication error. */
+}

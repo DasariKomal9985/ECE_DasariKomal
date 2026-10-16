@@ -1,0 +1,469 @@
+14. CAN Protocol (Controller Area Network) 🚗
+CAN is an important communication protocol used in automotive systems, industrial automation, robotics, and embedded systems. It allows multiple electronic control units (ECUs) to communicate over a shared bus without requiring a separate communication wire between every pair of devices.
+For your embedded systems learning, CAN is especially useful when working with STM32 microcontrollers, automotive electronics, and the MCP2515 CAN controller.
+
+
+
+
+
+
+
+
+1. CAN Basics
+CAN stands for Controller Area Network.
+It is a serial communication protocol designed for reliable communication between multiple electronic devices.
+For example, in a car:
+- The engine control unit sends engine-related information.
+- The ABS controller sends wheel-speed information.
+- The dashboard receives vehicle speed and warning information.
+These devices can exchange messages over the same CAN bus.
+Why do we use CAN?
+- Reliable communication in electrically noisy environments.
+- Multiple devices share the same bus.
+- Message priority is handled through arbitration.
+- Built-in mechanisms detect communication errors.
+- Messages are identified by IDs rather than destination addresses.
+Traditional CAN uses a shared broadcast bus: devices receive frames and decide whether the messages are relevant to them.
+
+
+
+
+
+
+
+
+
+2. CAN Bus
+The CAN bus is the physical communication network connecting CAN devices.
+A typical high-speed CAN bus uses two signal wires:
+- CANH — CAN High
+- CANL — CAN Low
+The bus commonly uses a twisted pair of wires to improve noise immunity.
+At the two physical ends of a conventional high-speed CAN bus, 120 Ω termination resistors are typically installed. These reduce signal reflections.
+The exact wiring and termination depend on the CAN physical layer and network topology.
+
+
+
+
+
+
+
+
+
+3. CAN Controller
+The CAN controller handles the CAN protocol's digital communication functions.
+Its responsibilities include:
+- Creating and interpreting CAN frames.
+- Performing arbitration.
+- Generating and checking CRC.
+- Detecting protocol errors.
+- Managing transmission and reception.
+- Applying message filters, where supported.
+Examples include an STM32's built-in CAN peripheral or an external MCP2515 controller.
+Important for your STM32F401RBT6: This MCU does not have a built-in CAN peripheral. You can use an external CAN controller such as the MCP2515 together with a CAN transceiver.
+
+
+
+
+
+
+
+
+
+
+4. CAN Transceiver
+The CAN transceiver converts the controller's digital logic signals into differential electrical signals on CANH and CANL, and converts received bus signals back into digital logic.
+It connects the controller to the physical CAN bus.
+Examples of CAN transceivers include the SN65HVD230 and MCP2562, subject to their supply-voltage and logic-interface requirements.
+The controller and transceiver are different:
+CAN controller	CAN transceiver
+Handles CAN protocol logic	Handles physical electrical signaling
+Creates and processes frames	Drives and senses CANH/CANL
+Manages arbitration and CRC	Helps provide differential signaling and noise immunity
+An MCP2515-based setup normally requires a separate CAN transceiver.
+
+
+
+
+
+
+
+
+
+
+5. CANH — CAN High
+CANH is one of the two differential signal wires.
+In a typical high-speed CAN network:
+- During the recessive state, CANH is approximately 2.5 V.
+- During the dominant state, CANH rises to approximately 3.5 V.
+These are illustrative nominal values, not guaranteed levels for every transceiver or operating condition.
+
+
+
+
+
+
+
+
+
+
+
+
+6. CANL — CAN Low
+CANL is the other differential signal wire.
+In a typical high-speed CAN network:
+- During the recessive state, CANL is approximately 2.5 V.
+- During the dominant state, CANL falls to approximately 1.5 V.
+The receiver evaluates the voltage difference between CANH and CANL rather than relying only on either wire's voltage relative to ground.
+
+
+
+
+
+
+
+
+
+
+7. Differential Signaling
+Differential signaling transmits information using the voltage difference between two wires.
+The receiver examines:
+\[
+V_{\text{diff}} = V_{\text{CANH}} - V_{\text{CANL}}
+\]
+
+Typical high-speed CAN behavior:
+State	CANH (approx.)	CANL (approx.)	Difference
+Recessive (logical 1)	2.5 V	2.5 V	0 V
+Dominant (logical 0)	3.5 V	1.5 V	2 V
+Why is this useful? If electrical noise affects both wires similarly, much of that noise cancels when the receiver measures their difference.
+CAN uses dominant and recessive states. Dominant overrides recessive when multiple nodes transmit simultaneously, which enables arbitration.
+
+
+
+
+
+
+
+
+
+
+
+8. Message ID
+A CAN message ID identifies the message's meaning and determines its priority during arbitration.
+For example:
+- ID 0x100: engine speed
+- ID 0x200: vehicle speed
+- ID 0x300: temperature
+These IDs are illustrative; real vehicle networks define their own message assignments.
+CAN IDs are not necessarily device addresses. A single ECU can transmit several different IDs, and multiple ECUs can receive the same message.
+Lower numerical IDs generally have higher arbitration priority, because dominant zero bits override recessive one bits.
+
+
+
+
+
+
+
+
+
+
+
+
+
+9. Data Frame
+A data frame carries actual information from a CAN transmitter to the other nodes on the bus.
+A classical CAN data frame contains these main fields:
+1. Start of Frame (SOF)
+2. Arbitration field — identifier and control information
+3. Control field
+4. Data field
+5. CRC field
+6. ACK field
+7. End of Frame (EOF)
+Classical CAN carries 0–8 data bytes per data frame. CAN FD supports larger payloads, up to 64 bytes, with additional protocol differences.
+Example: An ECU sends engine-speed data in a CAN data frame.
+
+
+
+
+
+
+
+
+
+
+
+10. Remote Frame
+A remote frame is a Classical CAN frame used to request that another node transmit a data frame with a particular identifier.
+It carries no application data payload.
+For example, one node could transmit a remote frame requesting the data associated with a particular CAN ID.
+Remote frames are a Classical CAN feature. CAN FD does not support remote frames, and many modern systems use periodic or event-triggered data transmission instead.
+
+
+
+
+
+
+
+
+
+
+
+11. Arbitration
+Arbitration determines which node wins access to the bus when multiple nodes begin transmitting simultaneously.
+CAN uses non-destructive, bitwise arbitration.
+- A dominant bit represents logical 0.
+- A recessive bit represents logical 1.
+- If a node transmits recessive but observes dominant, it loses arbitration and stops transmitting.
+- The winning frame continues without being corrupted by the losing node.
+Example:
+Node A	Node B	Result
+ID 0x100	ID 0x200	Node A wins
+Lower ID	Higher ID	Lower ID generally wins
+Why does 0x100 win over 0x200? The binary identifiers differ, and the first differing bit favors the identifier with the dominant zero bit.
+Arbitration allows higher-priority messages to gain bus access without destroying the winning frame.
+
+
+
+
+
+
+
+
+
+
+
+
+
+12. Bit Stuffing
+Bit stuffing helps CAN receivers maintain synchronization with the transmitted bit stream.
+In Classical CAN, after five consecutive bits of the same polarity within the applicable stuffed region, the transmitter inserts a bit of the opposite polarity.
+The receiver removes the inserted bit during decoding.
+For example:
+Transmitted data pattern: 00000
+A stuff bit is inserted:
+On the bus: 000001
+The extra bit is not application data. It supports clock synchronization and error detection.
+If the receiver detects a bit-stuffing violation in a region where stuffing is required, it can signal a protocol error.
+
+
+
+
+
+
+
+
+
+
+
+13. ACK — Acknowledge
+The ACK field indicates whether at least one receiving node correctly received the frame sufficiently to acknowledge it.
+During the ACK slot:
+- The transmitter sends a recessive bit.
+- A receiver that has correctly received the frame can drive the bus dominant.
+- The transmitter checks whether the ACK slot is dominant.
+If no receiver acknowledges the frame, the transmitter can detect an ACK error.
+Important: An ACK does not necessarily mean the intended application processed the message. It only indicates acknowledgment at the CAN protocol level.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+14. Error Detection
+CAN provides several error-detection mechanisms.
+- Bit error: A node detects a mismatch between the bit it transmits and the bus state, subject to arbitration and acknowledgment rules.
+- Stuff error: An invalid bit-stuffing sequence is detected.
+- CRC error: The received frame's CRC check fails.
+- Form error: A fixed-format field contains an invalid bit.
+- ACK error: The transmitter does not detect an acknowledgment in the ACK slot.
+These mechanisms help CAN detect corrupted frames rather than silently accepting every transmission.
+
+
+
+
+
+
+
+
+
+
+
+
+
+15. Error Handling
+When a CAN node detects a protocol error, it can transmit an error flag to indicate that the current frame is invalid.
+The affected frame is normally retransmitted automatically, depending on the error and controller configuration.
+CAN also tracks transmission and reception errors using internal counters:
+- Transmit Error Counter (TEC)
+- Receive Error Counter (REC)
+These counters help determine whether a node is operating normally, has become error passive, or has entered bus-off.
+Repeated errors can indicate problems such as incorrect bit timing, missing termination, wiring faults, incompatible transceivers, or a node that is not connected properly.
+
+
+
+
+
+
+
+
+
+
+
+16. Bus-Off
+Bus-off is a fault state in which a CAN node stops participating in normal bus communication because its transmit error counter has crossed the protocol-defined threshold.
+In Classical CAN, the bus-off condition occurs when the transmit error counter reaches or exceeds 256.
+While bus-off:
+- The node does not transmit normal CAN frames.
+- Other nodes may continue communicating if the bus itself is healthy.
+- Recovery depends on the CAN protocol, controller implementation, and software configuration.
+A practical system should diagnose the underlying cause before attempting recovery. Repeatedly restarting a faulty node without fixing its wiring or timing can cause the problem to return.
+
+
+
+
+
+
+
+
+
+
+
+
+
+17. Error Active
+Error active is the normal error state of a CAN node.
+A node is error active when its error counters have not reached the error-passive thresholds.
+An error-active node can:
+- Transmit and receive normal frames.
+- Participate in arbitration.
+- Signal detected errors using an active error flag.
+An active error flag can disrupt the current frame so that nodes do not accept an invalid message as a valid frame.
+
+
+
+
+
+
+
+
+
+
+
+
+
+18. Error Passive
+Error passive is a degraded communication state reached when a node's transmit or receive error counter reaches the error-passive threshold.
+For Classical CAN, a node becomes error passive when either error counter reaches 128, provided it has not entered bus-off.
+An error-passive node can still transmit and receive frames, but its error signaling behavior changes.
+- It sends a passive error flag instead of an active error flag.
+- Its ability to interfere with ongoing bus communication is reduced.
+- Further transmit errors can eventually cause bus-off.
+The three main states are:
+State	Meaning
+Error active	Normal protocol participation
+Error passive	Communication continues with restrictions
+Bus-off	Node stops normal bus participation
+
+
+
+
+
+
+
+
+
+
+
+
+
+19. CAN Filters
+CAN filters determine which incoming messages a controller accepts for processing or stores in its receive buffers.
+For example, an ECU may need only engine-speed messages and ignore unrelated IDs.
+Filters can match:
+- A specific CAN ID.
+- A range or pattern of IDs using masks.
+- Standard or extended identifier formats, depending on the controller.
+Filtering reduces unnecessary processing and helps organize received traffic.
+STM32 note: CAN filter configuration differs by peripheral family. STM32F401RBT6 has no built-in CAN hardware, so filters for an MCP2515 must be configured using that controller's registers and datasheet.
+
+
+
+
+
+
+
+
+
+
+
+20. CAN Mailbox
+A CAN mailbox is a hardware storage or transmission resource used by a CAN controller to manage a frame.
+Depending on the controller, mailboxes may be used for:
+- Holding a frame waiting for transmission.
+- Storing a received frame.
+- Managing transmission requests and completion status.
+For example, software places a message's ID, data length, and payload into a transmit mailbox, then requests transmission.
+Terminology varies: some controllers use dedicated transmit mailboxes, while others use transmit buffers, receive buffers, or FIFO queues. An MCP2515, for instance, has transmit buffers and receive buffers rather than the same mailbox architecture used by some STM32 bxCAN peripherals.
+
+
+
+
+
+
+
+
+
+
+
+21. Standard ID
+A standard CAN identifier is 11 bits long.
+It allows \(2^{11} = 2048\) possible identifier values, although some values have protocol-specific meanings or restrictions.
+Example: 0x123 is a valid value within the 11-bit identifier range.
+Standard identifiers are widely used in automotive and industrial systems.
+
+
+
+
+
+
+
+
+
+
+22. Extended ID
+An extended CAN identifier is 29 bits long.
+It allows \(2^{29}\) possible identifier values, offering a much larger identifier space than standard CAN.
+Example: 0x18FF50E5 fits within the 29-bit range.
+Extended identifiers can help networks organize many message types, but they generally add overhead compared with standard frames.
+Feature	Standard CAN	Extended CAN
+Identifier size	11 bits	29 bits
+Maximum identifier value	0x7FF	0x1FFFFFFF
+Identifier capacity	2,048 values	536,870,912 values
+Frame type	Base format	Extended format
+
+Practical example: STM32 + MCP2515 + CAN transceiver 🛠️
+For your STM32F401RBT6, a typical external CAN setup looks like this:
+STM32F401RBT6
+Application code and SPI peripheral
+
+SPI signals + chip select + interrupt (optional)
+MCP2515 CAN controller
+CAN frames, IDs, filtering and error handling
+
+TXCAN / RXCAN digital signals
+CAN transceiver
+Digital signals ↔ differential bus signals
+
+CANH + CANL
+Other CAN node(s)
+Properly terminated shared bus
