@@ -1,0 +1,300 @@
+1. Embedded product companies, firmware & Linux
+1. Zilogic Systems
+2. Embien Technologies
+3. embedUR Systems
+4. Mobiveil Technologies
+5. e-con Systems
+6. MuPhile Labs
+7. EMDSOL
+8. Automotive Robotics India (ARi)
+9. Novotek Electronics
+10. Srithar Innovation Labs
+11. Yaazhiyal Embedded Control & IoT Solutions
+12. TechUC
+13. Firmcraft Technologies
+14. Enarxi Innovations
+15. Trinovtech
+16. Dhyana Engineering Solutions
+17. Jasmin Infotech
+18. Raptee.HV
+19. Grinntech
+20. Data Patterns
+21. Astra Microwave Products
+22. Tessolve
+23. Kaynes Technology
+24. Syrma SGS Technology
+25. Avalon Technologies
+26. Centum Electronics
+27. Visteon
+28. Microchip Technology
+29. Lattice Semiconductor
+30. Qualcomm
+31. Arista Networks
+32. NETGEAR
+33. Logitech
+34. ICU Medical
+35. Trane Technologies
+36. Amazon Devices
+37. Hubbell
+38. Arrow Electronics
+39. KLA
+40. Applied Materials
+41. Infineon Technologies
+42. Siemens
+43. Delta Electronics
+44. Lite-On
+45. Sanmina
+46. Flex
+47. Jabil
+48. Foxconn
+49. Bharat FIH
+50. Tata Electronics
+
+
+
+
+
+
+
+2. Automotive embedded & ECU software
+51. Aptiv
+52. Valeo
+53. ZF Group
+54. Bosch
+55. Continental
+56. HARMAN
+57. Tata Elxsi
+58. KPIT Technologies
+59. L&T Technology Services
+60. Capgemini Engineering
+61. HCLTech
+62. Tata Technologies
+63. ALTEN India
+64. Satyam Venture Engineering Services
+65. Caterpillar
+66. Royal Enfield
+67. Hyundai Motor India
+68. Renault Nissan Technology & Business Centre India
+69. Ashok Leyland
+70. TVS Motor
+71. Yamaha Motor Solutions
+72. Daimler Truck Innovation Center India
+73. BMW Group Technology Office
+74. Mahindra & Mahindra
+75. Stellantis
+76. Ford Business Solutions
+77. BorgWarner
+78. Schaeffler
+79. Lear Corporation
+80. Forvia
+81. Uno Minda
+82. Motherson Technology Services
+83. Yazaki
+84. Aptiv Connection Systems
+85. Rane Group
+86. Lucas-TVS
+87. Sundaram Clayton
+88. Brakes India
+89. Wheels India
+90. Hyundai Mobis
+91. Denso
+92. Aumovio
+93. FEV India
+94. AVL India
+95. EDAG India
+96. Bertrandt
+97. Expleo
+98. Akkodis
+99. Quest Global
+100. Cyient
+
+
+
+
+
+
+
+
+
+3. Embedded software services, system programming & engineering
+101. Tata Consultancy Services (TCS)
+102. Wipro
+103. Infosys
+104. Tech Mahindra
+105. Cognizant
+106. Accenture
+107. LTIMindtree
+108. Persistent Systems
+109. GlobalLogic
+110. UST
+111. Mphasis
+112. Hexaware Technologies
+113. CGI
+114. NTT DATA
+115. DXC Technology
+116. IBM
+117. HPE
+118. Capgemini
+119. Birlasoft
+120. Zensar Technologies
+121. Virtusa
+122. KPIT
+123. Tata Elxsi
+124. Sasken Technologies
+125. VVDN Technologies
+126. MosChip Technologies
+127. eInfochips
+128. Cyient
+129. Quest Global
+130. Altran
+131. LTTS
+132. Alten Calsoft Labs
+133. GlobalLogic India
+134. Ciklum India
+135. Appian
+136. Aricent
+137. Altran Technologies
+138. Mindtree
+139. Sutherland
+140. Encora
+141. Mistral Solutions
+142. Sankalp Semiconductor
+143. Silicon Labs
+144. AMD
+145. NVIDIA
+146. Intel
+147. Marvell
+148. Broadcom
+149. MediaTek
+150. Synopsys
+
+
+
+
+
+
+
+
+
+
+
+4. Semiconductor, VLSI, firmware & platform development
+151. Cadence Design Systems
+152. Siemens EDA
+153. L&T Semiconductor Technologies
+154. Tessolve Semiconductor
+155. MosChip
+156. SmartSoC Solutions
+157. Invecas
+158. Quest Global Engineering
+159. Sankalp Semiconductor
+160. Microchip Technology
+161. Lattice Semiconductor
+162. Qualcomm
+163. Infineon
+164. Applied Materials
+165. KLA Corporation
+166. Lam Research
+167. Texas Instruments
+168. Analog Devices
+169. Renesas Electronics
+170. STMicroelectronics
+171. NXP Semiconductors
+172. onsemi
+173. Silicon Labs
+174. Synaptics
+175. Cirrus Logic
+176. MaxLinear
+177. Rambus
+178. Arm
+179. Siemens Technology
+180. HCLTech Engineering
+181. Wipro Engineering Edge
+182. TCS Engineering
+183. Infosys Engineering Services
+184. Capgemini Engineering
+185. L&T Technology Services
+186. Tata Elxsi
+187. Sasken Technologies
+188. VVDN Technologies
+189. e-con Systems
+190. Mobiveil Technologies
+
+
+
+
+
+
+
+
+
+
+5. Embedded testing, validation, automation & integration
+191. Tata Elxsi
+192. Expleo
+193. ALTEN India
+194. ZF Group
+195. Aptiv
+196. Caterpillar
+197. HCLTech
+198. Capgemini Engineering
+199. Quest Global
+200. KPIT Technologies
+201. GlobalLogic
+202. Cyient
+203. TCS
+204. Wipro
+205. Infosys
+206. Tech Mahindra
+207. Accenture
+208. Akkodis
+209. FEV India
+210. AVL India
+211. Bertrandt
+212. Tata Technologies
+213. Satyam Venture Engineering Services
+214. Automotive Robotics India
+215. Jasmin Infotech
+216. embedUR Systems
+217. Zilogic Systems
+218. Embien Technologies
+219. Tessolve
+220. VVDN Technologies
+
+
+
+
+
+
+
+6. IoT, industrial firmware, automation & connected products
+221. Schneider Electric
+222. ABB
+223. Siemens
+224. Honeywell
+225. Emerson
+226. Rockwell Automation
+227. Yokogawa
+228. Danfoss
+229. Grundfos
+230. Flowserve
+231. KSB
+232. ELGI Equipments
+233. CRI Pumps
+234. Texmo Industries
+235. Salzer Electronics
+236. Geesys Technologies
+237. Novotek Electronics
+238. MuPhile Labs
+239. EMDSOL
+240. Enarxi Innovations
+241. Srithar Innovation Labs
+242. TechUC
+243. Trinovtech
+244. Yaazhiyal Embedded Control & IoT Solutions
+245. Data Patterns
+246. Astra Microwave Products
+247. Centum Electronics
+248. Avalon Technologies
+249. Kaynes Technology
+250. Syrma SGS Technology

@@ -1,0 +1,293 @@
+1. Motherson
+2. Royal Enfield
+3. Hyundai
+4. Renault
+5. Nissan
+6. Yamaha
+7. BMW
+8. Ashok Leyland
+9. Daimler India Commercial Vehicles
+10. Ford
+11. Mitsubishi
+12. BYD
+13. Renault Nissan Automotive
+14. AIS Glass
+15. Saint-Gobain
+16. Faurecia
+17. Uno Minda
+18. BorgWarner
+19. Schwing Stetter
+20. Hwashin Automotive
+21. Seoyon E-Hwa
+22. Thai Summit
+23. RIKUN Manufacturing
+24. Salcomp
+25. Asian Paints
+26. Nippon Paint
+27. Tata AutoComp
+28. Caparo Engineering
+29. Flender
+30. Thaai Casting
+31. JBM Group
+32. JK Tyre
+33. Royal Tyres
+34. Polyhose
+35. Tata Electronics
+36. Caterpillar
+37. Komatsu
+38. Vestas
+39. Siemens Gamesa
+40. Bonfiglioli
+41. CEAT
+42. Michelin
+43. Apollo Tyres
+44. TVS Motor
+45. Tata Motors
+46. Schaeffler
+47. ZF
+48. Continental
+49. Hyundai Steel
+50. BSH Home Appliances
+
+
+
+1. Hyundai
+2. Renault
+3. Nissan
+4. Royal Enfield
+5. Ashok Leyland
+6. TVS Motor
+7. Yamaha
+8. BMW
+9. Daimler India Commercial Vehicles
+10. Mahindra & Mahindra
+11. Tata Motors
+12. Ford
+13. Caterpillar
+14. Komatsu
+15. Isuzu Motors
+16. Stellantis
+17. Force Motors
+18. Schwing Stetter
+19. Motherson
+20. Rane Group
+21. Sundram Fasteners
+22. Wheels India
+23. Brakes India
+24. Lucas-TVS
+25. ZF
+26. Valeo
+27. Bosch
+28. Continental
+29. BorgWarner
+30. Lear Corporation
+31. Faurecia
+32. Uno Minda
+33. JBM Group
+34. Yazaki
+35. Aptiv
+36. Schaeffler
+37. SKF
+38. TI Fluid Systems
+39. Saint-Gobain Sekurit
+40. Sundaram Clayton
+41. Samsung
+42. Nokia
+43. Foxconn
+44. Bharat FIH
+45. Sanmina
+46. Flex
+47. Salcomp
+48. Pegatron
+49. Dell
+50. Jabil
+51. Tata Electronics
+52. Syrma SGS Technology
+53. Kaynes Technology
+54. Bharat Electronics Limited
+55. Delta Electronics
+56. Siemens
+57. Schneider Electric
+58. ABB
+59. Eaton
+60. Legrand
+61. V-Guard Industries
+62. Havells
+63. Crompton
+64. Salzer Electronics
+65. Avalon Technologies
+66. Avalon Innovation
+67. Avalon Technologies
+68. Amphenol
+69. Lite-On
+70. Tessolve
+71. Shahi Exports
+72. Eastman Exports
+73. KPR Mill
+74. Tiruppur-based Jay Jay Mills
+75. SCM Garments
+76. Best Corporation
+77. Poppys Knitwear
+78. Armstrong Spinning Mills
+79. Lakshmi Machine Works
+80. Lakshmi Mills
+81. Bannari Amman Spinning Mills
+82. KG Denim
+83. Premier Mills
+84. Vardhman Textiles
+85. Gokaldas Exports
+86. Page Industries
+87. Arvind Limited
+88. Rupa & Company
+89. Dollar Industries
+90. Indian Terrain
+91. Farida Group
+92. Lotus Footwear
+93. Tata International
+94. Florence Shoes
+95. Phoenix Kothari Footwear
+96. BHEL
+97. LMW
+98. Tube Investments of India
+99. Roots Industries
+100. ELGI Equipments
+101. CRI Pumps
+102. Texmo Industries
+103. KSB
+104. Flowserve
+105. Lakshmi Precision Tools
+106. Shanthi Gears
+107. Craftsman Automation
+108. Ramkrishna Forgings
+109. India Pistons
+110. Wheels India
+111. Tube Products of India
+112. Carborundum Universal
+113. Festo
+114. Flender
+115. Bonfiglioli
+116. L&T
+117. Greaves Cotton
+118. Kirloskar Brothers
+119. L&T Valves
+120. Salem Steel Plant
+121. JSW Steel
+122. Tata Steel
+123. Jindal Stainless
+124. Dalmia Bharat
+125. India Cements
+126. Asian Paints
+127. Berger Paints
+128. Nippon Paint
+129. Saint-Gobain
+130. Coromandel International
+131. Manali Petrochemicals
+132. Chennai Petroleum Corporation
+133. CPCL
+134. Tamil Nadu Petroproducts
+135. Chemplast Sanmar
+136. Sanmar Group
+137. Supreme Industries
+138. Finolex Industries
+139. Polyhose
+140. TI Cycles
+141. Carborundum Universal
+142. PPG Asian Paints
+143. Dow
+144. BASF
+145. Henkel
+146. Roca
+147. Asian Granito
+148. Kajaria Ceramics
+149. Parryware
+150. Brakes India
+151. Sun Pharmaceutical Industries
+152. Pfizer
+153. AstraZeneca
+154. Orchid Pharma
+155. Aurobindo Pharma
+156. Cipla
+157. Dr. Reddy's Laboratories
+158. Zydus Lifesciences
+159. Natco Pharma
+160. Fourrts Laboratories
+161. Caplin Point Laboratories
+162. Tablets India
+163. TTK Healthcare
+164. Sanofi
+165. Abbott
+166. Bharat Biotech
+167. Piramal Pharma
+168. InterMed Laboratories
+169. Par Formulations
+170. Sterimed
+171. ITC
+172. Britannia
+173. Hatsun Agro Product
+174. Aavin
+175. CavinKare
+176. Haldiram's
+177. PepsiCo
+178. Coca-Cola
+179. Nestlé
+180. Hindustan Unilever
+181. Procter & Gamble
+182. Godrej Consumer Products
+183. Parle Products
+184. Aachi Masala
+185. Sakthi Masala
+186. MTR Foods
+187. GRB Dairy Foods
+188. Milky Mist
+189. Heritage Foods
+190. EID Parry
+191. Murugappa Group
+192. Cargill
+193. M.K. Agrotech
+194. Hatsun
+195. Anil Foods
+196. TNPL
+197. Seshasayee Paper and Boards
+198. ITC Packaging
+199. Huhtamaki
+200. UFlex
+201. Parksons Packaging
+202. TCPL Packaging
+203. Mold-Tek Packaging
+204. Manjushree Technopack
+205. ITC PSPD
+206. Integral Coach Factory
+207. Rail Wheel Factory
+208. Heavy Vehicles Factory
+209. Avadi Engine Factory
+210. Neyveli Lignite Corporation
+211. BEML
+212. Siemens Gamesa
+213. Vestas
+214. Suzlon
+215. GE Vernova
+216. L&T Energy
+217. Caterpillar
+218. Yanmar
+219. Wärtsilä
+220. Tractors and Farm Equipment Limited (TAFE)
+221. Titan Company
+222. TAFE
+223. Preethi Kitchen Appliances
+224. Butterfly Gandhimathi Appliances
+225. Vidiem
+226. Eureka Forbes
+227. Nilkamal
+228. Supreme Furniture
+229. Godrej & Boyce
+230. CavinKare
+231. Garuda Aerospace
+232. Agnikul Cosmos
+233. Data Patterns
+234. Astra Microwave Products
+235. Centum Electronics
+236. Dynamatic Technologies
+237. MTAR Technologies
+238. Aequs
+239. Azad Engineering
+240. TIDCO-supported industrial units

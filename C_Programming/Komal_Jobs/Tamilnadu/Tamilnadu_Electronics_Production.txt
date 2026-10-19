@@ -1,0 +1,70 @@
+1. Samsung Electronics
+2. Foxconn
+3. Bharat FIH
+4. Flex
+5. Salcomp
+6. Sanmina
+7. Pegatron
+8. Nokia
+9. Dell
+10. Jabil
+11. Tata Electronics
+12. Syrma SGS Technology
+13. Visteon Electronics
+14. Bharat Electronics Limited (BEL)
+15. Kaynes Circuits
+16. Motherson Electronic Components
+17. Mini-Circuits India
+18. Fortran Cirkit Electronics
+19. Coromandel Electronics
+20. Srinar Electronics
+21. Amphenol
+22. Giesecke+Devrient
+23. Vishay Precision Transducers
+24. Thinksemi Infotech
+25. BIGCAT Electronics
+26. Infocus Electronics Technology
+27. Delta Electronics
+28. Tessolve
+29. Eltech EMS
+30. Zettaone Technologies
+31. Glonix Electronics
+32. Yeemak Electronics
+33. Nokia Solutions and Networks
+34. Lite-On
+35. Rising Star Hi-Tech
+36. Tata Electronics
+37. Delta Electronics
+38. Hi-Q Electronics
+39. Ascent Circuits
+40. LifeLine Circuits
+41. Rapto Circuits
+42. Tescom
+43. Bharani Technologies
+44. Mefron Technologies
+45. Kaynes Technology
+46. Syrma SGS Technology
+47. Flex
+48. Foxconn
+49. Bharat FIH
+50. Eltech EMS
+51. Mefron Technologies
+52. Tescom
+53. Deivanai Electronics
+54. Salzer Electronics
+55. Geesys Technologies
+56. Bharani Technologies
+57. MSB Electronic Industries
+58. Deivanai Electronics
+59. Tata Electronics
+60. Bharat Electronics Limited (BEL)
+61. Syrma SGS Technology
+62. Vishay Precision Transducers
+63. Fortran Cirkit Electronics
+64. Ascent Circuits
+65. Kaynes Circuits India
+66. Mini-Circuits India
+67. Coromandel Electronics
+68. Amphenol Omni Connect
+69. Thinksemi Infotech
+70. Giesecke+Devrient
