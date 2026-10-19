@@ -1,0 +1,64 @@
+Developer roles
+1. Embedded Software Developer
+2. Embedded C Developer
+3. Firmware Developer
+4. C Programmer / C Developer
+5. Linux System Programmer
+6. Linux Application Developer
+7. Linux Device Driver Developer
+8. Embedded Linux Developer
+9. BSP Developer
+10. Software Integration Developer
+11. Junior C++ Developer
+12. IoT Software Developer
+
+
+
+Tester and QA roles
+13. Embedded Software Tester
+14. Firmware Test Engineer
+15. Embedded Validation Engineer
+16. Linux Test Engineer
+17. Software Test Engineer
+18. Manual Tester
+19. Automation Test Engineer
+20. Hardware-Software Integration Tester
+21. System Testing Engineer
+22. QA Engineer
+
+
+
+Automation and build roles
+23. Test Automation Engineer
+24. Embedded Test Automation Engineer
+25. Build and Release Engineer
+26. Linux Build Engineer
+27. CI/CD Engineer
+28. Build Automation Engineer
+29. Software Integration and Automation Engineer
+
+
+
+DevOps and IT infrastructure roles
+30. DevOps Engineer Trainee
+31. Junior DevOps Engineer
+32. Linux Support Engineer
+33. Linux System Administrator
+34. IT Support Engineer
+35. Technical Support Engineer
+36. Application Support Engineer
+37. Production Support Engineer
+38. Cloud Support Associate
+39. Site Reliability Engineer (SRE) Trainee
+
+
+
+Other engineering roles
+40. System Software Engineer
+41. Platform Software Engineer
+42. Board Bring-up Engineer
+43. Automotive Embedded Engineer
+44. CAN Protocol Test Engineer
+45. Hardware Validation Engineer
+46. Technical Engineer
+47. Research and Development Engineer
