@@ -119,3 +119,59 @@ void Reverse_word_order(char name[]) {
         }
     }
 }
+
+
+
+
+/*
+
+
+Enter the string: Dasari Komal Rao
+
+Reversed string: oaR lamoK irasaD
+
+Reversed each word: irasaD lamoK oaR
+
+Reversed word order: Rao Komal Dasari
+
+
+
+
+Enter the string: Dasari Komal Rao
+
+1. Print the string
+2. Reverse the entire string
+3. Reverse each word
+4. Reverse the order of words
+5. Exit
+Enter your choice: 2
+Reversed string: oaR lamoK irasaD
+
+1. Print the string
+2. Reverse the entire string
+3. Reverse each word
+4. Reverse the order of words
+5. Exit
+Enter your choice: 3
+Reversed each word: irasaD lamoK oaR
+
+1. Print the string
+2. Reverse the entire string
+3. Reverse each word
+4. Reverse the order of words
+5. Exit
+Enter your choice: 4
+Reversed word order: Rao Komal Dasari
+
+1. Print the string
+2. Reverse the entire string
+3. Reverse each word
+4. Reverse the order of words
+5. Exit
+Enter your choice: 5
+Exiting program...
+
+
+
+
+*/
