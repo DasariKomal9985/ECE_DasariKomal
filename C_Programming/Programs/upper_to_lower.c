@@ -45,3 +45,18 @@ int main()
 	printf("\n");
 	return 0;
 }
+
+
+
+/*
+
+Enter the String : dasari komal
+Enter the Case : 
+1.) Upper_Case
+2.) Lower_Case
+ 1
+The String is Upper Case : DASARI KOMAL
+
+
+
+*/
