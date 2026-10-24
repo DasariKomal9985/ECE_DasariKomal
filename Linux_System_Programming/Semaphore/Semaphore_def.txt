@@ -1,0 +1,92 @@
+A semaphore is a synchronization mechanism that uses an integer count and atomic wait/signal operations to manage access to shared resources and coordinate processes or threads.
+
+
+
+Wait (P / Down): Decreases the semaphore's count when permitted; if the resource or condition is unavailable, the calling task may have to wait.
+Signal (V / Up): Increases the semaphore's count or signals availability, potentially allowing a waiting task to proceed.
+
+
+
+🔐 1. What Is a Binary Semaphore?
+Definition: A binary semaphore is a synchronization mechanism whose value is restricted to 0 or 1, used to signal events or coordinate access to resources.
+
+It has only two possible values:
+- 1: A permit is available.
+- 0: No permit is available.
+Example 💡
+Suppose Thread A needs to signal Thread B that some data is ready.
+
+Initially, the semaphore value is 0, meaning the event has not been signaled.
+Operation	Semaphore value	Meaning
+Initial state	0	Data is not ready
+Thread A signals	1	Data is ready
+Thread B waits and acquires the permit	0	Thread B can proceed
+
+
+Why use it? To coordinate threads or signal events.
+
+⚠️ Important: A binary semaphore is not automatically the same as a mutex. A mutex typically has ownership rules, while a binary semaphore generally does not.
+
+
+
+
+
+
+What Is a Counting Semaphore?
+Definition: A counting semaphore is a synchronization mechanism that maintains a nonnegative count of available permits to manage access to multiple instances of a resource or coordinate concurrent tasks.
+
+Its count can represent multiple available permits.
+Example 💡
+Suppose a system has 3 printers available.
+
+Initialize the counting semaphore to 3.
+Operation	Semaphore value	Meaning
+Initial state	3	Three permits available
+Process A acquires a permit	2	Two permits remain
+Process B acquires a permit	1	One permit remains
+Process C acquires a permit	0	No permits remain
+Process D tries to acquire a permit	0	Process D must wait
+Process A releases a permit	1	A permit becomes available
+
+
+Why use it? To control access to a limited number of resources.
+
+
+
+
+
+
+5. Linux kernel semaphore functions
+Header file:
+#include <linux/semaphore.h>
+
+
+These APIs are used in Linux kernel code, including kernel modules and device drivers.
+Function / macro		What it does
+sema_init()			Initializes a kernel semaphore
+down()				Acquires a permit; may sleep
+down_interruptible()		Acquires a permit but can return if interrupted
+down_killable()			Acquires a permit with fatal-signal interruption behavior
+down_trylock()			Attempts to acquire without sleeping
+up()				Releases a permit and may wake a waiting task
+
+
+
+
+#include <linux/semaphore.h>
+
+static struct semaphore sem;
+
+static int __init my_init(void)
+{
+    sema_init(&sem, 1);
+
+    if (down_interruptible(&sem))
+        return -ERESTARTSYS;
+
+    /* Critical work */
+
+    up(&sem);
+
+    return 0;
+}
