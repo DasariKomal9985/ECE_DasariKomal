@@ -39,3 +39,7 @@ Think of it this way:
 Mutex: "I locked this resource, so I am responsible for unlocking it."
 Binary semaphore: "A resource or event is available, or a signal has been given."
 A mutex is designed around ownership and mutual exclusion. A binary semaphore is more flexible for synchronization because it does not impose the same ownership rule.
+
+
+
+Although both a mutex and a binary semaphore can provide exclusive access to a shared resource, a mutex is specifically designed for mutual exclusion and has ownership semantics. Normally, the thread that locks a mutex must unlock it. A binary semaphore does not have this ownership requirement and is commonly used for signaling and synchronization between threads. Therefore, a mutex is generally preferred for protecting shared data, while a binary semaphore is useful for coordinating events between threads.
