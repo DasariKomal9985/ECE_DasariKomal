@@ -1,0 +1,1 @@
+A mutex is a synchronization mechanism that ensures only one thread at a time can access a protected critical section or shared resource by using a locking and unlocking mechanism.
