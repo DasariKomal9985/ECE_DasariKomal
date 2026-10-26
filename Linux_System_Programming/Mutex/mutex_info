@@ -1,0 +1,41 @@
+2. Example: Binary Semaphore
+Imagine Thread A and Thread B.
+A binary semaphore starts at 1.
+Thread A calls sem_wait() and changes the semaphore from 1 to 0.
+Thread A enters the critical section.
+Thread B calls sem_wait(). Because the semaphore is 0, Thread B waits.
+Thread A finishes and calls sem_post(), making the semaphore available again.
+Thread B can now proceed.
+This works for mutual exclusion.
+But consider what happens if Thread B calls sem_post() while Thread A is still using the shared resource.
+A binary semaphore does not enforce that only Thread A can release it. Thread B may signal the semaphore, allowing another thread to enter the critical section while Thread A is still inside.
+That can cause a race condition.
+3. Example: Mutex
+Now imagine the same situation with a mutex.
+Thread A calls pthread_mutex_lock().
+Thread A enters the critical section.
+Thread B calls pthread_mutex_lock() and waits.
+Thread A finishes and calls pthread_mutex_unlock().
+Thread B acquires the mutex and enters the critical section.
+With a normal POSIX mutex, Thread B cannot validly unlock the mutex owned by Thread A.
+This ownership rule helps prevent accidental or incorrect unlocking.
+4. When Should You Use Each One?
+Use a mutex to protect shared data
+For example, two threads incrementing the same counter:
+pthread_mutex_lock(&lock);
+
+counter++;  // Critical section
+
+pthread_mutex_unlock(&lock);
+The mutex ensures that only one thread at a time executes the protected operation.
+Use a binary semaphore to signal an event
+For example, one thread receives data and another thread processes it.
+Thread A: Receives data and signals that the data is ready.
+Thread B: Waits for the signal and processes the data.
+A binary semaphore can be useful for this type of synchronization.
+Note: A binary semaphore generally represents a pending signal, not a count of every event. If every event must be counted, a counting semaphore or another appropriate mechanism may be needed.
+5. The Most Important Point to Remember 🧠
+Think of it this way:
+Mutex: "I locked this resource, so I am responsible for unlocking it."
+Binary semaphore: "A resource or event is available, or a signal has been given."
+A mutex is designed around ownership and mutual exclusion. A binary semaphore is more flexible for synchronization because it does not impose the same ownership rule.
