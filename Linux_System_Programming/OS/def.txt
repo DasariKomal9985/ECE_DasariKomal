@@ -1,0 +1,8 @@
+Linux: An open-source, Unix-like operating-system kernel; the name is also used for complete systems built around it.
+Kernel: The core that manages hardware and system resources.
+Distribution: A complete operating-system package built around the Linux kernel.
+Shell: A command interpreter that lets you interact with the system.
+System call: An interface for requesting services from the kernel.
+Device driver: Kernel-integrated software that enables operating-system support for hardware.
+Android: A mobile operating-system platform built on the Linux kernel.
+Linux architecture: A modular monolithic kernel design with user-space applications and services above it.
