@@ -1,0 +1,94 @@
+A semaphore is a synchronization mechanism 
+that uses atomic wait and signal operations 
+to coordinate processes or threads and control access 
+to shared resources.
+
+
+
+
+A binary semaphore is a synchronization mechanism
+ whose value is restricted to 0 or 1 and is 
+used to coordinate processes or threads, commonly for event signaling.
+
+
+
+
+
+A counting semaphore is a synchronization mechanism 
+that maintains a count of available permits to 
+coordinate processes or threads and control access to multiple instances of a shared resource.
+
+
+
+
+2. POSIX semaphore functions
+These functions are declared in the header file <semaphore.h>.
+Function
+Purpose
+sem_init()
+Initializes an unnamed semaphore
+sem_wait()
+Waits for and acquires a semaphore permit; may block
+sem_trywait()
+Attempts to acquire a permit without waiting
+sem_timedwait()
+Waits for a permit until a deadline
+sem_post()
+Releases a permit or signals availability
+sem_getvalue()
+Retrieves an approximate/current semaphore value, subject to concurrency caveats
+sem_destroy()
+Destroys an initialized unnamed semaphore
+sem_open()
+Opens or creates a named semaphore
+sem_close()
+Closes a named semaphore handle
+sem_unlink()
+Removes a named semaphore's name
+These are POSIX user-space APIs, not Linux kernel semaphore functions.
+
+
+
+
+
+
+3. What are sem_wait() and sem_post()?
+Consider a counting semaphore initialized to 1.
+sem_wait() acquires one available permit, reducing the count from 1 to 0.
+If the count is already 0, sem_wait() blocks until a permit becomes available, unless interrupted or another error occurs.
+sem_post() releases a permit, increasing the count and potentially waking a waiting thread.
+Initial semaphore count: 1
+sem_wait()
+Acquire one permit
+Semaphore count: 0
+No permits remain
+sem_post()
+Release one permit
+Semaphore count: 1
+
+
+
+
+
+
+
+4. What are down() and up()?
+These names are commonly used for semaphore operations in Linux kernel programming and other operating-system implementations.
+Operation
+Meaning
+down()
+Acquires a semaphore; may put the calling task to sleep
+down_interruptible()
+Attempts to acquire a semaphore but can return if interrupted by a signal
+down_killable()
+Similar to interruptible acquisition, but responds to fatal signals
+down_trylock()
+Attempts acquisition without sleeping; returns immediately if unavailable
+up()
+Releases the semaphore and may wake a waiting task
+These are Linux kernel APIs declared through the kernel semaphore headers, commonly <linux/semaphore.h>.
+
+
+
+
+

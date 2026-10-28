@@ -1,0 +1,32 @@
+Binary Semaphore vs Mutex
+Both can help ensure that only one thread accesses a shared resource at a time, but they work differently.
+
+
+Feature
+Binary Semaphore
+Mutex
+Values / state
+0 or 1
+Locked or unlocked
+
+
+Main purpose
+Signaling or synchronization; can also control exclusive access
+Mutual exclusion
+
+
+
+Ownership
+No ownership requirement
+Has an owner
+
+
+Who can release it?
+Generally, a different thread can signal it
+Normally, the thread that locked it must unlock it
+
+
+
+Example use
+Notify another thread that data is ready
+Protect a shared counter or data structure
