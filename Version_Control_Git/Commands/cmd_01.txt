@@ -8,3 +8,14 @@ git status		Show current changes		git status
 git init		Create a repository		git init
 git clone URL		Copy a remote repository	git clone URL
 git ls-files		List tracked files		git ls-files
+
+Check changes
+git status
+2. Review your edits
+git diff
+3. Stage selected changes
+git add .
+4. Commit
+git commit -m "Add new program"
+5. Push to GitHub
+git push origin main
