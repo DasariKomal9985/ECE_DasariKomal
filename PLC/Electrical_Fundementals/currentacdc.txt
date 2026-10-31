@@ -1,0 +1,5 @@
+AC: An electric current whose magnitude generally varies with time and whose direction periodically reverses.
+
+
+
+DC: An electric current that flows continuously in one direction, with its magnitude either remaining constant or varying with time.
