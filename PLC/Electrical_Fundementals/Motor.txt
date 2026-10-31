@@ -1,0 +1,36 @@
+AC Current and DC Current
+Electric current is the flow of electric charge through a conductor or electrical circuit.
+Based on how current flows and changes with time, we mainly classify it into two types:
+AC – Alternating Current
+DC – Direct Current
+Let's understand both from the basics. 😊
+1. 🔋 What is DC Current?
+DC stands for Direct Current.
+DC is an electric current that flows in only one direction.
+Current direction remains the same.
+Polarity remains the same.
+Its magnitude can be constant or vary with time.
+Commonly supplied by batteries and DC power supplies.
+Examples:
+🔋 Mobile phone batteries
+🔌 12 V DC power supply
+⚙️ 24 V DC PLC control circuits
+💻 Electronic circuits
+
+
+m the positive terminal towards the negative terminal.
+2. 🏠 What is AC Current?
+AC stands for Alternating Current.
+AC is an electric current that periodically changes its direction and usually its magnitude.
+Current direction changes periodically.
+Voltage polarity changes periodically.
+Commonly used in homes and industries.
+Produced by alternators and generators.
+Examples:
+🏠 Household electricity
+🏭 Industrial three-phase power supply
+⚙️ AC induction motors
+💡 Electrical appliances
+Example:
+In India, household AC electricity has a nominal frequency of 50 Hz.
+This means the current completes 50 full cycles every second.
