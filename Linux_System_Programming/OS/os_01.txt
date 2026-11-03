@@ -81,3 +81,26 @@ These classifications describe different things: kernel architecture, operating-
 
 
 One-line definition: A monolithic kernel runs most core OS services in kernel space, while a microkernel keeps only essential services in the kernel and moves many others to user space.
+
+
+Linux kernel: Handles low-level memory management, scheduling, security mechanisms, and hardware drivers.
+
+
+
+Hardware Abstraction Layer (HAL): Provides standard interfaces between Android's higher software layers and hardware-specific implementations.
+
+
+
+Native libraries and services: Provide functions such as graphics, media, logging, and inter-process communication.
+
+
+
+Android Runtime (ART): Provides the runtime environment for Android applications.
+
+
+
+Application framework: Provides APIs used by apps for activities, notifications, permissions, cameras, and other features.
+
+
+
+Android applications: The apps you install and use.
