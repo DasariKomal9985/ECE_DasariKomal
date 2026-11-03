@@ -65,6 +65,13 @@ Executable Program
 
 
 
+9. Important GCC commands to remember
+Command					Purpose			Output
+gcc -E file.c -o file.i			Preprocessing		.i
+gcc -S file.i -o file.s			Generate assembly	.s
+gcc -c file.s -o file.o			Generate object file	.o
+gcc file.o -o program			Linking			Executable
+
 
 
 
