@@ -1,0 +1,199 @@
+1. Enumeration – Definition
+Enumeration (enum) is a user-defined data type in C that consists of a set of named integer constants. 
+It allows programmers to assign meaningful names to integer values, making the code more readable and easier to maintain.
+
+
+
+enum Day
+{
+    MON,
+    TUE,
+    WED,
+    THU,
+    FRI
+};
+
+
+
+Default Values in Enum
+Definition: By default, the first enum constant is assigned the value 0, 
+and each subsequent constant is assigned the previous constant's value plus 1.
+
+enum Day
+{
+    MON,  // 0
+    TUE,  // 1
+    WED,  // 2
+    THU,  // 3
+    FRI   // 4
+};
+
+
+
+Custom Values in Enum
+Definition: Custom enum values allow programmers to explicitly assign integer values to enum constants instead of using the default sequential values. Subsequent constants continue from the previous constant's value plus one unless another value is explicitly assigned.
+
+enum Status
+{
+    OFF = 0,
+    ON = 5,
+    ERROR = 10,
+    WARNING
+};
+
+
+
+
+
+
+	Enum								#define
+Defines a user-defined enumeration type.			Defines a preprocessor macro.
+Provides named integer constants.				Performs textual macro replacement.
+Constants are handled by the compiler.				Macros are processed by the preprocessor.
+Supports grouping related constants under one type.		Does not create a data type.
+Values can be inspected in a 
+debugger more meaningfully in some implementations.		Macro names are generally replaced before compilation.
+
+
+
+
+
+
+1. Why do we need enum?
+Imagine you are developing a traffic signal system.
+
+Without enum:
+int signal = 0;
+
+if (signal == 0)
+{
+    printf("RED\n");
+}
+else if (signal == 1)
+{
+    printf("YELLOW\n");
+}
+else if (signal == 2)
+{
+    printf("GREEN\n");
+}
+
+
+
+Here, you need to remember:
+- 0 means RED.
+- 1 means YELLOW.
+- 2 means GREEN.
+This can become confusing in large programs.
+
+
+
+
+
+2. Using enum
+
+#include <stdio.h>
+
+enum Traffic
+{
+    RED,
+    YELLOW,
+    GREEN
+};
+
+int main()
+{
+    enum Traffic signal;
+
+    signal = RED;
+
+    if (signal == RED)
+    {
+        printf("STOP\n");
+    }
+    else if (signal == YELLOW)
+    {
+        printf("READY\n");
+    }
+    else if (signal == GREEN)
+    {
+        printf("GO\n");
+    }
+
+    return 0;
+}
+
+STOP
+
+
+
+
+
+1. Structure (struct)
+Definition: A structure is a user-defined data type that groups multiple variables of different data types under a single name, allowing related data to be stored together.
+
+
+2. Enumeration (enum)
+Definition: An enumeration is a user-defined data type that defines a set of named integer constants, allowing related fixed values to be represented using meaningful names.
+
+
+
+
+#include <stdio.h>
+
+struct Student
+{
+    int roll;
+    float marks;
+};
+
+int main()
+{
+    struct Student s;
+
+    s.roll = 101;
+    s.marks = 85.5;
+
+    printf("Roll = %d\n", s.roll);
+    printf("Marks = %.2f\n", s.marks);
+
+    return 0;
+}
+
+
+
+
+
+
+#include <stdio.h>
+
+enum Traffic
+{
+    RED,
+    YELLOW,
+    GREEN
+};
+
+int main()
+{
+    enum Traffic signal = GREEN;
+
+    printf("Signal = %d\n", signal);
+
+    return 0;
+}
+
+
+
+
+
+
+Structure: Used to store multiple related data values together.
+Enumeration: Used to represent a fixed set of named integer constants.
+
+
+
+
+
+
+
