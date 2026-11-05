@@ -1,0 +1,29 @@
+1. const Qualifier
+Definition: const is a type qualifier in C used to declare a variable whose value cannot be modified through that variable after initialization
+
+
+
+#include <stdio.h>
+
+int main(void)
+{
+    const int a = 100;
+
+    printf("Value of a = %d\n", a);
+
+    // a = 200;  // Error: cannot modify a const variable
+
+    return 0;
+}
+
+
+Value of a = 100
+
+
+
+
+
+Explanation:
+- const int a = 100; declares an integer variable with a constant-qualified type.
+- You cannot directly assign a new value to a.
+- const helps prevent accidental modification of data..
