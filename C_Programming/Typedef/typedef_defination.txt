@@ -1,0 +1,188 @@
+1. typedef in C
+Definition: typedef is a keyword in C used to create an alternative name (alias) for an existing data type. 
+It makes complex data type declarations simpler, shorter, and easier to read.
+
+typedef existing_data_type new_name;
+
+typedef unsigned int uint32_t;
+
+Here, uint32_t becomes an alternative name for unsigned int in this example.
+
+Important: typedef does not create a new data type or allocate memory. It only provides another name for an existing type.
+
+
+
+
+
+2. typedef with structure
+Definition: typedef with a structure is used to create a shorter alternative name for a structure type, so we can declare structure variables without repeatedly writing the struct keyword.
+
+Without typedef:
+
+struct Student {
+    int id;
+    float marks;
+};
+
+struct Student s1;
+
+
+
+With typedef:
+
+typedef struct Student {
+    int id;
+    float marks;
+} Student;
+
+Student s1;
+
+Here, Student is an alias for struct Student.
+
+
+
+
+
+
+
+
+3. typedef with pointers
+Definition: typedef with pointers is used to create an alternative name for a pointer data type, making pointer declarations simpler and easier to understand.
+
+typedef int *IntPtr;
+
+int main()
+{
+    int a = 10;
+    IntPtr ptr = &a;
+
+    printf("%d", *ptr);
+
+    return 0;
+}
+IntPtr is an alias for int *.
+ptr is a pointer to an integer.
+*ptr accesses the value stored at the address.
+
+
+
+
+
+
+
+
+4. typedef with function pointer
+Definition: typedef with a function pointer is used to create an alternative name for a function pointer type, making function pointer declarations shorter and easier to use.
+
+#include <stdio.h>
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+typedef int (*FuncPtr)(int, int);
+
+int main()
+{
+    FuncPtr ptr = add;
+
+    printf("%d", ptr(10, 20));
+
+    return 0;
+}
+
+
+
+- FuncPtr is an alias for a pointer to a function.
+- The function accepts two int arguments.
+- The function returns an int.
+- ptr stores the address of add().
+
+
+
+
+typedef								#define
+Creates an alias for a data type.			Defines a macro for textual replacement.
+Processed by the compiler.				Processed by the preprocessor.
+Follows C type-declaration rules.			Performs textual substitution.
+Used for type aliases.					Used for constants, macros, and code substitutions.
+Has type information.					Does not create type information.
+
+
+
+
+
+typedef unsigned int uint32_t;
+#define UINT unsigned int
+
+uint32_t a = 100;
+UINT b = 200;
+
+
+
+
+In real embedded projects, you will often see:
+#include <stdint.h>
+
+uint8_t  a;  // 8-bit unsigned integer
+uint16_t b;  // 16-bit unsigned integer
+uint32_t c;  // 32-bit unsigned integer
+uint64_t d;  // 64-bit unsigned integer
+
+
+
+
+
+
+#include <stdio.h>
+
+typedef unsigned int uint32_t;
+
+int main()
+{
+    uint32_t a = 100;
+    uint32_t b = 200;
+    uint32_t sum;
+
+    sum = a + b;
+
+    printf("A = %u\n", a);
+    printf("B = %u\n", b);
+    printf("Sum = %u\n", sum);
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+The real difference becomes clear with pointers.
+
+1. Example using #define
+
+#define PTR int *
+PTR a, b;
+After preprocessor replacement, it becomes:
+int *a, b;
+Here:
+- a is a pointer to an integer.
+- b is a normal integer.
+This may cause confusion!
+
+
+
+
+2. Example using typedef
+
+typedef int *PTR;
+PTR a, b;
+Here:
+- a is a pointer to an integer.
+- b is also a pointer to an integer.
+Both variables have the same pointer type.
