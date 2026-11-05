@@ -1,0 +1,58 @@
+Volatile: 
+
+
+volatile is a type qualifier in C used to declare a variable whose value can change unexpectedly during program execution. It tells the compiler not to optimize away memory accesses to that variable, ensuring that its value is read from memory whenever it is accessed.
+
+
+#include <stdio.h>
+
+int main(void)
+{
+    volatile int sensor_value = 100;
+
+    printf("Sensor Value = %d\n", sensor_value);
+
+    sensor_value = 200;
+
+    printf("Updated Sensor Value = %d\n", sensor_value);
+
+    return 0;
+}
+
+
+
+Sensor Value = 100
+Updated Sensor Value = 200
+
+
+
+Explanation:
+- volatile int declares a volatile integer variable.
+- The variable's value may change unexpectedly.
+- The compiler must perform the required accesses rather than optimizing them away based on an assumption that the value is unchanged.
+
+volatile int flag = 0;
+
+while (flag == 0)
+{
+    // Wait until flag changes
+}
+
+If an interrupt changes flag to 1, the main program can observe that change.
+
+
+
+const									volatile
+
+Prevents modification through that variable.		Allows the value to change unexpectedly.
+Used for read-only data.				Used for hardware registers and ISR-shared variables.
+Helps prevent accidental modification.			Prevents certain compiler optimizations.
+
+
+
+const volatile unsigned int *status_reg;
+
+const → Your program cannot modify the register value through this pointer.
+volatile → The hardware can change the register value unexpectedly.
+Reading → Your program can read the updated register value whenever it accesses it.
+
