@@ -1,0 +1,2 @@
+Microprocessor (MP)
+Definition: A microprocessor is a programmable electronic chip that contains only the CPU (Central Processing Unit) and requires external components such as RAM, ROM, and I/O peripherals to build a complete computer system.
