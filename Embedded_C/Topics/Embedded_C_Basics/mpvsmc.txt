@@ -1,2 +1,22 @@
 Microprocessor (MP)
 Definition: A microprocessor is a programmable electronic chip that contains only the CPU (Central Processing Unit) and requires external components such as RAM, ROM, and I/O peripherals to build a complete computer system.
+
+
+Examples:
+Intel 8085
+Intel 8086
+Intel Pentium
+ARM Cortex-A series
+
+
+
+Microcontroller (MC)
+Definition: A microcontroller is a programmable integrated circuit that contains a CPU, RAM, ROM/Flash memory, and peripherals such as GPIO, timers, UART, SPI, and I2C on a single chip.
+
+
+Examples:
+8051
+ATmega328P
+STM32F401
+PIC16F877A
+ESP32
