@@ -20,3 +20,21 @@ ATmega328P
 STM32F401
 PIC16F877A
 ESP32
+
+
+
+
+
+
+Microprocessor
+Computers
+Laptops
+Servers
+Smartphones
+
+
+Microcontroller
+Washing machines
+Automotive ECUs
+Medical devices
+Industrial controllers
