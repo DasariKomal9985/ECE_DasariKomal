@@ -2,3 +2,150 @@ CPU Architecture (Central Processing Unit)
 1. Definition
 The CPU (Central Processing Unit) is the main processing unit of a computer or microcontroller. It executes instructions, performs arithmetic and logical operations, and controls the overall operation of the system.
 The CPU consists of several important components that work together to execute instructions.
+
+
+The major components are:
+ALU (Arithmetic Logic Unit)
+Control Unit (CU)
+Registers
+Program Counter (PC)
+Instruction Register (IR)
+Clock
+Internal Buses
+
+
+
+
+Components of CPU
+1. ALU (Arithmetic Logic Unit)
+Definition: ALU is a part of the CPU that performs arithmetic and logical operations.
+Arithmetic operations:
+Addition
+Subtraction
+Multiplication
+Division
+Increment
+Decrement
+Logical operations:
+AND
+OR
+NOT
+XOR
+Comparison
+
+
+
+
+
+Control Unit (CU)
+Definition: The Control Unit is responsible for controlling and coordinating CPU operations by fetching, decoding, and controlling the execution of instructions.
+Its responsibilities:
+Fetch instructions from memory.
+Decode instructions.
+Generate control signals.
+Coordinate ALU, registers and memory operations.
+
+
+
+Registers
+Definition: Registers are small, high-speed storage locations inside the CPU used to temporarily store data, addresses, instructions and intermediate results during program execution.
+Important registers:
+Register Function
+PC Stores address of next instruction
+SP Stores stack address
+IR Holds current instruction
+General Purpose Registers Store temporary data
+Status Register Stores processor flags
+LR Stores return address in ARM
+Example – ARM Cortex-M4:
+R0–R12: General-purpose registers
+R13: Stack Pointer (SP)
+R14: Link Register (LR)
+R15: Program Counter (PC)
+xPSR: Program Status Register
+
+
+
+
+
+
+Program Counter (PC)
+Definition: The Program Counter is a special CPU register that holds the address of the next instruction to be executed.
+Example:
+Suppose instructions are stored at:
+0x08000000
+0x08000004
+0x08000008
+The PC normally advances to the next instruction, but branch instructions can change its value.
+
+
+
+
+
+
+Instruction Register (IR)
+Definition: The Instruction Register temporarily holds the instruction currently being decoded or executed by the CPU.
+
+
+
+
+
+Clock
+Definition: The clock generates periodic timing signals that synchronize CPU operations.
+Clock frequency is measured in Hertz (Hz).
+For example:
+1 MHz = 1 million cycles per second.
+100 MHz = 100 million cycles per second.
+Higher clock frequency does not always mean higher performance because architecture, instructions and memory access also matter.
+
+
+
+
+
+Buses
+Definition: A bus is a communication pathway used to transfer data, addresses and control signals between CPU, memory and peripherals.
+There are three basic types:
+Bus Function
+Data Bus Transfers data
+Address Bus Carries memory addresses
+Control Bus Carries control signals
+Example:
+When the CPU reads data from memory:
+CPU places the memory address on the address bus.
+CPU generates a read control signal.
+Memory sends the requested data through the data bus.
+
+
+
+
+
+
+How does a CPU execute an instruction?
+This is called the Instruction Cycle.
+There are four basic stages:
+Stage Description
+Fetch Fetch instruction from memory
+Decode Understand the instruction
+Execute Perform the required operation
+Store Store the result in a register or memory
+Example:
+int a = 10;
+int b = 20;
+int c = a + b;
+CPU execution conceptually:
+Fetch the ADD instruction.
+Decode the ADD instruction.
+ALU performs 10 + 20.
+Store the result 30 in a register.
+
+
+
+
+
+
+
+
+
+
+
+
