@@ -1,0 +1,4 @@
+CPU Architecture (Central Processing Unit)
+1. Definition
+The CPU (Central Processing Unit) is the main processing unit of a computer or microcontroller. It executes instructions, performs arithmetic and logical operations, and controls the overall operation of the system.
+The CPU consists of several important components that work together to execute instructions.
