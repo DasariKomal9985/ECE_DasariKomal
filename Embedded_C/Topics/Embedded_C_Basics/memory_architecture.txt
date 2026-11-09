@@ -1,0 +1,16 @@
+What is Memory Architecture?
+Definition: Memory architecture describes how memory is organized and used in a computer or microcontroller to store program instructions, data and intermediate results during execution.
+
+A processor needs memory for two major purposes:
+
+Program storage: Stores the firmware instructions.
+Data storage: Stores variables, temporary data, stack, heap and other runtime information.
+
+For embedded systems, the important memory types are:
+
+RAM (Random Access Memory)
+ROM (Read Only Memory)
+SRAM (Static RAM)
+DRAM (Dynamic RAM)
+Flash Memory
+EEPROM (Electrically Erasable Programmable ROM)
