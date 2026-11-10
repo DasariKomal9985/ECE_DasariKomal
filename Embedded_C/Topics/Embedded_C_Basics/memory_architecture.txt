@@ -81,3 +81,39 @@ EEPROM        Electrically erasable and programmable
 
 Important: Modern embedded microcontrollers commonly use Flash memory instead of traditional ROM because Flash can be electrically erased and reprogrammed.
 
+
+
+
+
+
+
+
+
+
+
+
+SRAM (Static RAM)
+Definition: SRAM is a type of volatile RAM that stores each bit using a flip-flop-based circuit and retains data as long as power is supplied, without requiring periodic refreshing.
+
+Characteristics:
+
+Volatile memory.
+Very fast.
+No refresh operation required.
+More expensive per bit.
+Requires more chip area per bit.
+Commonly used as CPU cache and microcontroller working memory.
+
+Example: STM32F401
+
+The STM32F401RB has:
+128 KB Flash memory.
+64 KB SRAM.
+
+When your firmware runs, SRAM is used for:
+
+Global variables.
+Local variables.
+Stack.
+Heap (if dynamically allocated).
+Temporary runtime data.
