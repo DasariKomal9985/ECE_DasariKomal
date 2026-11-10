@@ -17,10 +17,67 @@ EEPROM (Electrically Erasable Programmable ROM)
 
 
 
+
+
+
+
+
+
+
+
+
+RAM (Random Access Memory)
+
 Definition: RAM is a volatile memory that temporarily stores data and instructions required by the processor during program execution. Its contents are lost when power is removed.
+
 Characteristics:
+
 Volatile memory.
 Read and write operations.
 Fast access.
 Used for temporary data storage.
 Data is lost when power is switched OFF.
+
+Example:
+int a = 10;
+int b = 20;
+int c = a + b;
+
+When this program executes, variables and intermediate data are handled using RAM and CPU registers, depending on compiler optimization and variable placement.
+
+Important: RAM is a general category. SRAM and DRAM are two major types of RAM.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ROM (Read Only Memory)
+
+Definition: ROM is a non-volatile memory used to store data or instructions that must be retained even when power is removed.
+
+Characteristics:
+
+Non-volatile memory.
+Retains data without power.
+Traditionally designed for read-only operation.
+Used for permanent firmware or fixed data.
+
+Types of ROM:
+
+Type          Meaning
+Mask ROM      Programmed during manufacturing
+PROM.         Programmable once
+EPROM         Erased using ultraviolet light
+EEPROM        Electrically erasable and programmable
+
+Important: Modern embedded microcontrollers commonly use Flash memory instead of traditional ROM because Flash can be electrically erased and reprogrammed.
+
