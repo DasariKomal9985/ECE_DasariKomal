@@ -117,3 +117,375 @@ Local variables.
 Stack.
 Heap (if dynamically allocated).
 Temporary runtime data.
+
+
+
+
+
+
+
+
+
+
+
+
+DRAM (Dynamic RAM)
+Definition: DRAM is a type of volatile RAM that stores each bit using a capacitor and transistor. Since the capacitor gradually loses its charge, DRAM requires periodic refreshing to retain data.
+
+Characteristics:
+
+Volatile memory.
+Requires periodic refresh.
+Higher storage density than SRAM.
+Generally cheaper per bit.
+Slower and more complex to manage than SRAM.
+Commonly used as main memory in computers.
+
+Example:
+Your laptop might have 8 GB or 16 GB DDR4/DDR5 DRAM.
+DDR4 and DDR5 are types of DRAM.
+
+
+
+
+
+
+
+
+
+Flash Memory
+Definition: Flash memory is a non-volatile memory that stores program instructions and data even when power is switched OFF. It can be electrically erased and reprogrammed.
+
+Characteristics:
+Non-volatile memory.
+Retains data without power.
+Electrically erasable and programmable.
+Used to store embedded firmware.
+Generally slower to write and erase than SRAM.
+Erased in sectors or pages, depending on the device.
+Supports a limited number of erase/program cycles.
+
+Example: STM32F401RB
+Memory Size Purpose
+Flash 128 KB Firmware storage
+SRAM 64 KB Runtime data storage
+
+When you upload your firmware to STM32, it is generally stored in its internal Flash memory.
+
+#include <stdint.h>
+
+int main(void)
+{
+    int a = 10;
+    int b = 20;
+    int c = a + b;
+
+    while (1)
+    {
+    }
+}
+
+The compiled machine instructions are stored in Flash. The runtime variables may be stored in SRAM or registers, depending on their scope and compiler optimization.
+
+
+
+
+
+
+
+
+
+
+
+Therefore, SRAM is used for frequently changing runtime data.
+
+Remember this simple concept:
+
+Flash
+Firmware
+Permanent program storage
+
+SRAM
+Runtime
+Temporary working memory
+
+
+
+
+
+
+
+What is Flashing?
+Definition: Flashing is the process of programming firmware or other data into the non-volatile Flash memory of a microcontroller or embedded device.
+
+Step-by-step process:
+
+Writing: You write C source code.
+Compilation: Compiler converts C code into machine instructions.
+Linking: Linker combines object files and libraries and assigns memory addresses.
+Generating firmware: An ELF file is generated; commonly a HEX or BIN file is also produced.
+Flashing: ST-Link sends the firmware to STM32 Flash memory.
+Execution: After reset, the processor starts executing the firmware through its reset vector.
+
+
+
+Source Code
+main.c
+Compiler + Linker
+Machine code and memory layout
+Firmware File
+.elf / .hex / .bin
+ST-Link Programmer
+Transfers firmware through SWD
+STM32 Flash Memory
+Firmware stored permanently
+CPU Executes Firmware
+Instructions execute after reset
+
+
+#include <stdint.h>
+
+int global_var = 100;
+
+const int fixed_value = 200;
+
+int uninitialized_var;
+
+int main(void)
+{
+    int local_var = 10;
+
+    static int count = 5;
+
+    while (1)
+    {
+        local_var++;
+        count++;
+    }
+}
+
+Section Contains Typical location
+.text Executable instructions Flash
+.rodata Read-only constants and string literals Flash
+.data Initialized global/static variables SRAM at runtime
+.bss Uninitialized/zero-initialized global/static variables SRAM
+Heap Dynamic memory allocation SRAM
+Stack Local variables, function calls, return addresses SRAM
+
+
+There is an important detail here.
+The initialized .data section has two locations:
+Its initial values are stored in Flash.
+At startup, those initial values are copied into SRAM.
+Similarly, the .bss section occupies SRAM and is initialized to zero during startup.
+
+
+Power is supplied to the microcontroller.
+CPU performs reset.
+CPU reads the initial Stack Pointer value and Reset Handler address from the vector table.
+Startup code executes.
+Initialized global/static variables (.data) are copied from Flash to SRAM.
+Uninitialized global/static variables (.bss) are initialized to zero.
+System initialization happens.
+main() is called.
+Your application executes.
+
+
+Important: The CPU does not normally copy the entire program from Flash into SRAM. On a typical STM32 Cortex-M4, it executes instructions directly from Flash using the memory-mapped Flash interface.
+This is called Execute In Place (XIP).
+
+
+1. Cache Memory
+Very fast memory that stores frequently accessed instructions or data to reduce access time. Common in application processors; some Cortex-M processors also have caches.
+2. CPU Registers
+Very small, very fast storage locations inside the CPU. Used for operands, addresses, intermediate results and processor state.
+3. Memory-mapped I/O
+Peripheral registers are assigned specific memory addresses, allowing the CPU to control GPIO, UART, SPI, timers and other peripherals through memory reads and writes.
+4. Stack Memory
+Stores local variables, function call information, return addresses and saved registers.
+5. Heap Memory
+Used for dynamic memory allocation using functions such as malloc() and free().
+6. OTP Memory
+One-Time Programmable memory. Once programmed, its contents cannot normally be changed.
+7. Backup SRAM
+A special SRAM region available on some microcontrollers that can retain its contents during certain low-power conditions if the backup power domain remains powered.
+
+
+
+
+Concept Remember
+RAM Volatile working memory
+ROM Non-volatile read-only memory family
+SRAM Fast RAM, no refresh required
+DRAM RAM requiring periodic refresh
+Flash Non-volatile firmware storage
+EEPROM Non-volatile configuration/data storage
+Flashing Programming firmware into Flash
+.text Program instructions
+.rodata Read-only data
+.data Initialized global/static variables
+.bss Zero-initialized global/static variables
+Stack Function calls and local runtime data
+Heap Dynamic memory allocation
+
+
+
+
+
+Memory Volatile? Main purpose
+Registers Yes CPU operations
+Cache Yes Fast access to frequently used data
+SRAM Yes Temporary runtime data
+DRAM Yes Large working memory
+ROM No Permanent instructions/data
+NOR Flash No Firmware and code storage
+NAND Flash No Large data storage
+EEPROM No Configuration data
+eMMC No Operating system and file storage
+SD Card No Removable storage
+OTP No Permanent identification/configuration
+
+
+
+
+An important distinction:
+Volatile memory: Loses its contents when power is removed.
+Non-volatile memory: Retains its contents without power.
+
+
+Flash Memory – NOR vs NAND
+Flash memory has two major architectures.
+A. NOR Flash
+Definition: NOR Flash is non-volatile memory that supports random access to stored data and is commonly used for storing executable firmware.
+Characteristics:
+Non-volatile.
+Supports random reads.
+Suitable for executing code directly (XIP).
+Erasing is performed in sectors.
+Commonly used for boot firmware and microcontroller program storage.
+Examples:
+STM32 internal Flash.
+External QSPI NOR Flash.
+SPI NOR Flash.
+
+
+
+NAND Flash
+Definition: NAND Flash is non-volatile memory designed for high-density data storage, commonly used in SSDs, eMMC, USB drives and memory cards.
+Characteristics:
+Non-volatile.
+High storage density.
+Lower cost per bit at high capacities.
+Read/write operations happen in pages.
+Erasing happens in blocks.
+Requires management of bad blocks and error correction.
+
+
+
+
+. What is eMMC?
+Definition: eMMC (Embedded MultiMediaCard) is a non-volatile storage device that combines NAND Flash memory and a dedicated Flash Memory Controller in a single package.
+
+In simple words:
+eMMC = NAND Flash + Flash Controller.
+The controller manages:
+Bad block management.
+Wear leveling.
+Error correction (ECC).
+Logical-to-physical address translation.
+Flash management.
+
+Why do we need eMMC?
+Consider an embedded Linux board.
+It needs to store:
+Bootloader.
+Linux kernel.
+Device tree.
+Root filesystem.
+Applications.
+Configuration files.
+User data.
+
+
+SRAM is too small and volatile for this purpose.
+eMMC provides persistent storage for all these components.
+How does eMMC work?
+The processor communicates with eMMC using the MMC protocol, commonly through an SD/MMC host controller.
+The operating system accesses the storage as a block device.
+
+lsblk
+
+NAME        SIZE TYPE MOUNTPOINTS
+mmcblk0     16G  disk
+├─mmcblk0p1 128M part /boot
+└─mmcblk0p2  15G part /
+
+
+
+
+Here:
+mmcblk0 = eMMC or SD/MMC block device.
+mmcblk0p1 = First partition.
+mmcblk0p2 = Second partition.
+Note: mmcblk0 does not automatically mean eMMC. It can also be an SD card. You need to identify the actual hardware.
+
+
+What happens when you power ON BeagleBone?
+A simplified boot sequence:
+ROM boot code executes inside the processor.
+Bootloader is loaded from a boot source, such as eMMC or microSD.
+Bootloader initializes DDR memory.
+Linux kernel is loaded into DDR RAM.
+Kernel initializes hardware and drivers.
+Root filesystem is mounted from eMMC or SD card.
+Linux starts systemd or another init system.
+Applications start executing.
+
+
+
+Where is the code stored?
+Component Storage
+Boot ROM Internal processor ROM
+U-Boot eMMC or microSD
+Linux kernel eMMC or microSD
+Device Tree Blob (DTB) eMMC or microSD
+Root filesystem eMMC or microSD
+Running applications Stored on eMMC/SD; loaded into RAM
+Runtime variables DDR RAM
+Process stack DDR RAM
+Process heap DDR RAM
+
+
+
+
+What is a Linker Script?
+This is especially important for embedded firmware development.
+Definition: A linker script defines how program sections are placed into the available memory regions of an embedded system.
+For example:
+This tells the linker:
+Program code belongs in Flash.
+Runtime writable data belongs in SRAM.
+Memory regions have specified start addresses and sizes.
+
+
+Common linker sections:
+Section Purpose
+.isr_vector Interrupt vector table
+.text Executable code
+.rodata Read-only constants
+.data Initialized writable variables
+.bss Zero-initialized variables
+Heap Dynamic allocation
+Stack Function execution
+In STM32CubeIDE, you will commonly find a .ld linker script in the project.
+
+
+Command Purpose
+free -h Shows RAM usage
+cat /proc/meminfo Detailed memory information
+lsblk Lists storage devices
+df -h Shows filesystem storage usage
+ls /dev/mmcblk* Shows MMC block-device entries
+dmesg Displays kernel messages
+cat /proc/iomem Shows physical memory resource ranges
+cat /proc/cpuinfo Displays CPU information
