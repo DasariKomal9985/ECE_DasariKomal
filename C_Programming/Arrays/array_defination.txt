@@ -1,0 +1,81 @@
+Arrays in C
+1. Definition
+An array is a derived data type in C that allows storing multiple elements of the same data type under a single variable name, where all elements are stored in contiguous memory locations and accessed using index numbers starting from 0.
+
+
+
+
+
+2. Syntax
+data_type array_name[size];
+
+
+Example:
+int arr[5];
+
+
+
+
+
+3. Example
+int arr[5] = {10, 20, 30, 40, 50};
+
+
+Here:
+
+Term					Meaning
+int				Data type of array elements.
+arr				Array name.
+5				Number of elements (size).
+10, 20, 30, 40, 50		Array elements.
+0, 1, 2, 3, 4			Index positions.
+
+
+
+
+
+4. Program
+#include <stdio.h>
+
+int main(void)
+{
+    int arr[5] = {10, 20, 30, 40, 50};
+
+    for (int i = 0; i < 5; i++)
+    {
+        printf("arr[%d] = %d\n", i, arr[i]);
+    }
+
+    return 0;
+}
+
+
+Output
+arr[0] = 10
+arr[1] = 20
+arr[2] = 30
+arr[3] = 40
+arr[4] = 50
+
+
+
+
+
+5. Important Points
+- Array stores multiple elements of the same data type.
+- Elements are stored in contiguous memory locations.
+- Array indexing starts from 0.
+- Last index is size - 1.
+- Array elements are accessed using the index operator [].
+- A fixed-size array cannot be resized after declaration.
+- Array size in bytes = number of elements × sizeof(data type).
+
+
+
+
+
+
+6. Types of Arrays
+1. One-dimensional array (1D).
+2. Two-dimensional array (2D).
+3. Multidimensional array.
