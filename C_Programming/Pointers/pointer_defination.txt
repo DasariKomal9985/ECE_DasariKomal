@@ -1,0 +1,88 @@
+Pointers in C
+1. Definition
+A pointer is a variable in C that stores the memory address of another variable and allows accessing or modifying the value stored at that memory location using the dereference operator (*)
+
+
+2. Syntax
+data_type *pointer_name;
+
+
+
+
+3. Example
+int a = 10;
+int *ptr = &a;
+
+
+Term	Meaning
+int	Data type of the variable being pointed to.
+a	Normal integer variable.
+10	Value stored in a.
+ptr	Pointer variable.
+*	Used to declare a pointer or dereference it.
+&	Address-of operator, used to obtain a variable's memory address.
+&a	Memory address of variable a.
+*ptr	Value stored at the address pointed to by ptr.
+
+
+
+
+4. Program
+#include <stdio.h>
+
+int main(void)
+{
+    int a = 10;
+    int *ptr = &a;
+
+    printf("Value of a = %d\n", a);
+    printf("Address of a = %p\n", (void *)&a);
+    printf("Value of ptr = %p\n", (void *)ptr);
+    printf("Value of *ptr = %d\n", *ptr);
+
+    *ptr = 20;
+
+    printf("Updated value of a = %d\n", a);
+
+    return 0;
+}
+
+
+
+
+
+5. Output
+Value of a = 10
+Address of a = 0x7ffd1234
+Value of ptr = 0x7ffd1234
+Value of *ptr = 10
+Updated value of a = 20
+
+
+The memory address shown is only an example. Actual addresses vary between executions.
+
+
+
+
+6. Important Points
+- A pointer stores the memory address of another variable.
+- & is used to obtain the address of a variable.
+- * is used to access the value at the address stored in a pointer.
+- A pointer can modify the original variable through dereferencing.
+- Pointer arithmetic depends on the size of the pointed-to data type.
+- A null pointer does not point to a valid object and must not be dereferenced.
+- Pointers are widely used in arrays, strings, functions, dynamic memory allocation, structures, and embedded programming.
+
+
+
+
+
+7. Types of Pointers
+1. Null pointer
+2. Void pointer
+3. Wild pointer (informal term for an uninitialized pointer)
+4. Dangling pointer
+5. Function pointer
+6. Pointer to pointer (double pointer)
+7. Constant pointer
+8. Pointer to constant.
