@@ -204,3 +204,19 @@ global_uninit = 0
 Initialized variables Uninitialized or zero-initialized variables
 Initial values stored in Flash No initial-value copy needed
 Runtime storage in SRAM Runtime storage in SRAM
+
+
+
+
+Variable / Section Where stored? Example
+Function instructions Flash .text main()
+String literals Usually Flash .rodata "Hello"
+Constant global Usually Flash .rodata const int x=10
+Initialized global SRAM .data int x=10
+Uninitialized global SRAM .bss int x
+Initialized static SRAM .data static int x=10
+Uninitialized static SRAM .bss static int x
+Local variable Usually Stack int a=10
+Dynamic memory Heap malloc()
+Pointer to heap Usually Stack if local int *ptr
+CPU working data Registers R0, R1, etc.
