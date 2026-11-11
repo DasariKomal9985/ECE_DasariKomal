@@ -1,0 +1,95 @@
+A structure is a user-defined data type in C that allows storing different data types such as int, char, and float at the same time, where each member has its own separate memory location.
+
+
+
+struct StructureName
+{
+    data_type member1;
+    data_type member2;
+    data_type member3;
+};
+
+
+
+
+
+struct Student
+{
+    int roll;
+    char name[20];
+    float marks;
+};
+
+
+
+
+
+Explanation of terms:
+Term Meaning
+struct Keyword used to define a structure.
+Student Structure tag (name given to the structure).
+int, char, float Data types of the members.
+roll, name, marks Structure members.
+struct Student Structure type.
+s Structure variable.
+
+
+
+
+Structure Variable Declaration
+There are two ways to declare structure variables.
+Method 1: After structure definition
+struct Student
+{
+    int roll;
+    char name[20];
+    float marks;
+};
+
+struct Student s1;
+Method 2: During structure definition
+struct Student
+{
+    int roll;
+    char name[20];
+    float marks;
+} s1;
+Both methods declare a structure variable named s1.
+
+
+
+
+
+
+
+Accessing Structure Members
+We can access structure members using two operators:
+
+A. Dot operator (.)
+Used to access structure members through a structure variable.
+Syntax:
+structure_variable.member_name;
+Example:
+s1.roll = 101;
+s1.marks = 85.5;
+
+B. Arrow operator (->)
+Used to access structure members through a pointer to a structure.
+Syntax:
+pointer_variable->member_name;
+Example:
+struct Student *ptr = &s1;
+ptr->roll = 101;
+ptr->marks = 85.5;
+
+
+
+
+
+
+
+Each structure member has its own storage.
+All members can hold values simultaneously.
+Structure members can have different data types.
+Structure members are accessed using . or ->.
+Structure memory may include padding bytes for alignment. 🔧
