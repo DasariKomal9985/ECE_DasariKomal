@@ -1,0 +1,151 @@
+Definition
+Bit fields are a feature in C structures that allow specifying the number of bits allocated to individual structure members instead of allocating the normal size of their data types. They are used to store and access individual bits or groups of bits efficiently.
+
+
+Syntax
+struct StructureName
+{
+    data_type member_name : number_of_bits;
+};
+
+
+
+3. Example
+struct Status
+{
+    unsigned int power : 1;
+    unsigned int mode  : 2;
+    unsigned int error : 1;
+};
+
+
+Explanation:
+Term Meaning
+struct Keyword used to define a structure.
+Status Structure tag name.
+unsigned int Data type of bit-field members.
+power Member allocated 1 bit.
+mode Member allocated 2 bits.
+error Member allocated 1 bit.
+: 1 Specifies a width of 1 bit.
+: 2 Specifies a width of 2 bits.
+
+
+
+
+
+#include <stdio.h>
+
+struct Status
+{
+    unsigned int power : 1;
+    unsigned int mode  : 2;
+    unsigned int error : 1;
+};
+
+int main(void)
+{
+    struct Status s;
+
+    s.power = 1;
+    s.mode = 2;
+    s.error = 0;
+
+    printf("Power = %u\n", s.power);
+    printf("Mode  = %u\n", s.mode);
+    printf("Error = %u\n", s.error);
+
+    return 0;
+}
+
+
+
+Power = 1
+Mode  = 2
+Error = 0
+
+
+Important Points
+Bit fields are declared inside structures.
+The colon (:) specifies the number of bits allocated to a member.
+Bit fields help represent small values using fewer bits.
+An unsigned 1-bit field can represent 0 or 1.
+An unsigned 2-bit field can represent 0 to 3.
+You cannot take the address of an individual bit-field member using &.
+Actual memory layout, bit ordering and padding depend on the compiler and target architecture.
+
+
+
+
+
+6. Applications in Embedded C
+Hardware register representation.
+Control and status flags.
+Device configuration.
+Protocol fields.
+Memory-efficient data representation.
+
+
+
+
+
+
+
+Before using bit fields (Normal structure)
+Suppose you want to store three status values:
+Power: ON/OFF
+Mode: 0 to 3
+Error: ON/OFF
+
+
+
+1.) 
+
+Without bit fields:
+struct Status
+{
+    unsigned int power;
+    unsigned int mode;
+    unsigned int error;
+};
+If unsigned int is 4 bytes:
+Member Memory
+power 4 bytes
+mode 4 bytes
+error 4 bytes
+Total 12 bytes
+Here, even though power and error need only two possible values, each member occupies a full unsigned int.
+
+
+
+2. After using bit fields
+struct Status
+{
+    unsigned int power : 1;
+    unsigned int mode  : 2;
+    unsigned int error : 1;
+};
+
+
+
+
+
+Member Bits required
+power 1 bit
+mode 2 bits
+error 1 bit
+Total 4 bits
+Now only 4 bits are requested for these three members.
+The actual structure size is implementation-dependent. The compiler may allocate a larger storage unit and add padding, so the structure is not necessarily just 4 bits in memory.
+
+
+
+
+
+What is the condition for using bit fields?
+Before declaring a bit field, you should consider:
+Bit fields are declared inside a structure or union.
+The member must have an eligible integer type, such as unsigned int, signed int, or _Bool (implementation-supported integer types may also be accepted).
+The bit width must be a non-negative integer constant expression.
+The width cannot exceed the width of the declared type.
+Individual bit-field members cannot have their addresses taken using &.
