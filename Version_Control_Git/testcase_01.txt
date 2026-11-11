@@ -1,0 +1,135 @@
+
+
+
+1. Install Git on the new Ubuntu PC
+Open the terminal:
+sudo apt update
+sudo apt install git -y
+Check the installation:
+git --version
+
+
+
+
+2. Configure your Git identity
+Run these commands:
+git config --global user.name "Dasari Komal"
+git config --global user.email "YOUR_GITHUB_EMAIL"
+Replace YOUR_GITHUB_EMAIL with the email associated with your GitHub account.
+Check configuration:
+git config --global --list
+
+
+
+3. Connect Ubuntu to GitHub using SSH
+SSH is a convenient way to authenticate Git operations without repeatedly entering credentials.
+
+Generate an SSH key:
+ssh-keygen -t ed25519 -C "YOUR_GITHUB_EMAIL"
+
+
+Press Enter to accept the default file location. You can set a passphrase or leave it empty.
+
+Start the SSH agent:
+eval "$(ssh-agent -s)"
+
+
+Add your key:
+ssh-add ~/.ssh/id_ed25519
+
+
+Display your public key:
+cat ~/.ssh/id_ed25519.pub
+
+
+Copy the complete output, then visit:
+GitHub → Add new SSH keyGive it a title such as Ubuntu New PC, paste the key, and save it.
+
+Test the connection:
+ssh -T git@github.com
+
+You should see a message confirming successful authentication.
+
+
+
+
+4. Download your existing repositories
+Create a folder for your projects:
+mkdir -p ~/Documents/VScode
+cd ~/Documents/VScode
+
+
+
+
+5. Daily Git commands: add, commit and push
+Whenever you create or modify code, go inside the repository:
+cd ~/Documents/VScode/ECE_DasariKomal
+
+
+Then follow this workflow:
+git status
+git add .
+git commit -m "Add new programs"
+git push origin main
+
+
+
+Command	Purpose
+git status	Check modified and new files
+git add .	Stage all changes
+git commit -m "message"	Save changes in local Git history
+git push origin main	Upload commits to GitHub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Download latest changes from GitHub
+git pull origin main
+
+# Check remote repository
+git remote -v
+
+# Check current branch
+git branch
+
+# View commit history
+git log --oneline
+
+# Create a new branch
+git branch new-feature
+
+# Switch branch
+git switch new-feature
+
+# Switch back to main
+git switch main
+
+# Delete a local branch
+git branch -d new-feature
+
+
+
+
+
+Git daily workflow
+1. Get the latest code
+   git pull origin main
+2. Modify or create your C files
+3. Check changes
+   git status
+4. Add all changes
+   git add .
+5. Commit changes
+   git commit -m "Your message"
+6. Push to GitHub
+   git push origin main
