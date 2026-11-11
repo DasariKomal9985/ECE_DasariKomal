@@ -32,3 +32,69 @@ STACK (SRAM)
 | return information   |
 +----------------------+
 
+
+
+Actual variable placement can differ because the compiler may use CPU registers or optimize variables away.
+Important: Stack memory is automatically managed as functions are called and returned. It is not manually allocated using malloc().
+
+
+Heap – Dynamic Memory Allocation
+Definition: Heap is a memory region used for allocating memory dynamically during program execution.
+
+From our code:
+int *ptr = malloc(sizeof(int));
+Here, two things happen:
+ptr is a local pointer variable. It is typically stored on the stack.
+malloc() allocates space for an integer from the heap.
+Then:
+*ptr = 500;
+The value 500 is stored in the dynamically allocated heap memory.
+
+Finally:
+free(ptr);
+The allocated memory is released for reuse.
+Conceptually:
+STACK (SRAM)             HEAP (SRAM)
+
++-------------+          +-------------+
+| ptr         |--------->| Value = 500 |
++-------------+          +-------------+Stack Heap
+Automatic memory management Manual allocation/release
+Local variables Dynamic variables
+Function calls malloc/calloc/realloc
+Released when function returns Released using free()
+
+
+
+
+
+
+
+Complete Memory Layout
+
+Now combine everything.
+STM32 memory layout
+
+
+FLASH
+.text
+main(), my_function(), executable instructions
+.rodata
+constant_var, string literals
+.data initial values
+Initial values for global/static variables
+.isr_vector
+Interrupt vector table
+Startup copies .data and initializes .bss
+
+
+SRAM
+.data
+global_init, static_global, count
+.bss
+global_uninit
+Heap
+malloc() allocated memory
+Stack
+local variables, function calls, saved registers
+Important difference:
