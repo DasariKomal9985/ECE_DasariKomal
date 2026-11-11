@@ -1,0 +1,34 @@
+ Stack – Local Variables
+Definition: The stack is a memory region used for function calls, local variables, return addresses and saved registers.
+
+From our code:
+int main(void)
+{
+    int a = 10;
+    int b = 20;
+}
+And:
+void my_function(void)
+{
+    int local_var = 10;
+}
+These are automatic local variables.
+Where are they stored?
+When main() executes, its function stack frame may contain a and b.
+When my_function() is called, another stack frame is created for its execution.
+
+When the function returns, its stack frame is released.
+Conceptually:
+STACK (SRAM)
+
++----------------------+
+| my_function() frame  |
+| local_var            |
+| saved registers      |
++----------------------+
+| main() frame         |
+| a                    |
+| b                    |
+| return information   |
++----------------------+
+
