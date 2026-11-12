@@ -1,0 +1,89 @@
+Definition
+A nested structure is a structure in C that contains another structure as one of its members, allowing us to store and access related information using multiple levels of structure members.
+
+
+
+Syntax
+struct Structure1
+{
+    data_type member1;
+
+    struct Structure2
+    {
+        data_type member2;
+    } variable2;
+};
+
+Example
+struct Address
+{
+    char city[20];
+    int pincode;
+};
+
+struct Student
+{
+    int roll;
+    char name[20];
+    struct Address addr;
+};
+
+
+Explanation of terms:
+Term Meaning
+struct Keyword used to define a structure.
+Address Inner structure tag.
+Student Outer structure tag.
+addr Inner structure variable and member of Student.
+roll, name Members of the outer structure.
+city, pincode Members of the inner structure.
+
+
+
+Accessing Nested Structure Members
+Use the dot (.) operator repeatedly to access inner structure members.
+Here:
+s → Outer structure variable.
+addr → Inner structure member.
+city and pincode → Inner structure members.
+
+
+#include <stdio.h>
+
+struct Address
+{
+    char city[20];
+    int pincode;
+};
+
+struct Student
+{
+    int roll;
+    char name[20];
+    struct Address addr;
+};
+
+int main(void)
+{
+    struct Student s = {101, "Komal", {"Chennai", 600001}};
+
+    printf("Roll     = %d\n", s.roll);
+    printf("Name     = %s\n", s.name);
+    printf("City     = %s\n", s.addr.city);
+    printf("Pincode  = %d\n", s.addr.pincode);
+
+    return 0;
+}
+
+
+Roll     = 101
+Name     = Komal
+City     = Chennai
+Pincode  = 600001
+
+Important Points
+A structure can contain another structure as a member.
+The inner structure has its own members.
+Nested structure members are accessed using multiple dot operators.
+Nested structures can also be accessed using structure pointers and the arrow (->) operator.
+They are useful for organizing related information such as student details, employee details, addresses, and device configurations. 🔧
