@@ -1,0 +1,22 @@
+Definition
+File operations in C are used to create, open, read, write, append, and close files to store and retrieve data permanently in secondary storage.
+
+
+
+2. File Handling Functions
+Function Purpose
+fopen() Opens or creates a file.
+fclose() Closes an opened file.
+fprintf() Writes formatted data into a file.
+fscanf() Reads formatted data from a file.
+fputc() Writes a single character into a file.
+fgetc() Reads a single character from a file.
+fputs() Writes a string into a file.
+fgets() Reads a string from a file.
+fwrite() Writes binary data into a file.
+fread() Reads binary data from a file.
+fseek() Moves the file position indicator.
+ftell() Returns the current file position.
+rewind() Moves the file position to the beginning.
+remove() Deletes a file.
+rename() Renames a file.
