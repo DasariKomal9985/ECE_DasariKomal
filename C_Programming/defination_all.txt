@@ -1,0 +1,8 @@
+Function Pointer in C
+1. Definition
+A function pointer is a pointer variable that stores the address of a function and allows calling that function through the pointer.
+
+
+
+
+
