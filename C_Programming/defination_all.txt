@@ -3,6 +3,342 @@ Function Pointer in C
 A function pointer is a pointer variable that stores the address of a function and allows calling that function through the pointer.
 
 
+return_type (*pointer_name)(parameter_list);
+
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int (*ptr)(int, int) = add;
+
+
+
+
+Term Meaning
+int Return type of the function.
+(*ptr) Declares ptr as a function pointer.
+(int, int) Function parameter types.
+add Function name.
+= add Stores the function address in the pointer.
+
+
+
+
+#include <stdio.h>
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int main(void)
+{
+    int (*ptr)(int, int);
+
+    ptr = add;
+
+    printf("Sum = %d\n", ptr(10, 20));
+
+    return 0;
+}
+
+
+
+Sum = 30
+
+
+
+How It Works
+add() is a normal function that accepts two integers.
+ptr is declared as a function pointer.
+ptr = add; stores the address of the add() function.
+ptr(10, 20) calls the add() function through the pointer.
+The function returns 30.
+
+
+
+
+ Important Points
+A function pointer stores the address of a function.
+Its declaration must match the function's return type and parameter types.
+A function pointer can call a function indirectly.
+Function pointers can be passed as arguments to other functions.
+Function pointers can be stored in arrays.
+typedef can simplify function pointer declarations.
+
+
+Applications in Embedded C
+Interrupt callback functions.
+Hardware driver callbacks.
+Event handling.
+State machines.
+Function selection at runtime.
+RTOS callback mechanisms.
+
+
+
+
+
+
+Difference Between Normal Function and Function Pointer in C
+1. Normal Function
+A normal function is a block of code that performs a specific task and is called directly using its function name.
+2. Function Pointer
+A function pointer is a pointer variable that stores the address of a function and allows calling that function indirectly through the pointer.
+
+
+
+
+#include <stdio.h>
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int main(void)
+{
+    printf("Sum = %d\n", add(10, 20));
+
+    return 0;
+}
+
+
+
+
+#include <stdio.h>
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int main(void)
+{
+    int (*ptr)(int, int);
+
+    ptr = add;
+
+    printf("Sum = %d\n", ptr(10, 20));
+
+    return 0;
+}
+
+
+
+
+Sum = 30
+
+add(10, 20);     // Direct function call
+
+ptr = add;       // Store function address
+
+ptr(10, 20);     // Function call through pointer
+
+
+
+
+#include <stdio.h>
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int sub(int a, int b)
+{
+    return a - b;
+}
+
+int mul(int a, int b)
+{
+    return a * b;
+}
+
+float div(int a, int b)
+{
+    return (float)a / b;
+}
+
+int main(void)
+{
+    int a, b, choice;
+
+    printf("Enter two numbers: ");
+    scanf("%d %d", &a, &b);
+
+    printf("\n1. Addition");
+    printf("\n2. Subtraction");
+    printf("\n3. Multiplication");
+    printf("\n4. Division");
+
+    printf("\nEnter choice: ");
+    scanf("%d", &choice);
+
+    switch(choice)
+    {
+        case 1:
+            printf("Result = %d\n", add(a, b));
+            break;
+
+        case 2:
+            printf("Result = %d\n", sub(a, b));
+            break;
+
+        case 3:
+            printf("Result = %d\n", mul(a, b));
+            break;
+
+        case 4:
+            if(b != 0)
+                printf("Result = %.2f\n", div(a, b));
+            else
+                printf("Division by zero not allowed\n");
+            break;
+
+        default:
+            printf("Invalid choice\n");
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+#include <stdio.h>
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int sub(int a, int b)
+{
+    return a - b;
+}
+
+int mul(int a, int b)
+{
+    return a * b;
+}
+
+float divide(int a, int b)
+{
+    return (float)a / b;
+}
+
+int main(void)
+{
+    int a, b, choice;
+
+    int (*ptr)(int, int);
+
+    printf("Enter two numbers: ");
+    scanf("%d %d", &a, &b);
+
+    printf("\n1. Addition");
+    printf("\n2. Subtraction");
+    printf("\n3. Multiplication");
+    printf("\n4. Division");
+
+    printf("\nEnter choice: ");
+    scanf("%d", &choice);
+
+    switch(choice)
+    {
+        case 1:
+            ptr = add;
+            printf("Result = %d\n", ptr(a, b));
+            break;
+
+        case 2:
+            ptr = sub;
+            printf("Result = %d\n", ptr(a, b));
+            break;
+
+        case 3:
+            ptr = mul;
+            printf("Result = %d\n", ptr(a, b));
+            break;
+
+        case 4:
+            if(b != 0)
+                printf("Result = %.2f\n", divide(a, b));
+            else
+                printf("Division by zero not allowed\n");
+            break;
+
+        default:
+            printf("Invalid choice\n");
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+. Main Difference
+Normal function Function pointer
+add(a, b) ptr = add;
+sub(a, b) ptr = sub;
+mul(a, b) ptr = mul;
+Direct function call. Function address assigned and called indirectly.
+
+
+Function pointers are especially useful when you want to select different functions dynamically, such as callback functions, driver operations and event handling. 🔧
+
+
+
+#include <stdio.h>
+
+void led_on(void)
+{
+    printf("LED ON\n");
+}
+
+void led_off(void)
+{
+    printf("LED OFF\n");
+}
+
+int main(void)
+{
+    void (*ptr)(void);
+
+    ptr = led_on;
+    ptr();
+
+    ptr = led_off;
+    ptr();
+
+    return 0;
+}
+
+
+Here:
+ptr is a function pointer.
+ptr = led_on selects the LED ON function.
+ptr() executes that function.
+ptr = led_off selects the LED OFF function.
+ptr() executes the LED OFF function.
+
+
+Remember this difference
+Normal function
+led_on();
+Directly calls the function
+Function pointer
+ptr = led_on;
+ptr();
+Stores its address and calls it indirectly
 
 
 
