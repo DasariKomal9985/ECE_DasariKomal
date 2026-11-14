@@ -342,3 +342,44 @@ Stores its address and calls it indirectly
 
 
 
+
+
+
+How does it work?
+Step 1: Function definition
+void uart_callback(void)
+{
+    printf("UART Data Received\n");
+}
+A function named uart_callback exists.
+Step 2: Pass the function
+uart_receive(uart_callback);
+Function address is passed
+Step 3: Receive the address
+void uart_receive(void (*callback)(void))
+The parameter callback receives the address of uart_callback.
+Step 4: Execute the function
+callback();
+Calls uart_callback()
+
+
+
+
+
+Are both names connected?
+Yes! Think of it this way:
+uart_receive(uart_callback);
+is equivalent in effect to:
+void (*callback)(void) = uart_callback;
+The name callback is simply the parameter name. It points to the function named uart_callback.
+You could even change the parameter name:
+void uart_receive(void (*my_function)(void))
+{
+    my_function();
+}
+And call it exactly the same way:
+uart_receive(uart_callback);
+The output remains:
+Receiving UART Data...
+UART Data Received
+
