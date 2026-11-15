@@ -1,0 +1,70 @@
+Callback Function in C
+1. Definition
+A callback function is a function that is passed as an argument to another function using a function pointer and is executed by that function when a specific condition or event occurs.
+
+
+
+void callback(void)
+{
+    // Callback code
+}
+
+void main_function(void (*ptr)(void))
+{
+    ptr();
+}
+
+
+
+#include <stdio.h>
+
+void callback(void)
+{
+    printf("Callback function executed\n");
+}
+
+void process(void (*ptr)(void))
+{
+    printf("Processing...\n");
+
+    ptr();
+}
+
+int main(void)
+{
+    process(callback);
+
+    return 0;
+}
+
+
+
+Processing...
+Callback function executed
+
+
+
+How It Works
+callback() is the actual function.
+process() accepts a function pointer as an argument.
+process(callback) passes the address of the callback function.
+ptr receives that function address.
+ptr() executes the callback function.
+
+
+
+
+Applications in Embedded C
+UART data reception callbacks.
+SPI and I2C communication completion callbacks.
+ADC conversion completion callbacks.
+DMA transfer completion callbacks.
+Timer event callbacks.
+Interrupt-related event handling.
+
+
+
+
+Function pointer → Stores the address of a function.
+Callback function → A function passed to another function and called by it when required.
+In simple words: A callback allows one function to execute another function when a particular event or condition occurs. 🔧
