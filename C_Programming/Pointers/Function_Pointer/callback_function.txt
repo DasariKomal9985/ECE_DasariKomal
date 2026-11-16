@@ -68,3 +68,27 @@ Interrupt-related event handling.
 Function pointer → Stores the address of a function.
 Callback function → A function passed to another function and called by it when required.
 In simple words: A callback allows one function to execute another function when a particular event or condition occurs. 🔧
+
+
+
+
+
+
+How Callback Works
+1. Define callback function
+void display(void)
+2. Pass function address
+process(display)
+3. Receive function pointer
+void (*callback)(void)
+4. Execute callback
+callback()Peripheral Callback example
+
+
+
+UART Data reception complete
+SPI Data transfer complete
+I2C Communication complete
+ADC Conversion complete
+DMA Transfer complete
+Timer Timer period elapsed
