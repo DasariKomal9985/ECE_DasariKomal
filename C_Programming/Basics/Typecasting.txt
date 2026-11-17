@@ -103,3 +103,15 @@ Voltage = 1.65 V
 Remember:
 Implicit → Compiler converts automatically.
 Explicit → Programmer converts manually using (data_type). 🔧
+
+
+
+Implicit Type Conversion Hierarchy in C.
+char / short
+int
+unsigned int
+long
+unsigned long
+float
+double
+long double
