@@ -1,0 +1,176 @@
+GDB (GNU Debugger)
+1. Definition
+GDB (GNU Debugger) is a debugging tool used to execute a program step by step, identify errors, inspect variables, examine memory, analyze program execution, and find the cause of runtime problems.
+
+
+
+2. What is Debugging?
+Debugging: Debugging is the process of identifying, analyzing, and fixing errors (bugs) in a program.
+
+
+
+3. Why Do We Use GDB?
+To identify runtime errors.
+To execute programs line by line.
+To check variable values.
+To inspect memory addresses.
+To analyze function calls.
+To debug segmentation faults.
+To find the location where a program crashes.
+
+
+
+4. How to Compile a C Program for GDB
+First, create a C program:
+#include <stdio.h>
+
+int main(void)
+{
+    int a = 10;
+    int b = 20;
+    int sum = a + b;
+
+    printf("Sum = %d\n", sum);
+
+    return 0;
+}
+Compile with debugging information:
+gcc -g program.c -o program
+
+Here:
+gcc – GCC compiler.
+-g – Generates debugging information.
+program.c – C source file.
+-o program – Generates executable named program.
+
+
+
+
+
+
+
+5. Starting GDB
+gdb ./program
+This opens the GDB debugger.
+To exit:
+quit
+6. Important GDB Commands
+
+Important GDB Commands
+Command Purpose
+run Executes the program.
+break main Sets a breakpoint at main().
+break 10 Sets a breakpoint at line 10.
+next Executes the next source line without stepping into function calls.
+step Executes the next source line and steps into function calls.
+continue Continues execution until the next breakpoint or program termination.
+print a Displays the value of variable a.
+info locals Displays local variables.
+info args Displays function arguments.
+display a Displays variable a automatically after each stop.
+backtrace Displays the function call stack.
+list Displays source code.
+info breakpoints Displays existing breakpoints.
+delete Deletes breakpoints.
+watch a Stops execution when variable a changes.
+quit Exits GDB.
+
+
+
+
+
+
+
+Practical GDB Example
+Suppose your program is:
+#include <stdio.h>
+
+int main(void)
+{
+    int a = 10;
+    int b = 20;
+    int sum;
+
+    sum = a + b;
+
+    printf("Sum = %d\n", sum);
+
+    return 0;
+}
+Step 1: Compile
+gcc -g program.c -o program
+Step 2: Open GDB
+gdb ./program
+Step 3: Set breakpoint
+(gdb) break main
+Step 4: Run program
+(gdb) run
+Step 5: Execute line by line
+(gdb) next
+Step 6: Check variable values
+(gdb) print a
+(gdb) print b
+(gdb) print sum
+Step 7: Check local variables
+(gdb) info locals
+Step 8: Continue execution
+(gdb) continue
+
+
+8. GDB in Embedded Systems
+GDB is very important in Embedded C development.
+It is used for:
+Debugging ARM Cortex-M microcontrollers.
+Debugging Linux device drivers.
+Debugging Raspberry Pi applications.
+Inspecting CPU registers.
+Examining memory addresses.
+Finding segmentation faults.
+Debugging firmware execution.
+Embedded debugging tools:
+Tool Purpose
+GDB Debugging program execution.
+GDB Server Provides debugging access to the target.
+OpenOCD Provides target debugging and programming support.
+J-Link Hardware debug probe.
+ST-Link STM32 programming and debugging probe.
+SWD Serial Wire Debug interface.
+JTAG Hardware debugging interface.
+
+
+
+
+
+
+9. Native GDB vs ARM GDB
+Native GDB ARM GDB
+Debugs programs running on the host system. Debugs programs targeting ARM processors.
+Command: gdb Command: arm-none-eabi-gdb
+Commonly used for Linux applications. Commonly used for ARM bare-metal firmware.
+Can debug through local processes. Commonly connects through a debug server and hardware probe.
+
+
+
+10. Important Difference: GCC vs GDB
+GCC GDB
+Compiler. Debugger.
+Converts source code into executable code. Examines and controls program execution.
+Detects compilation errors and warnings. Helps identify runtime and logical errors.
+Example: gcc -g program.c -o program Example: gdb ./program
+
+
+
+
+
+
+
+
+
+Remember:
+GCC → Compiles the program.
+GDB → Debugs the program.
+-g → Adds debugging information.
+Breakpoint → Pauses execution at a specified location.
+next → Executes the next line.
+print → Displays variable values.
+backtrace → Shows the function call sta
