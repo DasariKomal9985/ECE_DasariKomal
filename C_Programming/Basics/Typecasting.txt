@@ -114,4 +114,21 @@ long
 unsigned long
 float
 double
-long double
+long double 
+
+
+Example 1: Short + int
+short a = 10;
+int b = 20;
+
+int result = a + b;
+Here, short is promoted to int.
+
+
+
+Float + double
+float a = 10.5f;
+double b = 20.5;
+
+double result = a + b;
+Here, float is converted to double.
