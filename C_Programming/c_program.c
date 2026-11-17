@@ -21,6 +21,12 @@ struct Student
 
 
 
+
+
+
+
+
+
 Arrays in C
 1. Definition
 An array is a derived data type in C that allows storing multiple elements of the same data type under a single variable name, where all elements are stored in contiguous memory locations and accessed using index numbers starting from 0.
@@ -30,6 +36,12 @@ data_type array_name[size];
 
 Example:
 int arr[5];
+
+
+
+
+
+
 
 
 
@@ -44,6 +56,10 @@ data_type *pointer_name;
 3. Example
 int a = 10;
 int *ptr = &a;
+
+
+
+
 
 
 
@@ -74,9 +90,24 @@ struct Status
 
 
 
+
+
+
+
+
+
+
 File Operations in C
 1. Definition
 File operations in C are used to create, open, read, write, append, and close files to store and retrieve data permanently in secondary storage.
+
+
+
+
+
+
+
+
 
 
 
@@ -103,6 +134,10 @@ Difference Between Normal Function and Function Pointer in C
 A normal function is a block of code that performs a specific task and is called directly using its function name.
 2. Function Pointer
 A function pointer is a pointer variable that stores the address of a function and allows calling that function indirectly through the pointer.
+
+
+
+
 
 
 
@@ -154,6 +189,12 @@ int main(void)
 
 
 
+
+
+
+
+
+
 Type Casting in C
 1. Definition
 Type casting is the process of converting a variable or expression from one data type to another data type.
@@ -168,33 +209,31 @@ Explicit Type Casting (Manual Conversion)
 
 
 
+
+
+
+
+
+
 Preprocessing Stages in C
 1. Definition
 Preprocessing is the first stage of C program compilation in which the preprocessor processes preprocessor directives, removes comments, expands macros, includes header files, and handles conditional compilation before passing the expanded source code to the compiler.
 2. Preprocessing Directives
 Preprocessor directives are instructions that begin with the # symbol and are processed before actual compilation.
 
-Examples:
-Directive Purpose
-#include Includes header files.
-#define Defines macros.
-#undef Undefines a macro.
-#ifdef Checks whether a macro is defined.
-#ifndef Checks whether a macro is not defined.
-#if Checks a compile-time condition.
-#else Alternative conditional section.
-#endif Ends a conditional section.
 
 
- Flow of Preprocessing
-Original C Source Code
-program.c
-Comment Removal
-Header File Inclusion
-Macro Expansion
-Conditional Compilation
-Preprocessed Output
-program.i
+
+
+
+
+
+
+
+
+
+
+
 
 
 
