@@ -1,56 +1,105 @@
-2️⃣ Type Casting
-Definition
-Type casting is the explicit conversion of a value from one data type to another data type.
+Type Casting in C
+1. Definition
+Type casting is the process of converting a variable or expression from one data type to another data type.
 
-Syntax
-(type)value
+2. Types of Type Casting
+There are two types:
+Implicit Type Casting (Automatic Conversion)
+Explicit Type Casting (Manual Conversion)
 
-Example 1: Integer → Float
-int a = 10;
-int b = 3;
+3. Implicit Type Casting
+Definition: Implicit type casting is the automatic conversion of one data type into another data type by the compiler without requiring the programmer to specify the conversion.
+Example:
+#include <stdio.h>
 
-float result = (float)a / b;
+int main(void)
+{
+    int a = 10;
+    float b = 5.5;
 
-printf("%f\n", result);
+    float result = a + b;
 
-Output:
-3.333333
+    printf("Result = %.2f\n", result);
 
-Without casting:
+    return 0;
+}
+
+Explanation:
+a is an integer.
+b is a float.
+During addition, a is converted to float.
+The result is 15.5.
+
+
+Explicit Type Casting
+Definition: Explicit type casting is the manual conversion of one data type into another data type by the programmer using the cast operator.
+
+Syntax:
+(data_type) expression;
+
+Example:
+#include <stdio.h>
+
+int main(void)
+{
+    int a = 10;
+    int b = 3;
+
+    float result = (float)a / b;
+
+    printf("Result = %.2f\n", result);
+
+    return 0;
+}
+
+
+Explanation:
+(float)a converts integer a into a float for this expression.
+Division is performed using floating-point arithmetic.
+Result is 3.333....
+
+Without type casting:
 float result = a / b;
+The result would be 3.00 because integer division happens first, and then the result is converted to float.
 
-The division happens as integer division first:
-10 / 3 = 3
+The result would be 3.00 because integer division happens first, and then the result is converted to float.
+5. Difference Between Implicit and Explicit Type Casting
+Implicit Explicit
+Automatic conversion. Manual conversion.
+Performed by compiler. Specified by programmer.
+No cast operator required. Uses cast operator (type).
+Example: float x = 10; Example: float x = (float)10;
 
-Then 3 is converted to float.
-Example 2: Float → Integer
-float value = 10.75;
 
-int x = (int)value;
 
-printf("%d\n", x);
 
-Output:
-10
+6. Important Points
+Type casting converts values between data types.
+Implicit conversion is performed automatically by the compiler.
+Explicit conversion is performed using the cast operator.
+Converting float to int removes the fractional part; it does not round.
+Converting a larger integer type to a smaller one may lose information.
+Type casting is useful in calculations, data conversion, and embedded programming.
 
-The fractional part is discarded.
-Example 3: Embedded C
-Suppose ADC gives a 12-bit value:
-uint16_t adc_value = 2048;
-float voltage;
 
-voltage = ((float)adc_value * 3.3f) / 4095.0f;
+#include <stdio.h>
 
-printf("%.2f V\n", voltage);
+int main(void)
+{
+    unsigned int adc_value = 2048;
 
-Casting adc_value to float ensures the calculation is performed using floating-point arithmetic.
-⚠️ Casting does NOT change the original variable
-int a = 10;
+    float voltage;
 
-float b = (float)a;
+    voltage = ((float)adc_value / 4095) * 3.3f;
 
-After this:
-a = 10
-b = 10.0
+    printf("Voltage = %.2f V\n", voltage);
 
-The cast creates a converted value for that expression; it doesn't change a's declared type.
+    return 0;
+}
+
+
+Voltage = 1.65 V
+
+Remember:
+Implicit → Compiler converts automatically.
+Explicit → Programmer converts manually using (data_type). 🔧
