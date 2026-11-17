@@ -152,3 +152,20 @@ int main(void)
 
 
 
+
+
+Type Casting in C
+1. Definition
+Type casting is the process of converting a variable or expression from one data type to another data type.
+
+2. Types of Type Casting
+There are two types:
+Implicit Type Casting (Automatic Conversion)
+Explicit Type Casting (Manual Conversion)
+
+
+
+
+
+
+
