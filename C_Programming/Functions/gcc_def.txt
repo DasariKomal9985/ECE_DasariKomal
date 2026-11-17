@@ -1,0 +1,146 @@
+GCC Compiler in C
+1. Definition
+GCC (GNU Compiler Collection) is an open-source compiler collection developed by the GNU Project, used to compile programming languages such as C and C++ into machine-executable code.
+
+
+2. What is GCC?
+GCC is a compiler toolchain that converts C source code into an executable program through different compilation stages.
+Converts source code into machine-level instructions.
+Checks syntax and semantic errors.
+Generates assembly code.
+Converts assembly code into object code.
+Links object files and libraries to generate an executable.
+
+
+3. GCC Compilation Stages
+There are four main stages:
+1. Preprocessing
+Source: program.c → Output: program.i
+Processes macros, header files and directives.
+2. Compilation
+Input: program.i → Output: program.s
+Translates C code into assembly code.
+3. Assembly
+Input: program.s → Output: program.o
+Converts assembly code into machine-code object file.
+4. Linking
+Input: program.o → Output: executable
+Combines object files and required libraries.
+
+
+
+
+GCC Compilation Commands
+Suppose your C file is named program.c.
+Stage GCC command Output
+Preprocessing gcc -E program.c -o program.i .i
+Compilation gcc -S program.i -o program.s .s
+Assembly gcc -c program.s -o program.o .o
+Linking gcc program.o -o program Executable
+
+
+
+
+#include <stdio.h>
+
+int main(void)
+{
+    int a = 10;
+    int b = 20;
+    int sum = a + b;
+
+    printf("Sum = %d\n", sum);
+
+    return 0;
+}
+
+
+
+gcc program.c -o program
+
+./program
+
+Sum = 30
+
+
+
+Important GCC Options
+Option Purpose
+-E Preprocessing only.
+-S Generates assembly code.
+-c Generates object file without linking.
+-o Specifies output filename.
+-Wall Enables many common warnings.
+-Wextra Enables additional warnings.
+-g Generates debugging information.
+-O0 Disables most optimization.
+-O1 Basic optimization.
+-O2 More extensive optimization.
+-O3 Higher-level optimization.
+-I Specifies header file search directory.
+-L Specifies library search directory.
+-l Links a library.
+
+
+
+
+
+
+GCC in Embedded Systems
+In Embedded C, we commonly use a cross-compiler.
+Definition: A cross-compiler is a compiler that runs on one system (host machine) but generates executable code for a different target architecture or processor.
+Example:
+Host Machine
+x86 / x86-64
+Ubuntu Linux PC
+Cross Compiler
+arm-none-eabi-gcc
+Target Microcontroller
+ARM Cortex-M4
+Generates ARM executable code
+
+
+
+
+
+Common cross-compilers:
+Compiler Target
+arm-none-eabi-gcc ARM Cortex-M microcontrollers
+aarch64-linux-gnu-gcc 64-bit ARM Linux
+arm-linux-gnueabihf-gcc 32-bit ARM Linux
+riscv64-unknown-elf-gcc RISC-V embedded systems
+8. Important Embedded GCC Commands
+For an ARM Cortex-M4 target:
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -c main.c -o main.o
+
+
+
+Here:
+arm-none-eabi-gcc – ARM embedded cross-compiler.
+-mcpu=cortex-m4 – Selects Cortex-M4 processor.
+-mthumb – Generates Thumb instructions.
+-c – Generates an object file.
+main.c – Source file.
+main.o – Output object file.
+For a complete embedded firmware build, additional files such as startup code and a linker script are normally required.
+
+
+
+
+For a complete embedded firmware build, additional files such as startup code and a linker script are normally required.
+
+
+9. GCC vs Cross Compiler
+GCC (Native Compiler) Cross Compiler
+Generates code for the host platform by default. Generates code for a different target platform.
+Used for normal PC applications. Used for embedded systems and other target platforms.
+
+
+Example: gcc Example: arm-none-eabi-gcc
+Remember:
+GCC → Compiler collection.
+Preprocessor → Processes directives.
+Compiler → Generates assembly.
+Assembler → Generates object code.
+Linker → Generates the final executable.
+Cross-compiler → Generates code for a different target architecture.
