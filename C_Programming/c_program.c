@@ -168,4 +168,34 @@ Explicit Type Casting (Manual Conversion)
 
 
 
+Preprocessing Stages in C
+1. Definition
+Preprocessing is the first stage of C program compilation in which the preprocessor processes preprocessor directives, removes comments, expands macros, includes header files, and handles conditional compilation before passing the expanded source code to the compiler.
+2. Preprocessing Directives
+Preprocessor directives are instructions that begin with the # symbol and are processed before actual compilation.
+
+Examples:
+Directive Purpose
+#include Includes header files.
+#define Defines macros.
+#undef Undefines a macro.
+#ifdef Checks whether a macro is defined.
+#ifndef Checks whether a macro is not defined.
+#if Checks a compile-time condition.
+#else Alternative conditional section.
+#endif Ends a conditional section.
+
+
+ Flow of Preprocessing
+Original C Source Code
+program.c
+Comment Removal
+Header File Inclusion
+Macro Expansion
+Conditional Compilation
+Preprocessed Output
+program.i
+
+
+
 
