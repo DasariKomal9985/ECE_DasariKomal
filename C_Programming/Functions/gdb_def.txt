@@ -173,4 +173,4 @@ GDB → Debugs the program.
 Breakpoint → Pauses execution at a specified location.
 next → Executes the next line.
 print → Displays variable values.
-backtrace → Shows the function call sta
+backtrace → Shows the function call stack
