@@ -1,0 +1,109 @@
+2. Expected output
+Array Elements:
+10 20 30 40 50
+Array Sum = 150
+Updated Array[2] = 100
+Function Pointer Result = 30
+
+3. Compile the program for GDB
+gcc -g -O0 -Wall debug.c -o debug
+
+Open your Linux terminal in the directory containing debug.c.
+Step 1: Compile
+Meaning:
+Option Purpose
+gcc GCC compiler
+-g Generates debugging information
+-O0 Disables optimization
+-Wall Enables common compiler warnings
+debug.c Source file
+-o debug Output executable
+
+Step 2: Open GDB
+
+
+
+
+
+
+4. Important GDB commands
+First, learn these commands:
+GDB command Purpose
+run Starts program execution.
+break main Sets breakpoint at main.
+break sum_array Sets breakpoint at a function.
+next Executes next line without entering called functions.
+step Executes next line and enters called functions.
+continue Continues execution until next breakpoint.
+print variable Prints a variable's value.
+info locals Displays local variables.
+info args Displays function arguments.
+display variable Automatically displays a variable after each stop.
+backtrace Shows function call history.
+finish Executes until the current function returns.
+list Displays source code.
+info breakpoints Lists breakpoints.
+delete Deletes breakpoints.
+quit Exits GDB.
+
+
+
+
+
+
+
+Debugging main() function
+(gdb) break main
+First, set a breakpoint at main().
+Start execution:
+(gdb) run
+Expected:
+Breakpoint 1, main () at debug.c
+Now GDB stops at the beginning of main().
+Check your source code:
+(gdb) list
+Execute line by line:
+(gdb) nextEach time you type next, GDB executes one source line.
+Try:
+(gdb) next
+(gdb) next
+(gdb) next
+Check local variables:
+(gdb) info locals
+You can also check individual variables:
+(gdb) print arr
+(gdb) print ptr
+(gdb) print total
+Remember:
+break main → Stops at main.
+run → Starts the program.
+next → Executes the next line.
+print → Displays variable values
+Each time you type next, GDB executes one source line.
+
+
+
+
+
+Debugging arrays
+Our program contains:
+int arr[5] = {10, 20, 30, 40, 50};
+At a breakpoint in main(), execute:
+(gdb) print arr
+To print individual elements:
+(gdb) print arr[0]
+(gdb) print arr[1]
+(gdb) print arr[2]
+(gdb) print arr[3]
+(gdb) print arr[4]
+To print all five elements together:
+(gdb) print arr[0]@5
+Expected:
+$1 = {10, 20, 30, 40, 50}
+To inspect the memory contents:
+(gdb) x/5dw arr
+Meaning:
+x → Examine memory.
+5 → Display five units.
+d → Display in decimal.
+w → Display word-sized units (typically 4 bytes).
