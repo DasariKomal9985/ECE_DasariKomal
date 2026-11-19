@@ -1,0 +1,27 @@
+ What is a Tuple?
+A Tuple is a collection of multiple values stored in a single variable.
+Tuples are ordered.
+Tuples allow duplicate values.
+Tuples can store different data types.
+Tuples are immutable (cannot be modified after creation).
+
+
+mytuple = (10, 20, 30, 40, 50)
+
+print(mytuple)
+
+
+
+(10, 20, 30, 40, 50)
+
+
+
+Tuple vs List vs C Array
+Feature C Array Python List Python Tuple
+Syntax {} [] ()
+Multiple values Yes Yes Yes
+Different data types Possible, but uncommon Yes Yes
+Modify elements Yes Yes No
+Size Fixed Dynamic Fixed after creation
+
+
