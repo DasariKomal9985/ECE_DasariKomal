@@ -1,0 +1,43 @@
+Complete Booting Sequence Flow Map
+
+1. POWER ON
+Supply voltage applied to STM32
+
+2. RESET
+Power-on reset / NRST / software / watchdog
+
+3. BOOT MODE SELECTION
+BOOT pins and device configuration
+
+4. SELECT BOOT MEMORY
+Flash
+Normal application
+System ROM
+Factory bootloader
+SRAM
+RAM-based code
+
+5. VECTOR TABLE
+Boot memory is visible at the vector-table address
+
+6. LOAD MSP
+Vector entry 0 → Initial Main Stack Pointer
+
+7. LOAD PC
+Vector entry 1 → Reset_Handler address (Thumb state)
+
+8. RESET_HANDLER
+Startup assembly code executes
+
+9. MEMORY INITIALIZATION
+Copy .data from Flash to SRAM
+Initialize .bss to zero
+
+10. SYSTEM INITIALIZATION
+Clock configuration and C runtime initialization
+
+11. main()
+Your embedded C application starts
+
+12. APPLICATION EXECUTION
+GPIO, UART, SPI, I2C, timers, interrupts, etc.
