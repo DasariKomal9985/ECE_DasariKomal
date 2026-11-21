@@ -1,0 +1,13 @@
+1. What is a vector table?
+A vector table is a table of addresses that tells the processor where to find the initial stack pointer and the functions that handle reset, exceptions and interrupts.
+In simple words, think of it as an address book for the CPU.
+For example:
+When the microcontroller powers ON, where should execution start?
+When an interrupt occurs, which function should execute?
+When a timer interrupt occurs, which handler should run?
+When an external GPIO interrupt occurs, which handler should run?
+The vector table provides these addresses.
+2. Where is the vector table located?
+For your STM32F401RB, the normal application vector table is located at the beginning of Flash memory:
+STM32F401RB Flash memory
+0x08000000
