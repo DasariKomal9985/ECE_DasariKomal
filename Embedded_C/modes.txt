@@ -1,0 +1,93 @@
+What is ARM Mode?
+Definition: ARM mode is an instruction-set state in which the processor executes 32-bit ARM instructions.
+
+In traditional ARM processors, there are two major instruction-set states:
+
+ARM state – 32-bit instructions.
+Thumb state – originally 16-bit instructions, later extended to support 32-bit instructions too.
+
+
+
+
+
+
+
+
+
+
+
+
+What is Thumb Mode?
+Definition: Thumb is an ARM instruction-set state designed to provide more compact machine code while retaining efficient processor execution.
+
+Originally, Thumb used 16-bit instructions.
+Later, Thumb-2 introduced both 16-bit and 32-bit instruction encodings.
+
+For example:
+ARM state: 32-bit instruction encoding.
+Thumb-2: 16-bit or 32-bit instruction encoding.
+
+Why was Thumb introduced?
+Embedded systems have limited Flash memory. Smaller instructions can reduce firmware size.
+
+Important: ARM Cortex-M processors execute only Thumb instructions. They do not support ARM state.
+
+
+
+
+
+
+
+
+
+
+
+
+Thread Mode
+Thread mode is where normal application code executes.
+For example:
+int main(void)
+{
+    while (1)
+    {
+        // Application code
+    }
+}
+Your main() function normally executes in Thread mode.
+Thread mode can operate in:
+Privileged state.
+Unprivileged state.
+
+
+
+
+
+
+
+Handler Mode
+Handler mode is where exception and interrupt handlers execute.
+For example:
+void TIM2_IRQHandler(void)
+{
+    // Timer interrupt handling
+}
+When a timer interrupt occurs, the processor enters Handler mode and executes the interrupt handler.
+Handler mode always has privileged access.
+
+
+
+
+
+
+
+
+
+Concept Meaning Cortex-M4
+ARM state 32-bit ARM instruction set Not supported
+Thumb state Thumb instruction set Supported
+Thread mode Normal application execution Supported
+Handler mode Interrupt/exception execution Supported
+Privileged Full permitted processor access Supported
+Unprivileged Restricted processor access Supported
+MSP Main Stack Pointer Supported
+PSP Process Stack Pointer Supported
