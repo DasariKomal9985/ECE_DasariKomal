@@ -1,0 +1,22 @@
+What does the MSP entry contain?
+The first vector table entry contains the initial Main Stack Pointer value.
+For example:
+Address          Stored data
+0x08000000       0x20010000
+Here:
+0x08000000 = address where the MSP entry is stored in Flash.
+0x20010000 = actual data stored in that entry.
+0x20010000 = initial stack pointer value, pointing into SRAM.
+What does this value mean?
+It tells the CPU where the stack should initially start.
+Your SRAM begins at 0x20000000. The stack normally grows downwards, so an initial stack pointer near the upper end of SRAM is commonly used.
+Illustrative SRAM layout
+0x20010000
+Initial MSP
+Top of the example stack region
+Stack grows downwards
+Stack memory
+Function calls, local variables and saved CPU context
+0x20000000
+SRAM starting address
+The example 0x20010000 is an illustrative SRAM boundary value, not necessarily the exact MSP value in your compiled project.
